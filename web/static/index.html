@@ -1,0 +1,211 @@
+<html>
+    <meta charset="UTF-8">
+    <head>
+    <title>Photograph Album</title>
+    <script src="bundle.js" type="text/javascript"></script>
+    <link href="pure-min.css" rel="stylesheet" type="text/css" media="all"></link>
+    <link href="open-iconic/font/css/open-iconic.css" rel="stylesheet" type="text/css" media="all"></link>
+    <script type="text/javascript">
+    var gApplication;
+    </script>
+    <style type="text/css">
+    body {
+    }
+    h1 {
+        font-family: sans;
+    }
+    hr {
+        border: 0;
+        height: 0;
+        border-top: 1px solid lightgrey;
+    }
+    legend {
+        border-bottom: 1px solid lightgrey;
+    }
+    fieldset {
+        border: 1px solid lightgrey;
+    }
+    ul a {
+        cursor: pointer;
+    }
+
+    .button-error, .button-success {
+        color: white;
+    }
+    .button-error {
+        background: rgb(202, 60, 60); /* this is a maroon */
+    }
+    .button-success {
+        background: rgb(28, 184, 65); /* this is a green */
+    }
+    .pure-button {
+        height: 36px;
+        margin: 1px;
+    }
+    .confirmbutton {
+        display: inline;
+        margin: 0;
+        height: 38px;
+        padding: 0;
+    }
+
+    .display-link {
+        background:none!important;
+        border:none;
+        padding:0!important;
+        border-bottom:1px solid #444;
+        cursor: pointer;
+    }
+    .messagebox {
+        border-bottom: 4px solid black;
+        padding: 1em;
+        transition: all 1s;
+    }
+    .messagebox-close {
+        float: right;
+    }
+    .messagebox-error {
+        background-color: #ffbaba;
+    }
+    .messagebox-information {
+        background-color: #bde5f8;
+    }
+    .messagebox-warning {
+        background-color: #feefb3;
+    }
+    .messagebox-success {
+        background-color: #dff2bf;
+    }
+
+    .buttonbox {
+        border-top: 1px solid lightgrey;
+        margin-top: 0.5em;
+        padding-top: 0.5em;
+        text-align: right;
+    }
+
+    .editable-tr {
+        cursor: pointer;
+    }
+    .editable-tr:hover {
+        background-color: lightgrey;
+    }
+
+    .header {
+        margin-left: 2em;
+        margin-right: 2em;
+    }
+    .page-content {
+        background-color: white;
+        margin-left: 0.5em;
+        margin-right: 0.5em;
+        padding: 1em;
+    }
+    .column {
+        margin-left: 1em;
+        margin-right: 1em;
+    }
+
+    .navigation {
+        margin-top: 0;
+    }
+    .navigation button {
+        border: none;
+        color: white;
+        padding-left: 0.7em;
+        padding-right: 0.7em;
+        margin: 0.3em;
+        margin-bottom: 0;
+        transition: all 0.5s ease;
+    }
+    .navigation ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+    .navigation li {
+        display: inline;
+    }
+    .navigation-active {
+    }
+    .navigation-inactive {
+    }
+    .navigation-active button {
+        background-color: white;
+        color: black;
+        padding-top: 1em;
+        padding-bottom: 0.7em;
+    }
+    .navigation-inactive button {
+        background-color: transparent;
+        color: white;
+        margin-top: 0;
+        opacity: 0.7;
+        padding-top: 0;
+        padding-bottom: 0.1em;
+    }
+    .navigation h1 {
+        color: white;
+        font-size: 30pt;
+        transition: all 0.5s ease;
+    }
+    .navigation-active h1 {
+        margin-top: 1.7em;
+        margin-bottom: 0.7em;
+    }
+    .navigation-inactive h1 {
+        margin-top: 0;
+        margin-bottom: 0;
+        opacity: 0.5;
+    }
+
+    .recipe-details {
+        background-color: white;
+        border: 2px solid lightgrey;
+        padding: 0.5em;
+        margin: 0.5em;
+    }
+    .recipe-outer {
+        background-color: white;
+        border-bottom: 1px solid lightgrey;
+        border-left: 2px solid lightgrey;
+        border-top: 1px solid lightgrey;
+        margin: 0.5em;
+        padding-right: 2px;
+    }
+    .recipe {
+        border-right: 2px solid lightgrey;
+        display: table;
+        width: 100%;
+    }
+    .recipe-component {
+        display: table-row;
+    }
+    .recipe-component-section {
+        display: table-cell;
+        vertical-align: middle;
+    }
+    .recipe-component-section-right {
+        border-bottom: 1px solid lightgrey;
+        border-top: 1px solid lightgrey;
+        padding: 0.5em;
+    }
+    .recipe ul, .recipe-component-section-right {
+        padding: 0.5em;
+    }
+
+    </style>
+    </head>
+    <body>
+        <div class="header" id="template_header"></div>
+        <div class="pure-g column">
+            <div class="pure-u-18-24">
+                <div class="page-content" id="template_content"></div>
+            </div>
+            <div class="pure-u-6-24">
+                <div class="page-content" id="template_side"></div>
+            </div>
+        </div>
+    </body>
+</html>
+
