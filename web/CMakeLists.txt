@@ -11,10 +11,17 @@ add_custom_target(
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_CURRENT_SOURCE_DIR}/client ${CMAKE_CURRENT_BINARY_DIR}/client
     )
+# Copy Atlas Components web directory over the client.  This makes atlas-com
+# web modules available in the same scope as this project's modules.
+add_custom_target(
+    copy_atlas_web
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/../atlas-com/web ${CMAKE_CURRENT_BINARY_DIR}/client
+    )
 
 add_custom_target(
     bundle
-    DEPENDS node_modules copy_web
+    DEPENDS node_modules copy_web copy_atlas_web
     COMMAND
         node_modules/webmake/bin/webmake
         ${CMAKE_CURRENT_BINARY_DIR}/client/index.js

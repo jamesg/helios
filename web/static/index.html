@@ -2,14 +2,15 @@
     <meta charset="UTF-8">
     <head>
     <title>Photograph Album</title>
-    <script src="bundle.js" type="text/javascript"></script>
-    <link href="pure-min.css" rel="stylesheet" type="text/css" media="all"></link>
-    <link href="open-iconic/font/css/open-iconic.css" rel="stylesheet" type="text/css" media="all"></link>
     <script type="text/javascript">
     var gApplication;
     </script>
+    <script src="bundle.js" type="text/javascript"></script>
+    <link href="pure-min.css" rel="stylesheet" type="text/css" media="all"></link>
+    <link href="open-iconic/font/css/open-iconic.css" rel="stylesheet" type="text/css" media="all"></link>
     <style type="text/css">
     body {
+        background-color: lightgrey;
     }
     h1 {
         font-family: sans;
@@ -84,6 +85,13 @@
         text-align: right;
     }
 
+    .editable-li {
+        cursor: pointer;
+    }
+    .editable-li:hover {
+        background-color: lightgrey;
+    }
+
     .editable-tr {
         cursor: pointer;
     }
@@ -104,6 +112,12 @@
     .column {
         margin-left: 1em;
         margin-right: 1em;
+    }
+
+    .mainmenu button {
+        width: 200px;
+        height: 100px;
+        background: rgb(28, 184, 65); /* this is a green */
     }
 
     .navigation {
@@ -159,39 +173,16 @@
         opacity: 0.5;
     }
 
-    .recipe-details {
-        background-color: white;
-        border: 2px solid lightgrey;
-        padding: 0.5em;
-        margin: 0.5em;
+    .thumblist {
+        list-style-type:  none;
     }
-    .recipe-outer {
-        background-color: white;
-        border-bottom: 1px solid lightgrey;
-        border-left: 2px solid lightgrey;
-        border-top: 1px solid lightgrey;
-        margin: 0.5em;
-        padding-right: 2px;
+    .thumblist li {
+        display: inline-block;
+        padding: 10px;
     }
-    .recipe {
-        border-right: 2px solid lightgrey;
-        display: table;
-        width: 100%;
-    }
-    .recipe-component {
-        display: table-row;
-    }
-    .recipe-component-section {
-        display: table-cell;
-        vertical-align: middle;
-    }
-    .recipe-component-section-right {
-        border-bottom: 1px solid lightgrey;
-        border-top: 1px solid lightgrey;
-        padding: 0.5em;
-    }
-    .recipe ul, .recipe-component-section-right {
-        padding: 0.5em;
+    .thumblist li img {
+        max-height: 100px;
+        max-width: 100px;
     }
 
     </style>
