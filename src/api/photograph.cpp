@@ -21,44 +21,68 @@ void helios::api::photograph::install(
         )
 {
     server.install<styx::element, int>(
-            "photograph_get",
-            [&conn](int id) {
-                helios::photograph p;
-                p.from_id(conn, helios::photograph::id_type{id});
-                return p.get_element();
-            }
-            );
+        "photograph_get",
+        [&conn](int id) {
+            helios::photograph p;
+            p.from_id(conn, helios::photograph::id_type{id});
+            return p.get_element();
+        }
+        );
     server.install<styx::list>(
-            "photograph_list",
-            boost::bind(&helios::photograph::get_collection, boost::ref(conn))
-            );
+        "photograph_list",
+        boost::bind(&helios::photograph::get_collection, boost::ref(conn))
+        );
 
-    // Album methods.
-    //server.install(
-        //"add_photograph_to_album",
-        //boost::bind(photoalbum::api::add_photograph_to_album, _1, _2, boost::ref(db)),
-        //boost::bind(jsonrpc::auth::logged_in, boost::ref(auth_db), _1)
-        //);
-    //api_server.install(
-        //"album_list",
-        //boost::bind(photoalbum::api::album_list, _1, _2, boost::ref(db)),
-        //boost::bind(jsonrpc::auth::logged_in, boost::ref(auth_db), _1)
-        //);
-    //api_server.install(
-        //"delete_album",
-        //boost::bind(photoalbum::api::delete_album, _1, _2, boost::ref(db)),
-        //boost::bind(jsonrpc::auth::logged_in, boost::ref(auth_db), _1)
-        //);
-    //api_server.install(
-        //"insert_album",
-        //boost::bind(photoalbum::api::insert_album, _1, _2, boost::ref(db)),
-        //boost::bind(jsonrpc::auth::logged_in, boost::ref(auth_db), _1)
-        //);
-    //api_server.install(
-        //"update_album",
-        //boost::bind(photoalbum::api::update_album, _1, _2, boost::ref(db)),
-        //boost::bind(jsonrpc::auth::logged_in, boost::ref(auth_db), _1)
-        //);
+    server.install<styx::element, int>(
+        "album_get",
+        [&conn](int album_id) {
+            helios::album a;
+            a.from_id(conn, helios::album::id_type{album_id});
+            return a.get_element();
+        }
+        );
+    server.install<styx::list>(
+        "album_list",
+        boost::bind(&helios::album::get_collection, boost::ref(conn))
+        );
+    server.install<styx::element, styx::element>(
+        "album_save",
+        [&conn](styx::element album_e) {
+            helios::album album(album_e);
+            album.save(conn);
+            return album.get_element();
+        }
+        );
+    server.install<bool, styx::element>(
+        "album_destroy",
+        [&conn](styx::element album_e) {
+            helios::album album(album_e);
+            return album.destroy(conn);
+        }
+        );
+    server.install<styx::null, int, int>(
+        "add_photograph_to_album",
+        [&conn](int photograph_id, int album_id) {
+            helios::photograph_in_album photograph_in_album(
+                helios::photograph_in_album::id_type{photograph_id, album_id}
+                );
+            return styx::null();
+        }
+        );
+    server.install<styx::list, int>(
+        "photographs_in_album",
+        [&conn](int album_id) {
+            return hades::join<helios::photograph, helios::photograph_in_album, helios::album>(
+                conn,
+                hades::where<int>(
+                    "photograph.photograph_id = photograph_in_album.photograph_id AND "
+                    "photograph_in_album.album_id = album.album_id AND "
+                    "album.album_id = ?",
+                    hades::row<int>(album_id)
+                    )
+                );
+        }
+        );
 
     // JPEG data methods.
     //api_server.install(

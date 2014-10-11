@@ -17,7 +17,6 @@ namespace helios
                 extern const char photograph_id[];
                 extern const char title[];
                 extern const char caption[];
-                extern const char filename[];
                 extern const char taken[];
             }
             namespace photograph_tagged
@@ -48,7 +47,6 @@ namespace helios
         public hades::tuple<
             db::attr::photograph::title,
             db::attr::photograph::caption,
-            db::attr::photograph::filename,
             db::attr::photograph::taken>,
         public hades::relation<db::relvar::photograph>,
         public hades::crud<photograph>
@@ -62,7 +60,6 @@ namespace helios
         }
         //std::string& title() const { return get_string("title"); }
         //std::string& caption() const { return get_string("caption"); }
-        //std::string& filename() const { return get_string("filename"); }
         //std::string& location() const { return get_string("location"); }
         //std::string& taken() const { return get_string("taken"); }
         /*!
@@ -85,6 +82,10 @@ namespace helios
         }
         photograph_in_album(styx::element& e) :
             styx::object_accessor(e)
+        {
+        }
+        photograph_in_album(id_type id) :
+            styx::object_accessor(id.get_element())
         {
         }
         //int& photograph_id() const { return get_int("photograph_id"); }

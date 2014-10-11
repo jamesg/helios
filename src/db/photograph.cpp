@@ -7,7 +7,6 @@
 const char helios::db::attr::photograph::photograph_id[] = "photograph_id";
 const char helios::db::attr::photograph::title[] = "title";
 const char helios::db::attr::photograph::caption[] = "caption";
-const char helios::db::attr::photograph::filename[] = "filename";
 const char helios::db::attr::photograph::taken[] = "taken";
 const char helios::db::attr::photograph_tagged::tag[] = "tag";
 const char helios::db::attr::photograph_location::location[] = "location";
@@ -21,55 +20,61 @@ const char helios::db::relvar::album[] = "album";
 void helios::db::photograph::create(hades::connection& conn)
 {
     hades::devoid(
-            "CREATE TABLE IF NOT EXISTS  photograph          ( "
-            "    photograph_id           INTEGER PRIMARY KEY AUTOINCREMENT, "
-            "    title                   VARCHAR NOT NULL, "
-            "    caption                 VARCHAR NULL, "
-            "    filename                VARCHAR NOT NULL, "
-            "    location                VARCHAR NULL, "
-            "    taken                   VARCHAR NULL, "
-            "    UNIQUE(photograph_id, title, caption, filename, location, taken) "
-            "    ) ",
+            "CREATE TABLE IF NOT EXISTS photograph ( "
+            " photograph_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+            " title VARCHAR NOT NULL, "
+            " caption VARCHAR NULL, "
+            " taken VARCHAR NULL "
+            " ) ",
             conn
             );
     hades::devoid(
-            "CREATE TABLE IF NOT EXISTS  jpeg_data           ( "
-            "    photograph_id           INTEGER PRIMARY KEY, "
-            "    data                    BLOB NOT NULL, "
-            "    FOREIGN KEY( photograph_id ) REFERENCES photograph(photograph_id) "
-            "    ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED "
-            "    ) ",
+            "CREATE TABLE IF NOT EXISTS photograph_location ( "
+            " photograph_id INTEGER PRIMARY KEY, "
+            " location VARCHAR, "
+            " FOREIGN KEY(photograph_id) REFERENCES photograph(photograph_id) "
+            "  ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED "
+            " ) ",
             conn
             );
     hades::devoid(
-            "CREATE TABLE IF NOT EXISTS  album               ( "
-            "    album_id                INTEGER PRIMARY KEY AUTOINCREMENT, "
-            "    name                    VARCHAR NOT NULL, "
-            "    caption                 VARCHAR NULL, "
-            "    UNIQUE(name) "
-            "    ) ",
+            "CREATE TABLE IF NOT EXISTS jpeg_data ( "
+            " photograph_id INTEGER PRIMARY KEY, "
+            " data BLOB NOT NULL, "
+            " FOREIGN KEY(photograph_id) REFERENCES photograph(photograph_id) "
+            "  ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED "
+            " ) ",
             conn
             );
     hades::devoid(
-            "CREATE TABLE IF NOT EXISTS  photograph_tagged    ( "
-            "    photograph_id           INTEGER NOT NULL, "
-            "    tag                     VARCHAR NOT NULL, "
-            "    FOREIGN KEY( photograph_id ) REFERENCES photograph( photograph_id ) "
-            "    ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, "
-            "    UNIQUE(photograph_id, tag) "
-            "    ) ",
+            "CREATE TABLE IF NOT EXISTS album ( "
+            " album_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+            " name VARCHAR NOT NULL, "
+            " caption VARCHAR NULL, "
+            " UNIQUE(name) "
+            " ) ",
             conn
             );
     hades::devoid(
-            "CREATE TABLE IF NOT EXISTS  photograph_in_album   ( "
-            "    photograph_id           INTEGER NOT NULL, "
-            "    album_id                INTEGER NOT NULL, "
-            "    FOREIGN KEY( photograph_id ) REFERENCES photograph( photograph_id ) "
-            "    ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, "
-            "    FOREIGN KEY( album_id )      REFERENCES album( album_id ) "
-            "    ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, "
-            "    UNIQUE(photograph_id, album_id) "
-            "    ) ",
+            "CREATE TABLE IF NOT EXISTS photograph_tagged ( "
+            " photograph_id INTEGER NOT NULL, "
+            " tag VARCHAR NOT NULL, "
+            " FOREIGN KEY(photograph_id) REFERENCES photograph(photograph_id) "
+            "  ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, "
+            " UNIQUE(photograph_id, tag) "
+            " ) ",
+            conn
+            );
+    hades::devoid(
+            "CREATE TABLE IF NOT EXISTS photograph_in_album ( "
+            " photograph_id INTEGER NOT NULL, "
+            " album_id INTEGER NOT NULL, "
+            " FOREIGN KEY(photograph_id) REFERENCES photograph(photograph_id) "
+            "  ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, "
+            " FOREIGN KEY(album_id) REFERENCES album(album_id) "
+            "  ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, "
+            " UNIQUE(photograph_id, album_id) "
+            " ) ",
             conn
             );
 }

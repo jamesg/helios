@@ -8,6 +8,7 @@ target_link_libraries(
     helios-server-lib
     helios-api
     helios-db
+    helios-uri
     atlas-com-api
     atlas-com-http-server
     atlas-com-jsonrpc

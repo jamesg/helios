@@ -10,6 +10,7 @@
 #include "http/server/static_file.hpp"
 #include "jsonrpc/uri.hpp"
 #include "log/log.hpp"
+#include "uri/uri.hpp"
 
 helios::server::server(
         const server::options& options,
@@ -39,6 +40,7 @@ helios::server::server(
     atlas::http::install_static_file(m_http_server, *m_mime_information, "open-iconic/font/css/open-iconic.css");
     atlas::http::install_static_file(m_http_server, *m_mime_information, "open-iconic/font/fonts/open-iconic.ttf");
     atlas::http::install_static_file(m_http_server, *m_mime_information, "open-iconic/font/fonts/open-iconic.woff");
+    uri::install(*m_connection, m_http_server);
 
     api::install(*m_connection, m_api_server);
     m_http_server.router().install(

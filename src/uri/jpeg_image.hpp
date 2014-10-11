@@ -1,31 +1,23 @@
-#ifndef PHOTOGRAPH_URI_JPEG_IMAGE_HPP
-#define PHOTOGRAPH_URI_JPEG_IMAGE_HPP
-
-/*
- * Photoalbum - a photograph album web application.
- * Copyright (C) 2014 James Goode.
- */
+#ifndef HELIOS_URI_JPEG_IMAGE_HPP
+#define HELIOS_URI_JPEG_IMAGE_HPP
 
 #include "mongoose.h"
 
-namespace sqlite
+#include "http/server/uri_type.hpp"
+
+namespace hades
 {
     class connection;
 }
-
-namespace photoalbum
+namespace helios
 {
-    class server;
-
     namespace uri
     {
-        int jpeg_image(
-                const server&,
-                mg_connection*,
-                mg_event,
-                sqlite::connection& photograph_db,
-                sqlite::connection& auth_db,
-                sqlite::connection& cache_db
+        void jpeg_image(
+                hades::connection& conn,
+                mg_connection *mg_conn,
+                atlas::http::uri_callback_type callback_success,
+                atlas::http::uri_callback_type callback_failure
                 );
     }
 }

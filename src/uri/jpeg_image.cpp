@@ -1,8 +1,3 @@
-/*
- * Photoalbum - a photograph album web application.
- * Copyright (C) 2014 James Goode.
- */
-
 #include "jpeg_image.hpp"
 
 #include <boost/fusion/include/at_c.hpp>
@@ -11,36 +6,28 @@
 #include <exiv2/exiv2.hpp>
 #include <Magick++.h>
 
-#include "sqlite/insert.hpp"
-#include "sqlite/row.hpp"
-#include "sqlite/select.hpp"
-
 #include "db/auth.hpp"
-#include "db/photograph/jpeg_data.hpp"
-#include "server.hpp"
+#include "db/jpeg_data.hpp"
 #include "uri/detail.hpp"
 
-int photoalbum::uri::jpeg_image(
-        const server& serve,
-        mg_connection *conn,
-        mg_event ev,
-        sqlite::connection& photograph_db,
-        sqlite::connection& auth_db,
-        sqlite::connection& cache_db
+void helios::uri::jpeg_image(
+        //const server& serve,
+        hades::connection& conn,
+        mg_connection *mg_conn,
+        atlas::http::uri_callback_type callback_success,
+        atlas::http::uri_callback_type callback_failure
         )
 {
-    if(ev != MG_REQUEST)
-        return MG_FALSE;
-    if(!db::auth::token_valid(detail::extract_token(conn), auth_db))
-    {
-        detail::text_response(conn, detail::status_unauthorized, "Not authorised");
-        std::cerr << "token " << detail::extract_token(conn) << std::endl;
-        return MG_TRUE;
-    }
+    //if(!db::auth::token_valid(detail::extract_token(conn), auth_db))
+    //{
+        //detail::text_response(conn, detail::status_unauthorized, "Not authorised");
+        //std::cerr << "token " << detail::extract_token(conn) << std::endl;
+        //return MG_TRUE;
+    //}
     char id_s[10], width_s[10], height_s[10];
-    mg_get_var(conn, "photograph_id", id_s, sizeof(id_s));
-    mg_get_var(conn, "width", width_s, sizeof(width_s));
-    mg_get_var(conn, "height", height_s, sizeof(height_s));
+    mg_get_var(mg_conn, "photograph_id", id_s, sizeof(id_s));
+    mg_get_var(mg_conn, "width", width_s, sizeof(width_s));
+    mg_get_var(mg_conn, "height", height_s, sizeof(height_s));
 
     int width = 100, height = 100, photo_id = 0;
     try
@@ -64,41 +51,40 @@ int photoalbum::uri::jpeg_image(
     catch(const std::exception&)
     {
         // Cannot provide a photograph if no id was given.
-        return MG_FALSE;
+        callback_failure();
+        return;
     }
 
-    sqlite::rowset<std::vector<unsigned char>> cache_data;
-    sqlite::select(
-            cache_db,
-            "SELECT data FROM jpeg_cache "
-            "WHERE photograph_id = ? "
-            "AND width = ? "
-            "AND height = ? ",
-            sqlite::row<int, int, int>(photo_id, width, height),
-            cache_data
-            );
-    if(cache_data.size())
-    {
-        mg_send_status(conn, 200);
-        mg_send_header(conn, "Content-type", "image/jpeg");
-        mg_send_header(
-                conn,
-                "Last-Modified",
-                detail::http_date(serve.start_time()).c_str()
-                );
-        mg_send_data(
-                conn,
-                &(sqlite::column<0>(cache_data.front()).front()),
-                sqlite::column<0>(cache_data.front()).size()
-                );
-        return MG_TRUE;
-    }
+    //sqlite::select(
+            //cache_db,
+            //"SELECT data FROM jpeg_cache "
+            //"WHERE photograph_id = ? "
+            //"AND width = ? "
+            //"AND height = ? ",
+            //sqlite::row<int, int, int>(photo_id, width, height),
+            //cache_data
+            //);
+    //if(cache_data.size())
+    //{
+        //mg_send_status(conn, 200);
+        //mg_send_header(conn, "Content-type", "image/jpeg");
+        //mg_send_header(
+                //conn,
+                //"Last-Modified",
+                //detail::http_date(serve.start_time()).c_str()
+                //);
+        //mg_send_data(
+                //conn,
+                //&(sqlite::column<0>(cache_data.front()).front()),
+                //sqlite::column<0>(cache_data.front()).size()
+                //);
+        //return MG_TRUE;
+    //}
 
+    Magick::Blob blob;
     try
     {
-        json::object data_o;
-        jpeg_data_db data(data_o);
-        db::get_by_id(photo_id, photograph_db, data);
+        helios::jpeg_data_db data = db::jpeg_data::get_by_id(conn, photo_id);
         Magick::Image image(Magick::Blob(
             reinterpret_cast<const void*>(&(data.data[0])), data.data.size())
             );
@@ -149,32 +135,34 @@ int photoalbum::uri::jpeg_image(
 
         Magick::Image out_image( image.size(), Magick::Color(255,255,255) );
         out_image.composite(image, 0, 0);
-        Magick::Blob blob;
         out_image.write(&blob, "JPEG");
-        mg_send_status(conn, 200);
-        mg_send_header(conn, "Content-type", "image/jpeg");
-        mg_send_header(
-                conn,
-                "Last-Modified",
-                detail::http_date(serve.start_time()).c_str()
-                );
-        mg_send_data(conn, blob.data(), blob.length());
 
-        sqlite::insert(
-                "jpeg_cache",
-                { "photograph_id", "width", "height", "data" },
-                boost::fusion::vector<int, int, int, std::string>(
-                    photo_id, width, height, std::string((const char*)(blob.data()), blob.length())
-                    ),
-                cache_db
-                );
+        //sqlite::insert(
+                //"jpeg_cache",
+                //{ "photograph_id", "width", "height", "data" },
+                //boost::fusion::vector<int, int, int, std::string>(
+                    //photo_id, width, height, std::string((const char*)(blob.data()), blob.length())
+                    //),
+                //cache_db
+                //);
     }
     catch(const std::exception& e)
     {
         std::cerr << "in jpeg_image: " << e.what() << std::endl;
-        return MG_FALSE;
+        callback_failure();
+        return;
     }
 
-    return MG_TRUE;
+    mg_send_status(mg_conn, 200);
+    mg_send_header(mg_conn, "Content-type", "image/jpeg");
+    //TODO
+    //mg_send_header(
+            //mg_conn,
+            //"Last-Modified",
+            //detail::http_date(serve.start_time()).c_str()
+            //);
+    mg_send_data(mg_conn, blob.data(), blob.length());
+
+    callback_success();
 }
 

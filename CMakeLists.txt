@@ -7,6 +7,7 @@ find_package(CURL)
 find_package(Threads)
 find_package(OpenSSL)
 find_package(Boost COMPONENTS date_time filesystem random regex system thread)
+find_package(ImageMagick COMPONENTS Magick++)
 
 include_directories("atlas-com/lib/sqlite3/include")
 include_directories("atlas-com/lib/mongoose/include")
@@ -16,6 +17,7 @@ include_directories("commandline/include")
 include_directories("hades/include")
 include_directories("styx/include")
 include_directories(${Boost_INCLUDE_DIRS})
+include_directories(${ImageMagick_INCLUDE_DIRS})
 include_directories(${CURL_INCLUDE_DIRS})
 
 # Documentation

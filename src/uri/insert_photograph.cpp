@@ -1,8 +1,3 @@
-/*
- * Photoalbum - a photograph album web application.
- * Copyright (C) 2014 James Goode.
- */
-
 #include "insert_photograph.hpp"
 
 #include <cstring>
@@ -12,9 +7,9 @@
 
 #include <exiv2/exiv2.hpp>
 
-#include "json/json.hpp"
+#include "hades/crud.ipp"
 
-#include "db/photograph/jpeg_data.hpp"
+#include "db/jpeg_data.hpp"
 #include "db/photograph.hpp"
 #include "jsonrpc/request.hpp"
 #include "jsonrpc/result.hpp"
@@ -23,7 +18,7 @@ namespace
 {
     std::string photograph_date(
             const unsigned char* jpeg_data,
-            const int            jpeg_data_len
+            const int jpeg_data_len
             )
     {
         try
@@ -71,17 +66,15 @@ namespace
     }
 }
 
-int photoalbum::uri::insert_photograph(
-        mg_connection       *conn,
-        mg_event            ev,
-        sqlite::connection& photo_db
+int helios::uri::insert_photograph(
+        hades::connection& conn,
+        mg_connection *mg_conn,
+        atlas::http::uri_callback_type callback_success,
+        atlas::http::uri_callback_type callback_failure
         )
 {
-    if(ev != MG_REQUEST)
-        return MG_FALSE;
-    json::object photo_o, data_o;
-    photograph photo(photo_o);
-    jpeg_data_db data_db(data_o);
+    helios::photograph photo;
+    helios::jpeg_data_db data_db;
 
     const char *data;
     int data_len;
@@ -91,7 +84,7 @@ int photoalbum::uri::insert_photograph(
 
     int skip = 0, skip_total = 0;
     while((skip = mg_parse_multipart(
-                conn->content+skip_total, conn->content_len-skip_total,
+                mg_conn->content+skip_total, mg_conn->content_len-skip_total,
                 var_name, sizeof(var_name),
                 file_name, sizeof(file_name),
                 &data, &data_len
@@ -101,16 +94,18 @@ int photoalbum::uri::insert_photograph(
         skip_total += skip;
 
         if(strcmp(var_name, "title") == 0)
-            photo.title() = std::string(data, data_len);
+            photo.get_string<db::attr::photograph::title>() =
+                std::string(data, data_len);
         if(strcmp(var_name, "caption") == 0)
-            photo.caption() = std::string(data, data_len);
-        if(strcmp(var_name, "location") == 0)
-            photo.location() = std::string(data, data_len);
+            photo.get_string<db::attr::photograph::caption>() =
+                std::string(data, data_len);
+        //if(strcmp(var_name, "location") == 0)
+            //photo.location() = std::string(data, data_len);
         if(strcmp(var_name, "tags") == 0)
             tags = std::string(data, data_len);
         if(strcmp(var_name, "file") == 0)
         {
-            photo.taken() = photograph_date(
+            photo.get_string<db::attr::photograph::taken>() = photograph_date(
                     reinterpret_cast<const unsigned char*>(data),
                     data_len
                     );
@@ -124,31 +119,25 @@ int photoalbum::uri::insert_photograph(
 
     typedef boost::tokenizer<boost::escaped_list_separator<char> > tokenizer;
     tokenizer t(tags, boost::escaped_list_separator<char>());
-    for(auto it = t.begin(); it != t.end(); ++it)
-        photo.tags().append(*it);
+    //for(auto it = t.begin(); it != t.end(); ++it)
+        //photo.tags().append(*it);
 
-    int photo_id = db::insert(
-            photo,
-            photo_db
-            );
+    photo.save(conn);
 
-    data_db.id() = photo_id;
-    db::insert(
-            data_db,
-            photo_db
-            );
+    data_db.photograph_id =
+        photo.get_int<db::attr::photograph::photograph_id>();
+    db::jpeg_data::insert(data_db, conn);
 
-    mg_send_status(conn, 200);
-    mg_send_header(conn, "Content-type", "text/json");
+    mg_send_status(mg_conn, 200);
+    mg_send_header(mg_conn, "Content-type", "text/json");
 
-    json::object res_o;
-    jsonrpc::result res(res_o);
+    atlas::jsonrpc::result res;
 
-    res.data() = json::object("Success");
+    res.data() = styx::element("Success");
 
-    std::string json_s = json::serialise_json(res_o);
-    mg_send_data(conn, json_s.c_str(), json_s.length());
+    std::string json_s = styx::serialise_json(res.get_element());
+    mg_send_data(mg_conn, json_s.c_str(), json_s.length());
 
-    return MG_TRUE;
+    callback_success();
 }
 

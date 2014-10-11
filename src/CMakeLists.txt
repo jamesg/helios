@@ -5,4 +5,5 @@ project("Helios")
 add_subdirectory(api)
 add_subdirectory(db)
 add_subdirectory(server)
+add_subdirectory(uri)
 

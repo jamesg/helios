@@ -1,10 +1,5 @@
-#ifndef PHOTOGRAPH_URI_DETAIL_HPP
-#define PHOTOGRAPH_URI_DETAIL_HPP
-
-/*
- * Photoalbum - a photograph album web application.
- * Copyright (C) 2014 James Goode.
- */
+#ifndef HELIOS_URI_DETAIL_HPP
+#define HELIOS_URI_DETAIL_HPP
 
 #include <string>
 
@@ -18,7 +13,7 @@ namespace boost
     }
 }
 
-namespace photoalbum
+namespace helios
 {
     namespace uri
     {
@@ -28,18 +23,18 @@ namespace photoalbum
             static const int status_unauthorized = 401;
 
             /*!
-             * Extract the 'token' GET variable.
+             * \brief Extract the 'token' GET variable.
              */
-            std::string extract_token(mg_connection *conn);
+            std::string extract_token(mg_connection*);
             /*!
-             * Format a date correctly for HTTP date headers.
+             * \brief Format a date correctly for HTTP date headers.
              */
             std::string http_date(const boost::posix_time::ptime&);
             /*!
-             * Send a plain text response.
+             * \brief Send a plain text response.
              */
             void text_response(
-                    mg_connection* conn,
+                    mg_connection*,
                     int status_code,
                     const std::string& response=""
                     );

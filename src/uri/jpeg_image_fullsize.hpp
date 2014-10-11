@@ -1,30 +1,25 @@
-#ifndef PHOTOGRAPH_URI_JPEG_IMAGE_FULLSIZE_HPP
-#define PHOTOGRAPH_URI_JPEG_IMAGE_FULLSIZE_HPP
-
-/*
- * Photoalbum - a photograph album web application.
- * Copyright (C) 2014 James Goode.
- */
+#ifndef HELIOS_URI_JPEG_IMAGE_FULLSIZE_HPP
+#define HELIOS_URI_JPEG_IMAGE_FULLSIZE_HPP
 
 #include "mongoose.h"
 
-namespace sqlite
+#include "http/server/uri_type.hpp"
+
+namespace hades
 {
     class connection;
 }
-
-namespace photoalbum
+namespace helios
 {
     class server;
 
     namespace uri
     {
-        int jpeg_image_fullsize(
-                const server&,
+        void jpeg_image_fullsize(
+                hades::connection&,
                 mg_connection*,
-                mg_event,
-                sqlite::connection& photograph_db,
-                sqlite::connection& auth_db
+                atlas::http::uri_callback_type callback_success,
+                atlas::http::uri_callback_type callback_failure
                 );
     }
 }
