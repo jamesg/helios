@@ -8,6 +8,7 @@
 #include <boost/fusion/include/vector.hpp>
 
 #include "hades/crud.ipp"
+#include "hades/filter.hpp"
 #include "hades/get_by_id.hpp"
 #include "hades/get_collection.hpp"
 #include "hades/join.hpp"
@@ -31,6 +32,28 @@ void helios::api::photograph::install(
     server.install<styx::list>(
         "photograph_list",
         boost::bind(&helios::photograph::get_collection, boost::ref(conn))
+        );
+    server.install<styx::list>(
+        "photograph_recent",
+        [&conn]() {
+            // TODO order by and limit
+            return hades::get_collection<helios::photograph>(
+                conn,
+                hades::order_by("photograph.taken DESCENDING", 36)
+                );
+        }
+        );
+    server.install<styx::list>(
+        "photograph_uncategorised",
+        [&conn]() {
+            // Use a LEFT OUTER JOIN, so photographs without any matching
+            // photograph_in_album will have one row with photograph_in_album
+            // attributes all NULL.
+            return hades::outer_join<helios::photograph, helios::photograph_in_album>(
+                conn,
+                hades::where<>("photograph_in_album.photograph_id IS NULL")
+                );
+        }
         );
 
     server.install<styx::element, int>(

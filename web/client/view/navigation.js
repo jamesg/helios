@@ -2,8 +2,8 @@ var StaticView = require('./static').StaticView;
 
 var icon = require('../ui').icon;
 
-var Home = require('../home').Home;
-var Upload = require('../upload').Upload;
+var HomePage = require('../page/home').HomePage;
+var UploadPage = require('../page/upload').UploadPage;
 
 exports.Navigation = StaticView.extend(
     {
@@ -22,7 +22,7 @@ exports.Navigation = StaticView.extend(
                     button(
                         {
                             onclick: (function() {
-                                gApplication.gotoView(Home);
+                                gApplication.gotoView(HomePage);
                             }).bind(this)
                         },
                         icon('home'), 'Home'

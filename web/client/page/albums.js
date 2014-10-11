@@ -22,8 +22,28 @@ exports.AlbumsPage = PageView.extend(
                 new AlbumPage({ application: this.application, model: album })
                 );
         },
+        gotoRecent: function() {
+        },
+        gotoUncategorised: function() {
+        },
         template: function() {
             h2('Albums');
+            div(
+                button(
+                    {
+                        class: 'pure-button',
+                        onclick: this.gotoRecent.bind(this)
+                    },
+                    icon('clock'), 'Recently Taken'
+                    ),
+                button(
+                    {
+                        class: 'pure-button',
+                        onclick: this.gotoUncategorised.bind(this)
+                    },
+                    icon('question-mark'), 'Uncategorised Photographs'
+                    )
+               );
             div(this.albumList.el);
         }
     }
