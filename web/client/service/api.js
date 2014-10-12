@@ -29,8 +29,8 @@ exports.rpc = function(options) {
 
     req.open('post', '/api_call', true);
 
-    if(window.localStorage.getItem('token'))
-        req.setRequestHeader('Authorization', window.localStorage.getItem('token'));
+    //if(window.localStorage.getItem('token'))
+        //req.setRequestHeader('Authorization', window.localStorage.getItem('token'));
     req.onload = reqListener;
     req.send(requestContent);
 
@@ -72,7 +72,7 @@ exports.backboneSyncFunction = function(rpcFunctions) {
                         params: [model.toJSON()]
                     }
                     );
-            function_().then(
+            return function_().then(
                 function(data) {
                     console.log('sync success', data);
                     options.success(data);

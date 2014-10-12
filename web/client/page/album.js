@@ -1,10 +1,8 @@
+var AlbumForm = require('../form/album').AlbumForm;
 var PageView = require('../view/page').PageView;
-
 var PhotographAlbum = require('../collection/photographalbum').PhotographAlbum;
-var PhotographThumbList = require('../view/photographthumblist').PhotographThumbList;
 var PhotographPage = require('./photograph').PhotographPage;
-
-var icon = require('../ui').icon;
+var PhotographThumbList = require('../view/photographthumblist').PhotographThumbList;
 
 exports.AlbumPage = PageView.extend(
     {
@@ -12,6 +10,7 @@ exports.AlbumPage = PageView.extend(
         initialize: function(options) {
             this.application = options.application;
             this.model = options.model;
+            this.form = new AlbumForm({ model: this.model });
             var photographCollection = new PhotographAlbum(
                 { album: options.model }
                 );
@@ -21,10 +20,11 @@ exports.AlbumPage = PageView.extend(
             this.render();
         },
         gotoPhotograph: function(photograph) {
-            this.application.gotoView(new PhotographPage({ model: photograph }));
+            this.application.gotoPage(new PhotographPage({ model: photograph }));
         },
         template: function() {
             h2('Album ', this.model.get('name'));
+            div(this.form.el);
             div(this.thumbList.el);
         }
     }

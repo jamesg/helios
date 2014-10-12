@@ -11,7 +11,7 @@ exports.Application = function() {
     document.getElementById('template_header')
         .appendChild(this.navigation.render().el);
 
-    this.gotoView(HomePage);
+    this.gotoPage(HomePage);
 };
 
 exports.Application.prototype._setElement = function(el) {
@@ -25,7 +25,7 @@ exports.Application.prototype._setElement = function(el) {
  * \param constructor A view or a constructor inheriting from PageView and
  * taking no arguments.
  */
-exports.Application.prototype.gotoView = function(constructor) {
+exports.Application.prototype.gotoPage = function(constructor) {
     var view = (_.isFunction(constructor))?
         (new constructor({ application: this })):
         constructor;

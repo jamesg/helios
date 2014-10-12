@@ -6,13 +6,14 @@ Backbone.$ = require('jbone');
 var CollectionView = require('./collection').CollectionView;
 
 var StaticView = require('./static').StaticView;
+var ui = require('../ui');
 
 var LiView = StaticView.extend(
     {
         tagName: 'li',
         className: 'editable-li',
         template: function() {
-            return a(
+            a(
                 {
                     onclick: this.trigger.bind(this, 'click', this.model)
                 },

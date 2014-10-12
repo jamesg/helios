@@ -16,7 +16,7 @@ exports.HomePage = PageView.extend(
                 return button(
                     {
                         class: 'pure-button',
-                        onclick: this.application.gotoView.bind(this.application, constructor)
+                        onclick: this.application.gotoPage.bind(this.application, constructor)
                     },
                     content
                     );

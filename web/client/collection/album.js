@@ -1,8 +1,6 @@
 var Backbone = require('backbone');
-
-var api = require('../service/api');
-
 var Album = require('../model/album').Album;
+var api = require('../service/api');
 
 exports.AlbumCollection = Backbone.Collection.extend(
     {

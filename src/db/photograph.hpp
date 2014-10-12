@@ -45,6 +45,7 @@ namespace helios
     struct photograph :
         public hades::has_candidate_key<db::attr::photograph::photograph_id>,
         public hades::tuple<
+            db::attr::photograph::photograph_id,
             db::attr::photograph::title,
             db::attr::photograph::caption,
             db::attr::photograph::taken>,

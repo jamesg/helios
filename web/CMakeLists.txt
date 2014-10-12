@@ -48,6 +48,8 @@ configure_file(static/index.html static/index.html COPYONLY)
 #configure_file(static/screen.css static/screen.css COPYONLY)
 #configure_file(static/favicon.png static/favicon.png COPYONLY)
 configure_file(static/pure-min.css static/pure-min.css COPYONLY)
+configure_file(static/grids-responsive-min.css static/grids-responsive-min.css COPYONLY)
+configure_file(static/grids-responsive-old-ie-min.css static/grids-responsive-old-ie-min.css COPYONLY)
 configure_file(
     static/open-iconic/font/css/open-iconic.css
     static/open-iconic/font/css/open-iconic.css

@@ -36,10 +36,9 @@ void helios::api::photograph::install(
     server.install<styx::list>(
         "photograph_recent",
         [&conn]() {
-            // TODO order by and limit
             return hades::get_collection<helios::photograph>(
                 conn,
-                hades::order_by("photograph.taken DESCENDING", 36)
+                hades::order_by("photograph.taken DESC", 36)
                 );
         }
         );
@@ -102,6 +101,20 @@ void helios::api::photograph::install(
                     "photograph_in_album.album_id = album.album_id AND "
                     "album.album_id = ?",
                     hades::row<int>(album_id)
+                    )
+                );
+        }
+        );
+    server.install<styx::list, int>(
+        "photograph_albums",
+        [&conn](int photograph_id) {
+            return hades::join<helios::photograph, helios::photograph_in_album, helios::album>(
+                conn,
+                hades::where<int>(
+                    "photograph.photograph_id = photograph_in_album.photograph_id AND "
+                    "photograph_in_album.album_id = album.album_id AND "
+                    "photograph.photograph_id = ?",
+                    hades::row<int>(photograph_id)
                     )
                 );
         }

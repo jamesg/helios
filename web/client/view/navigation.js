@@ -22,7 +22,7 @@ exports.Navigation = StaticView.extend(
                     button(
                         {
                             onclick: (function() {
-                                gApplication.gotoView(HomePage);
+                                gApplication.gotoPage(HomePage);
                             }).bind(this)
                         },
                         icon('home'), 'Home'
@@ -32,7 +32,7 @@ exports.Navigation = StaticView.extend(
                     //button(
                         //{
                             //onclick: (function() {
-                                //this.application.gotoView(Upload);
+                                //this.application.gotoPage(Upload);
                             //}).bind(this)
                         //},
                         //icon('data-transfer-upload'), 'Upload'
