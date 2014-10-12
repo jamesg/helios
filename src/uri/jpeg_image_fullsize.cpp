@@ -1,5 +1,7 @@
 #include "jpeg_image_fullsize.hpp"
 
+#include <iostream>
+
 #include <boost/lexical_cast.hpp>
 
 #include "db/jpeg_data.hpp"
