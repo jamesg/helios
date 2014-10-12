@@ -5,6 +5,7 @@ var AlbumForm = require('../form/album').AlbumForm;
 var AlbumList = require('../view/albumlist').AlbumList;
 var AlbumPage = require('./album').AlbumPage;
 var PageView = require('../view/page').PageView;
+var PhotographPage = require('./photograph').PhotographPage;
 var PhotographThumbList = require('../view/photographthumblist').PhotographThumbList;
 var RecentlyTaken = require('../collection/recentlytaken').RecentlyTaken;
 var StaticView = require('../view/static').StaticView;
@@ -24,8 +25,14 @@ var CategoryPage = PageView.extend(
             this.application.gotoPage(new PhotographPage({ model: photograph }));
         },
         template: function() {
-            h2('');
-            div(this.thumbList.el);
+            return div(
+                { class: 'pure-g' },
+                div(
+                    { class: 'pure-u-1-1' },
+                    h2(''),
+                    div(this.thumbList.el)
+                   )
+                );
         }
     }
     );
@@ -34,15 +41,22 @@ var RecentlyTakenPage = CategoryPage.extend(
     {
         initialize: function(options) {
             this.model = new RecentlyTaken;
+            this.listenTo(this.model, 'all', this.render.bind(this));
             this.model.fetch();
             this.initializeList(options);
         },
         template: function() {
-            h2('Recently Taken Photographs');
-            if(this.thumbList.length > 0)
-                div(this.thumbList.el);
-            else
-                p('There are no recently taken photographs.');
+            console.log('len', this.model.length);
+            return div(
+                { class: 'pure-g' },
+                div(
+                    { class: 'pure-u-1-1' },
+                    h2('Recently Taken Photographs'),
+                    (this.model.length > 0)?
+                        div(this.thumbList.el):
+                        p('There are no recently taken photographs.')
+                   )
+                );
         }
     }
     );
@@ -51,16 +65,22 @@ var UncategorisedPage = CategoryPage.extend(
     {
         initialize: function(options) {
             this.model = new Uncategorised;
+            this.listenTo(this.model, 'all', this.render.bind(this));
             this.model.fetch();
             this.initializeList(options);
         },
         template: function() {
-            h2('Uncategorised Photographs');
-            p('These photographs are not yet a member of any album.');
-            if(this.thumbList.length > 0)
-                div(this.thumbList.el);
-            else
-                p('There are currently no uncategorised photographs.');
+            return div(
+                { class: 'pure-g' },
+                div(
+                    { class: 'pure-u-1-1' },
+                    h2('Uncategorised Photographs'),
+                    p('These photographs are not yet a member of any album.'),
+                    (this.model.length > 0)?
+                        div(this.thumbList.el):
+                        p('There are currently no uncategorised photographs.')
+                   )
+                );
         }
     }
     );
@@ -110,25 +130,34 @@ exports.AlbumsPage = PageView.extend(
             this.application.gotoPage(UncategorisedPage);
         },
         template: function() {
-            h2('Albums');
-            div(
-                button(
-                    {
-                        class: 'pure-button',
-                        onclick: this.gotoRecent.bind(this)
-                    },
-                    ui.icon('clock'), 'Recently Taken'
-                    ),
-                button(
-                    {
-                        class: 'pure-button',
-                        onclick: this.gotoUncategorised.bind(this)
-                    },
-                    ui.icon('question-mark'), 'Uncategorised Photographs'
+            return div(
+                { class: 'pure-g' },
+                div(
+                    { class: 'pure-u-1-1' },
+                    h2('Albums'),
+                    div(
+                        button(
+                            {
+                                class: 'pure-button',
+                                onclick: this.gotoRecent.bind(this)
+                            },
+                            ui.icon('clock'), 'Recently Taken'
+                            ),
+                        button(
+                            {
+                                class: 'pure-button',
+                                onclick: this.gotoUncategorised.bind(this)
+                            },
+                            ui.icon('question-mark'), 'Uncategorised Photographs'
+                            )
+                       )
+                   ),
+                div(
+                    { class: 'pure-u-1-1' },
+                    div(this.albumList.el),
+                    div(this.albumForm.el)
                     )
-               );
-            div(this.albumList.el);
-            div(this.albumForm.el);
+                );
         }
     }
     );

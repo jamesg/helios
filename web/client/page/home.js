@@ -22,12 +22,18 @@ exports.HomePage = PageView.extend(
                     );
             }).bind(this);
 
-            h2('Helios: ', small('Photo Storage'));
-            div(
-                { class: 'mainmenu' },
-                menuButton(AlbumsPage, span(icon('book'), 'Albums')),
-                menuButton(UploadPage, span(icon('data-transfer-upload'), 'Upload'))
-               );
+            return div(
+                { class: 'pure-g' },
+                div(
+                    { class: 'pure-u-1-1' },
+                    h2('Helios: ', small('Photo Storage')),
+                    div(
+                        { class: 'mainmenu' },
+                        menuButton(AlbumsPage, span(icon('book'), 'Albums')),
+                        menuButton(UploadPage, span(icon('data-transfer-upload'), 'Upload'))
+                       )
+                   )
+                );
         }
     }
     );

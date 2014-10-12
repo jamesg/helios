@@ -30,7 +30,7 @@ var PhotographForm = StaticView.extend(
             }
             return form(
                 {
-                    class: 'pure-form pure-form-stacked',
+                    class: 'pure-form pure-form-aligned',
                     onsubmit: (function() {
                         this.model.set('title', title().value);
                         this.model.set('caption', caption().value);
@@ -43,9 +43,12 @@ var PhotographForm = StaticView.extend(
                 inlineInput(caption, 'Caption'),
                 inlineInput(date, 'Date'),
                 inlineInput(location, 'Location'),
-                button(
-                    { type: 'submit', class: 'pure-button pure-button-primary' },
-                    ui.icon('data-transfer-download'), 'Save'
+                inlineInput(
+                    button(
+                        { type: 'submit', class: 'pure-button pure-button-primary' },
+                        ui.icon('data-transfer-download'), 'Save'
+                        ),
+                    ''
                     )
                 );
         }
@@ -105,19 +108,19 @@ var DetailView = StaticView.extend(
         template: function() {
             div({ class: 'pure-u-1-1' }, h2(this.model.get('title')));
             div(
-                { class: 'pure-u-1-1 pure-u-md-1-1 pure-u-lg-12-24 pure-u-xl-12-24' },
+                { class: 'pure-u-1-1 pure-u-md-1-1 pure-u-lg-17-24 pure-u-xl-17-24' },
                 img(
                     {
                         class: 'pure-img',
                         alt: this.model.get('title'),
                         src: '/jpeg_image?photograph_id=' +
                             this.model.get('photograph_id') +
-                            '&height=500&width=500'
+                            '&height=800&width=1000'
                     }
                    )
                );
             div(
-                { class: 'pure-u-1-1 pure-u-md-12-24 pure-u-lg-12-24 pure-u-xl-12-24' },
+                { class: 'pure-u-1-1 pure-u-md-7-24 pure-u-lg-7-24 pure-u-xl-7-24' },
                 dl(
                     { compact: 'compact' },
                     dt('Title'), dd(this.model.get('title')),
@@ -127,7 +130,7 @@ var DetailView = StaticView.extend(
                   )
                );
             div(
-                { class: 'pure-u-1-1 pure-u-md-12-24 pure-u-lg-10-24 pure-u-xl-8-24' },
+                { class: 'pure-u-1-1 pure-u-md-17-24 pure-u-lg-11-24 pure-u-xl-8-24' },
                 this.form.el
                );
             div(
@@ -135,7 +138,7 @@ var DetailView = StaticView.extend(
                 this.albumList.el
                );
             div(
-                { class: 'pure-u-1-1 pure-u-md-12-24 pure-u-lg-7-24 pure-u-xl-8-24' },
+                { class: 'pure-u-1-1 pure-u-md-12-24 pure-u-lg-6-24 pure-u-xl-8-24' },
                 div(
                     { class: 'pure-menu pure-menu-vertical pure-menu-open' },
                     ul(

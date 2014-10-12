@@ -23,9 +23,15 @@ exports.AlbumPage = PageView.extend(
             this.application.gotoPage(new PhotographPage({ model: photograph }));
         },
         template: function() {
-            h2('Album ', this.model.get('name'));
-            div(this.form.el);
-            div(this.thumbList.el);
+            return div(
+                { class: 'pure-g' },
+                div(
+                    { class: 'pure-u-1-1' },
+                    h2('Album ', this.model.get('name')),
+                    div(this.form.el),
+                    div(this.thumbList.el)
+                   )
+               );
         }
     }
     );
