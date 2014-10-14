@@ -1,6 +1,4 @@
-var Backbone = require('backbone');
-
-var CollectionView = require('./collection').CollectionView;
+var GenericListView = require('./genericlist').GenericListView;
 var StaticView = require('./static').StaticView;
 var PhotographThumbView = require('./photographthumb').PhotographThumbView;
 
@@ -25,30 +23,14 @@ var LiView = StaticView.extend(
     }
     );
 
-var UlView = CollectionView.extend(
-    {
-        view: LiView,
-        tagName: 'ul',
-        className: 'thumblist',
-        initializeView: function(view) {
-            this.listenTo(view, 'click', this.trigger.bind(this, 'click'));
-        }
-    }
-   );
-
-exports.PhotographThumbList = Backbone.View.extend(
+exports.PhotographThumbListView = GenericListView.extend(
     {
         tagName: 'div',
-        className: '',
-        initialize: function(options) {
-            this.ulView = new UlView({ model: this.model });
-            this.listenTo(this.ulView, 'click', this.trigger.bind(this, 'click'));
-            this.render();
-        },
-        render: function() {
-            this.$el.empty();
-            this.el.appendChild(this.ulView.el);
-            return this;
+        className: 'thumblist',
+        view: LiView,
+        initialize: function() {
+            console.log('view', this.view);
+            GenericListView.prototype.initialize.apply(this, arguments);
         }
     }
     );

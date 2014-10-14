@@ -1,68 +1,60 @@
 var _ = require('underscore');
-var AlbumList = require('../view/albumlist').AlbumList;
+var AlbumCollection = require('../collection/album').AlbumCollection;
+var AlbumListView = require('../view/albumlist').AlbumListView;
+var AlbumSelectForm = require('../form/albumselect').AlbumSelectForm;
 var MessageBox = require('../view/messagebox').MessageBox;
 var PageView = require('../view/page').PageView;
 var Photograph = require('../model/photograph').Photograph;
 var PhotographAlbums = require('../collection/photographalbums').PhotographAlbums;
+var PhotographForm = require('../form/photograph').PhotographForm;
 var StaticView = require('../view/static').StaticView;
+var api = require('../service/api');
 var ui = require('../ui');
 
-var PhotographForm = StaticView.extend(
+/*!
+ * \brief Detailed information for a single photograph.
+ *
+ * \param inAlbum Optionally consider the photograph to be a member of an
+ * album.  The page will display additional tools to remove the photograph from
+ * this album.
+ */
+exports.PhotographPage = PageView.extend(
     {
+        fullPage: true,
         initialize: function(options) {
-            if(_.has(options, 'model'))
-                this.model = options.model;
-            if(!_.has(this, 'model'))
-                this.model = new Photograph;
-            this.render();
-        },
-        template: function() {
-            var title = input({ type: 'text', name: 'title', value: this.model.get('title') });
-            var caption = input({ type: 'text', name: 'caption', value: this.model.get('caption') });
-            var date = input({ type: 'text', name: 'date', value: this.model.get('date') });
-            var location = input({ type: 'text', name: 'location', value: this.model.get('location') });
-            var inlineInput = function(input_, label_) {
-                return div(
-                        { class: 'pure-control-group' },
-                        label({ for: input_().name }, label_),
-                        input_
-                        );
-            }
-            return form(
-                {
-                    class: 'pure-form pure-form-aligned',
-                    onsubmit: (function() {
-                        this.model.set('title', title().value);
-                        this.model.set('caption', caption().value);
-                        this.model.set('date', date().value);
-                        this.model.set('location', location().value);
-                        return false;
-                    }).bind(this)
-                },
-                inlineInput(title, 'Title'),
-                inlineInput(caption, 'Caption'),
-                inlineInput(date, 'Date'),
-                inlineInput(location, 'Location'),
-                inlineInput(
-                    button(
-                        { type: 'submit', class: 'pure-button pure-button-primary' },
-                        ui.icon('data-transfer-download'), 'Save'
-                        ),
-                    ''
-                    )
-                );
-        }
-    }
-    );
-
-var DetailView = StaticView.extend(
-    {
-        initialize: function() {
+            if(_(options).has('inAlbum'))
+                this.inAlbum = options.inAlbum;
             this.form = new PhotographForm({ model: this.model });
+            this.messageBox = new MessageBox;
             var photographAlbums = new PhotographAlbums({ photograph: this.model });
             photographAlbums.fetch();
-            this.albumList = new AlbumList({ model: photographAlbums });
+            this.albumForm = new AlbumSelectForm({ buttonText: 'Add' });
+            this.listenTo(
+                this.albumForm,
+                'addToAlbum',
+                (function(albumId) {
+                    this.addPhotographToAlbum(this.model.get('photograph_id'), albumId);
+                }).bind(this)
+                );
+            this.albumList = new AlbumListView({ model: photographAlbums });
             this.render();
+        },
+        addPhotographToAlbum: function(photographId, albumId) {
+            api.rpcFunction('add_photograph_to_album')(
+                photographId,
+                albumId
+                )
+            .then(
+                (function() {
+                    console.log('success');
+                    this.messageBox.displaySuccess('Added photgraph to album.');
+                    this.photographAlbums.fetch();
+                }).bind(this),
+                (function(err) {
+                    this.messageBox.displayError('Error adding photograph to album.');
+                    console.log('adding photograph to album', err);
+                }).bind(this)
+                );
         },
         tagName: 'div',
         className: 'pure-g',
@@ -106,7 +98,11 @@ var DetailView = StaticView.extend(
          * +----------+-----------+-----------+
          */
         template: function() {
-            div({ class: 'pure-u-1-1' }, h2(this.model.get('title')));
+            div(
+                { class: 'pure-u-1-1' },
+                h2(this.model.get('title')),
+                this.messageBox.el
+                );
             div(
                 { class: 'pure-u-1-1 pure-u-md-1-1 pure-u-lg-17-24 pure-u-xl-17-24' },
                 img(
@@ -120,7 +116,8 @@ var DetailView = StaticView.extend(
                    )
                );
             div(
-                { class: 'pure-u-1-1 pure-u-md-7-24 pure-u-lg-7-24 pure-u-xl-7-24' },
+                { class: 'pure-u-1-1 pure-u-md-10-24 pure-u-lg-7-24 pure-u-xl-7-24' },
+                h3('Photograph Details'),
                 dl(
                     { compact: 'compact' },
                     dt('Title'), dd(this.model.get('title')),
@@ -130,15 +127,21 @@ var DetailView = StaticView.extend(
                   )
                );
             div(
-                { class: 'pure-u-1-1 pure-u-md-17-24 pure-u-lg-11-24 pure-u-xl-8-24' },
+                { class: 'pure-u-1-1 pure-u-md-14-24 pure-u-lg-11-24 pure-u-xl-8-24' },
+                h3('Edit'),
                 this.form.el
                );
             div(
                 { class: 'pure-u-1-1 pure-u-md-12-24 pure-u-lg-7-24 pure-u-xl-8-24' },
+                h3('Albums'),
+                p('Add this photograph to another album.'),
+                this.albumForm.el,
                 this.albumList.el
                );
             div(
                 { class: 'pure-u-1-1 pure-u-md-12-24 pure-u-lg-6-24 pure-u-xl-8-24' },
+                h3('Tools'),
+                p('Download the image at a different size.'),
                 div(
                     { class: 'pure-menu pure-menu-vertical pure-menu-open' },
                     ul(
@@ -147,20 +150,6 @@ var DetailView = StaticView.extend(
                       )
                    )
                );
-        }
-    }
-    );
-
-exports.PhotographPage = PageView.extend(
-    {
-        fullPage: true,
-        initialize: function(options) {
-            this.detail = new DetailView({ model: options.model });
-            this.render();
-        },
-        render: function() {
-            this.$el.empty();
-            this.$el.append(this.detail.el);
         }
     }
     );

@@ -1,12 +1,12 @@
 var _ = require('underscore');
 var Album = require('../model/album').Album;
 var AlbumCollection = require('../collection/album').AlbumCollection;
-var AlbumForm = require('../form/album').AlbumForm;
-var AlbumList = require('../view/albumlist').AlbumList;
+var AlignedAlbumForm = require('../form/alignedalbum').AlignedAlbumForm;
+var AlbumListView = require('../view/albumlist').AlbumListView;
 var AlbumPage = require('./album').AlbumPage;
 var PageView = require('../view/page').PageView;
 var PhotographPage = require('./photograph').PhotographPage;
-var PhotographThumbList = require('../view/photographthumblist').PhotographThumbList;
+var PhotographThumbListView = require('../view/photographthumblist').PhotographThumbListView;
 var RecentlyTaken = require('../collection/recentlytaken').RecentlyTaken;
 var StaticView = require('../view/static').StaticView;
 var Uncategorised = require('../collection/uncategorised').Uncategorised;
@@ -17,7 +17,7 @@ var CategoryPage = PageView.extend(
         fullPage: true,
         initializeList: function(options) {
             this.application = options.application;
-            this.thumbList = new PhotographThumbList({ model: this.model });
+            this.thumbList = new PhotographThumbListView({ model: this.model });
             this.listenTo(this.thumbList, 'click', this.gotoPhotograph.bind(this));
             this.render();
         },
@@ -93,7 +93,7 @@ exports.AlbumsPage = PageView.extend(
             var albumCollection = new AlbumCollection;
             albumCollection.fetch();
 
-            this.albumForm = new AlbumForm;
+            this.albumForm = new AlignedAlbumForm;
             this.listenTo(
                 this.albumForm,
                 'save',
@@ -114,7 +114,7 @@ exports.AlbumsPage = PageView.extend(
                 }).bind(this)
                 );
 
-            this.albumList = new AlbumList({ model: albumCollection });
+            this.albumList = new AlbumListView({ model: albumCollection });
             this.listenTo(this.albumList, 'click', this.gotoAlbum.bind(this));
             this.render();
         },
@@ -154,7 +154,10 @@ exports.AlbumsPage = PageView.extend(
                    ),
                 div(
                     { class: 'pure-u-1-1' },
-                    div(this.albumList.el),
+                    div(this.albumList.el)
+                   ),
+                div(
+                    { class: 'pure-u-1-1' },
                     div(this.albumForm.el)
                     )
                 );

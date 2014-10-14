@@ -1,6 +1,7 @@
 var PageView = require('../view/page').PageView;
 
 var AlbumsPage = require('./albums').AlbumsPage;
+var TagsPage = require('./tags').TagsPage;
 var UploadPage = require('./upload').UploadPage;
 
 var icon = require('../ui').icon;
@@ -30,6 +31,7 @@ exports.HomePage = PageView.extend(
                     div(
                         { class: 'mainmenu' },
                         menuButton(AlbumsPage, span(icon('book'), 'Albums')),
+                        menuButton(TagsPage, span(icon('tags'), 'Tags')),
                         menuButton(UploadPage, span(icon('data-transfer-upload'), 'Upload'))
                        )
                    )

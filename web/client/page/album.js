@@ -1,8 +1,9 @@
-var AlbumForm = require('../form/album').AlbumForm;
+var CompactAlbumForm = require('../form/compactalbum').CompactAlbumForm;
 var PageView = require('../view/page').PageView;
 var PhotographAlbum = require('../collection/photographalbum').PhotographAlbum;
 var PhotographPage = require('./photograph').PhotographPage;
-var PhotographThumbList = require('../view/photographthumblist').PhotographThumbList;
+var PhotographThumbListView = require('../view/photographthumblist').PhotographThumbListView;
+var ui = require('../ui');
 
 exports.AlbumPage = PageView.extend(
     {
@@ -10,25 +11,41 @@ exports.AlbumPage = PageView.extend(
         initialize: function(options) {
             this.application = options.application;
             this.model = options.model;
-            this.form = new AlbumForm({ model: this.model });
+            this.form = new CompactAlbumForm({ model: this.model });
             var photographCollection = new PhotographAlbum(
                 { album: options.model }
                 );
             photographCollection.fetch();
-            this.thumbList = new PhotographThumbList({ model: photographCollection });
+            this.thumbList = new PhotographThumbListView({ model: photographCollection });
             this.listenTo(this.thumbList, 'click', this.gotoPhotograph.bind(this));
             this.render();
         },
         gotoPhotograph: function(photograph) {
-            this.application.gotoPage(new PhotographPage({ model: photograph }));
+            this.application.gotoPage(
+                new PhotographPage(
+                    { model: photograph, inAlbum: this.model }
+                    )
+                );
         },
         template: function() {
             return div(
                 { class: 'pure-g' },
                 div(
                     { class: 'pure-u-1-1' },
-                    h2('Album ', this.model.get('name')),
+                    h2(this.model.get('name')),
                     div(this.form.el),
+                    div(
+                        button(
+                            {
+                                type: 'button',
+                                class: 'pure-button pure-button-error',
+                                onclick: (function() {
+                                    console.log('delete');
+                                }).bind(this)
+                            },
+                            ui.icon('delete'), 'Delete'
+                            )
+                       ),
                     div(this.thumbList.el)
                    )
                );

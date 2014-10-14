@@ -90,16 +90,26 @@ exports.UploadPage = PageView.extend(
                     enctype: 'multipart/form-data',
                     onsubmit: submit
                 },
-                h2('Upload Photograph'),
-                messageBox.el,
-                inlineInput(title, 'Title'),
-                inlineInput(caption, 'Caption'),
-                inlineInput(location, 'Location'),
-                inlineInput(tags, 'Tags'),
-                inlineInput(fileInput, 'File'),
-                inlineInput(submitButton, '')
+                fieldset(
+                    legend('Enter photograph details and choose a JPEG file'),
+                    inlineInput(title, 'Title'),
+                    inlineInput(caption, 'Caption'),
+                    inlineInput(location, 'Location'),
+                    inlineInput(tags, 'Tags'),
+                    inlineInput(fileInput, 'File'),
+                    inlineInput(submitButton, '')
+                    )
                 );
-            return _form;
+
+            return div(
+                    { class: 'pure-g' },
+                    div(
+                        { class: 'pure-u-1-1' },
+                        h2('Upload Photograph'),
+                        messageBox.el,
+                        _form
+                       )
+                    );
         }
     }
     );

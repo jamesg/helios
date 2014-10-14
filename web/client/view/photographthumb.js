@@ -12,8 +12,8 @@ exports.PhotographThumbView = StaticView.extend(
                             this.trigger('click');
                         }).bind(this)
                     }
-                   ),
-                span(this.model.get('title'))
+                   )/*,*/
+                /*span(this.model.get('title'))*/
                 );
         }
     }

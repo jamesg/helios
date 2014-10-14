@@ -61,3 +61,21 @@ exports.icon = function(icon) {
         );
 };
 
+exports.inlineInput = function(label_, input_) {
+    return div(
+            { class: 'pure-control-group' },
+            label({ for: input_().name }, label_),
+            input_
+            );
+};
+
+exports.saveButton = function(text) {
+    if(_.isUndefined(text))
+        text = 'Save';
+    return button(
+        { type: 'submit', class: 'pure-button pure-button-primary' },
+        exports.icon('data-transfer-download'),
+        text
+        );
+};
+
