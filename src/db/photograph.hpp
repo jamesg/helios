@@ -32,6 +32,16 @@ namespace helios
                 extern const char album_id[];
                 extern const char name[];
             }
+            namespace location
+            {
+                extern const char location[];
+                extern const char photograph_count[];
+            }
+            namespace tag
+            {
+                extern const char tag[];
+                extern const char photograph_count[];
+            }
         }
         namespace relvar
         {
@@ -149,6 +159,35 @@ namespace helios
         //std::string& caption() const { return get_string("caption"); }
         //std::string& fromdate() const { return get_string("fromdate"); }
         //std::string& todate() const { return get_string("todate"); }
+    };
+    /*!
+     * \brief View onto photograph_location.
+     */
+    struct location :
+        public hades::tuple<
+            db::attr::location::location,
+            db::attr::location::photograph_count>,
+        public hades::relation<db::relvar::photograph_location>
+    {
+    };
+    /*!
+     * \brief View onto photograph_tagged.
+     */
+    struct tag :
+        public hades::tuple<
+            db::attr::tag::tag,
+            db::attr::tag::photograph_count>,
+        public hades::relation<db::relvar::photograph_tagged>
+    {
+    };
+    /*!
+     * \brief Tag details.
+     */
+    struct basic_tag :
+        public hades::tuple<
+            db::attr::tag::tag>,
+        public hades::relation<db::relvar::photograph_tagged>
+    {
     };
 
     namespace db

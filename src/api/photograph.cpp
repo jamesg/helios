@@ -8,6 +8,7 @@
 #include <boost/fusion/include/vector.hpp>
 
 #include "hades/crud.ipp"
+#include "hades/custom_select.hpp"
 #include "hades/filter.hpp"
 #include "hades/get_by_id.hpp"
 #include "hades/get_collection.hpp"
@@ -82,13 +83,13 @@ void helios::api::photograph::install(
             return album.destroy(conn);
         }
         );
-    server.install<styx::null, int, int>(
+    server.install<bool, int, int>(
         "add_photograph_to_album",
         [&conn](int photograph_id, int album_id) {
             helios::photograph_in_album photograph_in_album(
                 helios::photograph_in_album::id_type{photograph_id, album_id}
                 );
-            return styx::null();
+            return photograph_in_album.save(conn);
         }
         );
     server.install<styx::list, int>(
@@ -115,6 +116,50 @@ void helios::api::photograph::install(
                     "photograph_in_album.album_id = album.album_id AND "
                     "photograph.photograph_id = ?",
                     hades::row<int>(photograph_id)
+                    )
+                );
+        }
+        );
+    server.install<styx::list>(
+        "location_list",
+        [&conn]() {
+            return hades::custom_select<
+                helios::location,
+                db::attr::location::location,
+                db::attr::location::photograph_count>(
+                    conn,
+                    "SELECT location, COUNT(photograph_id) "
+                    " FROM photograph_location "
+                    "GROUP BY location ORDER BY title ASC "
+                    );
+        }
+        );
+    server.install<styx::list>(
+        "tag_list",
+        [&conn]() {
+            return hades::custom_select<
+                helios::tag,
+                db::attr::tag::tag,
+                db::attr::tag::photograph_count>(
+                    conn,
+                    "SELECT tag, COUNT(photograph_id) FROM photograph_tagged "
+                    "GROUP BY tag ORDER BY tag ASC "
+                    );
+        }
+        );
+    server.install<styx::list, std::string>(
+        "photographs_with_tag",
+        [&conn](std::string tag) {
+            return hades::join<helios::photograph, helios::basic_tag>(
+                conn,
+                hades::filter<hades::where<std::string>>(
+                    hades::where<std::string>(
+                        "photograph.photograph_id = "
+                        " photograph_tagged.photograph_id AND "
+                        "photograph_tagged.tag = ? ",
+                        hades::row<std::string>(tag)
+                        ),
+                    hades::order_by("photograph.taken ASC")
                     )
                 );
         }
