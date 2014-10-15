@@ -25,14 +25,37 @@ void helios::api::photograph::install(
     server.install<styx::element, int>(
         "photograph_get",
         [&conn](int id) {
-            helios::photograph p;
-            p.from_id(conn, helios::photograph::id_type{id});
-            return p.get_element();
+            styx::list l =
+                hades::equi_join<helios::photograph, helios::photograph_location>(
+                    conn,
+                    hades::where<int>(
+                        "photograph.photograph_id = ?",
+                        hades::row<int>(id)
+                        )
+                    );
+            if(l.size() != 1)
+                throw atlas::api::exception("Photograph not found");
+
+            return l.at(0);
         }
         );
     server.install<styx::list>(
         "photograph_list",
-        boost::bind(&helios::photograph::get_collection, boost::ref(conn))
+        boost::bind(
+            &hades::equi_join<helios::photograph, helios::photograph_location>,
+            boost::ref(conn)
+            )
+        );
+    server.install<styx::element, styx::element>(
+        "photograph_save",
+        [&conn](styx::element photograph_e) {
+            helios::photograph photograph(photograph_e);
+            photograph.save(conn);
+
+            helios::photograph_location photograph_location(photograph.get_element());
+            photograph_location.save(conn);
+            return photograph.get_element();
+        }
         );
     server.install<styx::list>(
         "photograph_recent",
@@ -66,7 +89,10 @@ void helios::api::photograph::install(
         );
     server.install<styx::list>(
         "album_list",
-        boost::bind(&helios::album::get_collection, boost::ref(conn))
+        [&conn]() {
+            auto ob = hades::order_by("album.name ASC");
+            return helios::album::get_collection(conn, ob);
+        }
         );
     server.install<styx::element, styx::element>(
         "album_save",
@@ -95,11 +121,16 @@ void helios::api::photograph::install(
     server.install<styx::list, int>(
         "photographs_in_album",
         [&conn](int album_id) {
-            return hades::join<helios::photograph, helios::photograph_in_album, helios::album>(
+            return hades::join<
+                helios::photograph,
+                helios::photograph_in_album,
+                helios::photograph_location,
+                helios::album>(
                 conn,
                 hades::where<int>(
                     "photograph.photograph_id = photograph_in_album.photograph_id AND "
                     "photograph_in_album.album_id = album.album_id AND "
+                    "photograph.photograph_id = photograph_location.photograph_id AND "
                     "album.album_id = ?",
                     hades::row<int>(album_id)
                     )
@@ -130,7 +161,8 @@ void helios::api::photograph::install(
                     conn,
                     "SELECT location, COUNT(photograph_id) "
                     " FROM photograph_location "
-                    "GROUP BY location ORDER BY title ASC "
+                    " WHERE location IS NOT NULL AND location != '' "
+                    "GROUP BY location ORDER BY location ASC "
                     );
         }
         );
@@ -143,6 +175,7 @@ void helios::api::photograph::install(
                 db::attr::tag::photograph_count>(
                     conn,
                     "SELECT tag, COUNT(photograph_id) FROM photograph_tagged "
+                    "WHERE tag IS NOT NULL AND tag != '' "
                     "GROUP BY tag ORDER BY tag ASC "
                     );
         }
@@ -158,6 +191,23 @@ void helios::api::photograph::install(
                         " photograph_tagged.photograph_id AND "
                         "photograph_tagged.tag = ? ",
                         hades::row<std::string>(tag)
+                        ),
+                    hades::order_by("photograph.taken ASC")
+                    )
+                );
+        }
+        );
+    server.install<styx::list, std::string>(
+        "photographs_with_location",
+        [&conn](std::string location) {
+            return hades::join<helios::photograph, helios::basic_location>(
+                conn,
+                hades::filter<hades::where<std::string>>(
+                    hades::where<std::string>(
+                        "photograph.photograph_id = "
+                        " photograph_location.photograph_id AND "
+                        "photograph_location.location = ? ",
+                        hades::row<std::string>(location)
                         ),
                     hades::order_by("photograph.taken ASC")
                     )
