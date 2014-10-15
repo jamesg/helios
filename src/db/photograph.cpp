@@ -18,6 +18,7 @@ const char helios::db::attr::location::location[] = "location";
 const char helios::db::attr::location::photograph_count[] = "photograph_count";
 const char helios::db::relvar::photograph[] = "photograph";
 const char helios::db::relvar::photograph_tagged[] = "photograph_tagged";
+const char helios::db::relvar::photograph_location[] = "photograph_location";
 const char helios::db::relvar::photograph_in_album[] = "photograph_in_album";
 const char helios::db::relvar::album[] = "album";
 

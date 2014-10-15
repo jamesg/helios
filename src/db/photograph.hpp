@@ -104,8 +104,7 @@ namespace helios
     };
     struct photograph_location :
         public hades::has_candidate_key<
-            db::attr::photograph::photograph_id,
-            db::attr::photograph_location::location>,
+            db::attr::photograph::photograph_id>,
         public hades::tuple<
             db::attr::photograph::photograph_id,
             db::attr::photograph_location::location>,
@@ -171,6 +170,14 @@ namespace helios
     {
     };
     /*!
+     * \brief Location details.
+     */
+    struct basic_location :
+        public hades::tuple<db::attr::location::location>,
+        public hades::relation<db::relvar::photograph_location>
+    {
+    };
+    /*!
      * \brief View onto photograph_tagged.
      */
     struct tag :
@@ -184,8 +191,7 @@ namespace helios
      * \brief Tag details.
      */
     struct basic_tag :
-        public hades::tuple<
-            db::attr::tag::tag>,
+        public hades::tuple<db::attr::tag::tag>,
         public hades::relation<db::relvar::photograph_tagged>
     {
     };

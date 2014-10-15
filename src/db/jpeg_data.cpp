@@ -14,11 +14,12 @@ helios::jpeg_data_db helios::db::jpeg_data::get_by_id(
     sqlite3_stmt *stmt;
     sqlite3_prepare(
             conn.handle(),
-            "SELECT photograph_id, data FROM jpeg_data",
+            "SELECT photograph_id, data FROM jpeg_data WHERE photograph_id = ?",
             -1,
             &stmt,
             nullptr
             );
+    sqlite3_bind_int(stmt, 1, photograph_id);
     hades::step(stmt);
     helios::jpeg_data_db out;
     out.photograph_id = sqlite3_column_int(stmt, 0);

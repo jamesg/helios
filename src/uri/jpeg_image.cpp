@@ -6,7 +6,8 @@
 #include <exiv2/exiv2.hpp>
 #include <Magick++.h>
 
-#include "db/auth.hpp"
+//#include "db/auth.hpp"
+#include "db/cache.hpp"
 #include "db/jpeg_data.hpp"
 #include "uri/detail.hpp"
 
@@ -21,7 +22,6 @@ void helios::uri::jpeg_image(
     //if(!db::auth::token_valid(detail::extract_token(conn), auth_db))
     //{
         //detail::text_response(conn, detail::status_unauthorized, "Not authorised");
-        //std::cerr << "token " << detail::extract_token(conn) << std::endl;
         //return MG_TRUE;
     //}
     char id_s[10], width_s[10], height_s[10];
@@ -55,31 +55,22 @@ void helios::uri::jpeg_image(
         return;
     }
 
-    //sqlite::select(
-            //cache_db,
-            //"SELECT data FROM jpeg_cache "
-            //"WHERE photograph_id = ? "
-            //"AND width = ? "
-            //"AND height = ? ",
-            //sqlite::row<int, int, int>(photo_id, width, height),
-            //cache_data
-            //);
-    //if(cache_data.size())
-    //{
-        //mg_send_status(conn, 200);
-        //mg_send_header(conn, "Content-type", "image/jpeg");
+    if(db::cache::has(conn, photo_id, height, width))
+    {
+        helios::jpeg_cache_db data =
+            db::cache::get(conn, photo_id, height, width);
+        mg_send_status(mg_conn, 200);
+        mg_send_header(mg_conn, "Content-type", "image/jpeg");
+        //TODO
         //mg_send_header(
-                //conn,
+                //mg_conn,
                 //"Last-Modified",
                 //detail::http_date(serve.start_time()).c_str()
                 //);
-        //mg_send_data(
-                //conn,
-                //&(sqlite::column<0>(cache_data.front()).front()),
-                //sqlite::column<0>(cache_data.front()).size()
-                //);
-        //return MG_TRUE;
-    //}
+        mg_send_data(mg_conn, &(data.data[0]), data.data.size());
+        callback_success();
+        return;
+    }
 
     Magick::Blob blob;
     try
@@ -123,7 +114,7 @@ void helios::uri::jpeg_image(
         image.scale(Magick::Geometry(oss.str()));
 
         // Rotate the image
-        switch( orientation )
+        switch(orientation)
         {
             case 3:
                 image.rotate(180);
@@ -137,6 +128,17 @@ void helios::uri::jpeg_image(
         out_image.composite(image, 0, 0);
         out_image.write(&blob, "JPEG");
 
+        helios::jpeg_cache_db cache_data;
+        cache_data.photograph_id = photo_id;
+        cache_data.height = height;
+        cache_data.width = width;
+        cache_data.data =
+            std::vector<unsigned char>(
+                (const unsigned char*)(blob.data()),
+                (const unsigned char*)(blob.data()) + blob.length()
+                );
+        db::cache::insert(cache_data, conn);
+
         //sqlite::insert(
                 //"jpeg_cache",
                 //{ "photograph_id", "width", "height", "data" },
@@ -148,7 +150,6 @@ void helios::uri::jpeg_image(
     }
     catch(const std::exception& e)
     {
-        std::cerr << "in jpeg_image: " << e.what() << std::endl;
         callback_failure();
         return;
     }
