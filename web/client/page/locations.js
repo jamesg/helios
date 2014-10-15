@@ -2,9 +2,9 @@ var _ = require('underscore');
 var PageView = require('../view/page').PageView;
 var PhotographPage = require('../page/photograph').PhotographPage;
 var PhotographThumbListView = require('../view/photographthumblist').PhotographThumbListView;
-var TagCollection = require('../collection/tag').TagCollection;
-var TagPhotographs = require('../collection/tagphotographs').TagPhotographs;
-var TagListView = require('../view/taglist').TagListView;
+var LocationCollection = require('../collection/location').LocationCollection;
+var LocationPhotographs = require('../collection/locationphotographs').LocationPhotographs;
+var LocationListView = require('../view/locationlist').LocationListView;
 var ui = require('../ui');
 
 var stringComparator = function(x, y) {
@@ -14,7 +14,7 @@ var stringComparator = function(x, y) {
 };
 
 var alphaComparator = function(x, y) {
-    return stringComparator(x.get('tag'), y.get('tag'));
+    return stringComparator(x.get('location'), y.get('location'));
 };
 
 var popularityComparator = function(x, y) {
@@ -25,14 +25,14 @@ var popularityComparator = function(x, y) {
     if(pcX > pcY) return -1;
 };
 
-var TagPage = PageView.extend(
+var LocationPage = PageView.extend(
     {
         fullPage: true,
         initialize: function(options) {
             this.application = options.application;
-            // Pass the tag on to new PhotographPages.
-            this.tag = options.model;
-            this.model = new TagPhotographs({ tag: this.tag });
+            // Pass the location on to new PhotographPages.
+            this.location = options.model;
+            this.model = new LocationPhotographs({ location: this.location });
             this.listenTo(this.model, 'all', this.render.bind(this));
             this.model.fetch();
             this.thumbList = new PhotographThumbListView({ model: this.model });
@@ -40,14 +40,14 @@ var TagPage = PageView.extend(
             this.render();
         },
         gotoPhotograph: function(photograph) {
-            this.application.pushPage(new PhotographPage({ model: photograph, withTag: this.tag }));
+            this.application.pushPage(new PhotographPage({ model: photograph, atLocation: this.location }));
         },
         template: function() {
             return div(
                 { class: 'pure-g' },
                 div(
                     { class: 'pure-u-1-1' },
-                    h2('Photographs tagged "', this.tag.get('tag'), '"'),
+                    h2('Photographs taken at ', this.location.get('location')),
                     div(this.thumbList.el)
                    )
                 );
@@ -55,20 +55,20 @@ var TagPage = PageView.extend(
     }
     );
 
-exports.TagsPage = PageView.extend(
+exports.LocationsPage = PageView.extend(
     {
-        pageTitle: 'Tags',
+        pageTitle: 'Locations',
         fullPage: true,
         initialize: function(options) {
             this.application = options.application;
-            this.tagCollection = new TagCollection(
+            this.locationCollection = new LocationCollection(
                 {
                     comparator: alphaComparator
                 }
                 );
-            this.tagCollection.fetch();
-            this.tagList = new TagListView({ model: this.tagCollection });
-            this.listenTo(this.tagList, 'click', this.gotoTag.bind(this));
+            this.locationCollection.fetch();
+            this.locationList = new LocationListView({ model: this.locationCollection });
+            this.listenTo(this.locationList, 'click', this.gotoLocation.bind(this));
             PageView.prototype.initialize.apply(this, arguments);
         },
         template: function() {
@@ -76,14 +76,12 @@ exports.TagsPage = PageView.extend(
                 { class: 'pure-g' },
                 div(
                     { class: 'pure-u-1-1' },
-                    h2('Tags'),
+                    h2('Locations'),
                     button(
                         {
                             type: 'button',
                             class: 'pure-button',
-                            onclick: (function() {
-                                this.sortAlphabetically();
-                            }).bind(this)
+                            onclick: this.sortAlphabetically.bind(this)
                         },
                         ui.icon('sort-ascending'), 'Sort alphabetically'
                         ),
@@ -91,34 +89,31 @@ exports.TagsPage = PageView.extend(
                         {
                             type: 'button',
                             class: 'pure-button',
-                            onclick: (function() {
-                                console.log('sort', this);
-                                this.sortPopularity();
-                            }).bind(this)
+                            onclick: this.sortPopularity.bind(this)
                         },
                         ui.icon('sort-descending'), 'Sort by popularity'
                         )
                    ),
                 div(
                     { class: 'pure-u-1-1' },
-                    this.tagList.el
+                    this.locationList.el
                    )
                );
         },
-        gotoTag: function(tag) {
+        gotoLocation: function(location) {
             this.application.pushPage(
-                new TagPage({ application: this.application, model: tag })
+                new LocationPage({ application: this.application, model: location })
                 );
         },
         sortAlphabetically: function() {
-            this.tagCollection.comparator = alphaComparator;
-            this.tagCollection.sort();
-            this.tagList.collectionView().reset();
+            this.locationCollection.comparator = alphaComparator;
+            this.locationCollection.sort();
+            this.locationList.collectionView().reset();
         },
         sortPopularity: function() {
-            this.tagCollection.comparator = popularityComparator;
-            this.tagCollection.sort();
-            this.tagList.collectionView().reset();
+            this.locationCollection.comparator = popularityComparator;
+            this.locationCollection.sort();
+            this.locationList.collectionView().reset();
         }
     }
     );

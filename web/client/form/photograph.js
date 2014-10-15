@@ -18,7 +18,7 @@ exports.PhotographForm = StaticView.extend(
         template: function() {
             var title = input({ type: 'text', name: 'title', value: this.model.get('title') });
             var caption = input({ type: 'text', name: 'caption', value: this.model.get('caption') });
-            var date = input({ type: 'text', name: 'date', value: this.model.get('date') });
+            var date = input({ type: 'text', name: 'date', value: this.model.get('taken') });
             var location = input({ type: 'text', name: 'location', value: this.model.get('location') });
             return form(
                 {
@@ -26,7 +26,7 @@ exports.PhotographForm = StaticView.extend(
                     onsubmit: (function() {
                         this.model.set('title', title().value);
                         this.model.set('caption', caption().value);
-                        this.model.set('date', date().value);
+                        this.model.set('taken', date().value);
                         this.model.set('location', location().value);
                         this.model.save();
                         this.trigger('saved', this.model);

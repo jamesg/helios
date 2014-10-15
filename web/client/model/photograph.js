@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var Backbone = require('backbone');
 
 var api = require('../service/api');
@@ -15,7 +16,15 @@ exports.Photograph = Backbone.Model.extend(
                 errors['title'] = 'Title is required';
             if(!_.isEmpty(errors))
                 return errors;
-        }
+        },
+        sync: api.backboneSyncFunction(
+            {
+                create: 'photograph_save',
+                delete: 'photograph_destroy',
+                read: 'photograph_get',
+                update: 'photograph_save'
+            }
+            )
     }
     );
 

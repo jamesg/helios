@@ -20,8 +20,12 @@ var ui = require('../ui');
  */
 exports.PhotographPage = PageView.extend(
     {
+        pageTitle: function() {
+            return this.model.get('title');
+        },
         fullPage: true,
         initialize: function(options) {
+            this.model.fetch();
             if(_(options).has('inAlbum'))
                 this.inAlbum = options.inAlbum;
             this.form = new PhotographForm({ model: this.model });

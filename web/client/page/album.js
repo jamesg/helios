@@ -7,6 +7,9 @@ var ui = require('../ui');
 
 exports.AlbumPage = PageView.extend(
     {
+        pageTitle: function() {
+            return this.model.get('name');
+        },
         fullPage: true,
         initialize: function(options) {
             this.application = options.application;
@@ -21,7 +24,7 @@ exports.AlbumPage = PageView.extend(
             this.render();
         },
         gotoPhotograph: function(photograph) {
-            this.application.gotoPage(
+            this.application.pushPage(
                 new PhotographPage(
                     { model: photograph, inAlbum: this.model }
                     )

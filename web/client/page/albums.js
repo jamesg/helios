@@ -14,6 +14,7 @@ var ui = require('../ui');
 
 var CategoryPage = PageView.extend(
     {
+        pageTitle: 'Category',
         fullPage: true,
         initializeList: function(options) {
             this.application = options.application;
@@ -22,7 +23,7 @@ var CategoryPage = PageView.extend(
             this.render();
         },
         gotoPhotograph: function(photograph) {
-            this.application.gotoPage(new PhotographPage({ model: photograph }));
+            this.application.pushPage(new PhotographPage({ model: photograph }));
         },
         template: function() {
             return div(
@@ -39,6 +40,7 @@ var CategoryPage = PageView.extend(
 
 var RecentlyTakenPage = CategoryPage.extend(
     {
+        pageTitle: 'Recently Taken',
         initialize: function(options) {
             this.model = new RecentlyTaken;
             this.listenTo(this.model, 'all', this.render.bind(this));
@@ -63,6 +65,7 @@ var RecentlyTakenPage = CategoryPage.extend(
 
 var UncategorisedPage = CategoryPage.extend(
     {
+        pageTitle: 'Uncategorised',
         initialize: function(options) {
             this.model = new Uncategorised;
             this.listenTo(this.model, 'all', this.render.bind(this));
@@ -87,6 +90,7 @@ var UncategorisedPage = CategoryPage.extend(
 
 exports.AlbumsPage = PageView.extend(
     {
+        pageTitle: 'Albums',
         fullPage: true,
         initialize: function(options) {
             this.application = options.application;
@@ -119,15 +123,15 @@ exports.AlbumsPage = PageView.extend(
             this.render();
         },
         gotoAlbum: function(album) {
-            this.application.gotoPage(
+            this.application.pushPage(
                 new AlbumPage({ application: this.application, model: album })
                 );
         },
         gotoRecent: function() {
-            this.application.gotoPage(RecentlyTakenPage);
+            this.application.pushPage(RecentlyTakenPage);
         },
         gotoUncategorised: function() {
-            this.application.gotoPage(UncategorisedPage);
+            this.application.pushPage(UncategorisedPage);
         },
         template: function() {
             return div(
