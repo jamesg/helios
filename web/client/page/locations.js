@@ -27,6 +27,9 @@ var popularityComparator = function(x, y) {
 
 var LocationPage = PageView.extend(
     {
+        pageTitle: function() {
+            return this.location.get('location');
+        },
         fullPage: true,
         initialize: function(options) {
             this.application = options.application;

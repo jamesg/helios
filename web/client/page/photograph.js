@@ -11,6 +11,21 @@ var StaticView = require('../view/static').StaticView;
 var api = require('../service/api');
 var ui = require('../ui');
 
+var PhotographDetails = StaticView.extend(
+    {
+        template: function() {
+            return dl(
+                { compact: 'compact' },
+                dt('Title'), dd(this.model.get('title')),
+                dt('Caption'), dd(this.model.get('caption')),
+                dt('Date'), dd(this.model.get('taken')),
+                dt('Location'), dd(this.model.get('location')),
+                dt('Tags'), dd(this.model.get('tags'))
+                );
+        }
+    }
+    );
+
 /*!
  * \brief Detailed information for a single photograph.
  *
@@ -25,7 +40,10 @@ exports.PhotographPage = PageView.extend(
         },
         fullPage: true,
         initialize: function(options) {
+            console.log('fetching photograph model');
             this.model.fetch();
+            this.photographDetails =
+                new PhotographDetails({ model: this.model });
             if(_(options).has('inAlbum'))
                 this.inAlbum = options.inAlbum;
             this.form = new PhotographForm({ model: this.model });
@@ -122,13 +140,7 @@ exports.PhotographPage = PageView.extend(
             div(
                 { class: 'pure-u-1-1 pure-u-md-10-24 pure-u-lg-7-24 pure-u-xl-7-24' },
                 h3('Photograph Details'),
-                dl(
-                    { compact: 'compact' },
-                    dt('Title'), dd(this.model.get('title')),
-                    dt('Caption'), dd(this.model.get('caption')),
-                    dt('Date'), dd(this.model.get('taken')),
-                    dt('Location'), dd(this.model.get('location'))
-                  )
+                this.photographDetails.el
                );
             div(
                 { class: 'pure-u-1-1 pure-u-md-14-24 pure-u-lg-11-24 pure-u-xl-8-24' },

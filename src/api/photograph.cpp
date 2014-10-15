@@ -13,6 +13,7 @@
 #include "hades/get_by_id.hpp"
 #include "hades/get_collection.hpp"
 #include "hades/join.hpp"
+#include "styx/serialisers/vector.hpp"
 
 #include "api/server.hpp"
 #include "db/photograph.hpp"
@@ -25,18 +26,39 @@ void helios::api::photograph::install(
     server.install<styx::element, int>(
         "photograph_get",
         [&conn](int id) {
+            auto where = hades::where<int>(
+                "photograph.photograph_id = ?",
+                hades::row<int>(id)
+                );
             styx::list l =
                 hades::equi_join<helios::photograph, helios::photograph_location>(
                     conn,
-                    hades::where<int>(
-                        "photograph.photograph_id = ?",
-                        hades::row<int>(id)
-                        )
+                    where
                     );
             if(l.size() != 1)
                 throw atlas::api::exception("Photograph not found");
 
-            return l.at(0);
+            helios::photograph photograph(l.at(0));
+
+            std::vector<std::string> tags = db::photograph_tags(
+                conn,
+                photograph.id()
+                );
+
+            std::ostringstream oss;
+            styx::serialise(
+                tags,
+                [](const std::string& tag, std::ostream& os) {
+                    os << tag;
+                },
+                ", ",
+                oss
+                );
+
+            atlas::log::information("api::photograph") << "tags " << oss.str();
+            photograph.tags() = oss.str();
+
+            return photograph.get_element();
         }
         );
     server.install<styx::list>(
@@ -54,6 +76,8 @@ void helios::api::photograph::install(
 
             helios::photograph_location photograph_location(photograph.get_element());
             photograph_location.save(conn);
+
+            db::set_photograph_tags(conn, photograph.id(), photograph.tags());
             return photograph.get_element();
         }
         );

@@ -7,7 +7,8 @@ exports.Photograph = Backbone.Model.extend(
     {
         defaults: {
             title: '',
-            taken: ''
+            taken: '',
+            tags: ''
         },
         idAttribute: 'photograph_id',
         validate: function() {
@@ -17,14 +18,22 @@ exports.Photograph = Backbone.Model.extend(
             if(!_.isEmpty(errors))
                 return errors;
         },
-        sync: api.backboneSyncFunction(
-            {
-                create: 'photograph_save',
-                delete: 'photograph_destroy',
-                read: 'photograph_get',
-                update: 'photograph_save'
-            }
-            )
+        sync: function(method, model, options) {
+            return api.backboneSyncFunction(
+                {
+                    create: 'photograph_save',
+                    delete: 'photograph_destroy',
+                    read: api.rpc.bind(
+                        this,
+                        {
+                            method: 'photograph_get',
+                            params: [this.get('photograph_id')]
+                        }
+                        ),
+                    update: 'photograph_save'
+                }
+                )(method, model, options);
+        }
     }
     );
 

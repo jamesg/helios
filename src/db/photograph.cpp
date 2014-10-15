@@ -1,4 +1,7 @@
+#define HADES_ENABLE_DEBUGGING
 #include "photograph.hpp"
+
+#include <boost/tokenizer.hpp>
 
 #include "hades/crud.ipp"
 #include "hades/devoid.hpp"
@@ -94,5 +97,63 @@ styx::list helios::db::get_photographs_by_album(
             conn,
             hades::where<int>("album_id = ?", hades::row<int>(album_id))
             );
+}
+
+std::vector<std::string> helios::db::photograph_tags(
+        hades::connection& conn,
+        helios::photograph::id_type id
+        )
+{
+    auto where = hades::where<int>(
+        "photograph_id = ?",
+        hades::row<int>(
+            id.get_int<db::attr::photograph::photograph_id>()
+            )
+        );
+    styx::list tags = helios::photograph_tagged::get_collection(conn, where);
+    std::vector<std::string> out;
+    for(styx::element e : tags)
+        out.push_back(
+                helios::photograph_tagged(e)
+                    .get_string<db::attr::photograph_tagged::tag>()
+                );
+    return out;
+}
+
+void helios::db::set_photograph_tags(
+        hades::connection& conn,
+        helios::photograph::id_type id,
+        std::vector<std::string> tags
+        )
+{
+    hades::transaction tr(conn, "helios_db_set_photograph_tags");
+    hades::devoid(
+            "DELETE FROM photograph_tagged WHERE photograph_id = ?",
+            hades::row<int>(id.get_int<db::attr::photograph::photograph_id>()),
+            conn
+            );
+    for(const std::string& tag : tags)
+    {
+        helios::photograph_tagged t;
+        t.get_int<db::attr::photograph::photograph_id>() =
+            id.get_int<db::attr::photograph::photograph_id>();
+        t.get_string<db::attr::photograph_tagged::tag>() = tag;
+        t.insert(conn);
+    }
+    tr.commit();
+}
+
+void helios::db::set_photograph_tags(
+        hades::connection& conn,
+        helios::photograph::id_type id,
+        std::string tags
+        )
+{
+    std::vector<std::string> tags_vector;
+    typedef boost::tokenizer<boost::escaped_list_separator<char> > tokenizer;
+    tokenizer t(tags, boost::escaped_list_separator<char>());
+    for(auto it = t.begin(); it != t.end(); ++it)
+        tags_vector.push_back(*it);
+    set_photograph_tags(conn, id, tags_vector);
 }
 

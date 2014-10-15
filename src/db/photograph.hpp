@@ -1,6 +1,8 @@
 #ifndef HELIOS_DB_PHOTOGRAPH_HPP
 #define HELIOS_DB_PHOTOGRAPH_HPP
 
+#include <vector>
+
 #include "hades/crud.hpp"
 #include "hades/has_candidate_key.hpp"
 #include "hades/relation.hpp"
@@ -65,18 +67,11 @@ namespace helios
         photograph()
         {
         }
-        photograph(styx::element& e) :
+        photograph(const styx::element& e) :
             styx::object_accessor(e)
         {
         }
-        //std::string& title() const { return get_string("title"); }
-        //std::string& caption() const { return get_string("caption"); }
-        //std::string& location() const { return get_string("location"); }
-        //std::string& taken() const { return get_string("taken"); }
-        /*!
-         * \brief List of tags (strings).
-         */
-        //styx::list& tags() const { return get_list("tags"); }
+        std::string& tags() { return styx::object_accessor::get_string("tags"); }
     };
     struct photograph_in_album :
         public hades::has_candidate_key<
@@ -204,8 +199,22 @@ namespace helios
         }
 
         styx::list get_photographs_by_album(
-                hades::connection& db,
+                hades::connection&,
                 const int album_id
+                );
+        std::vector<std::string> photograph_tags(
+                hades::connection&,
+                helios::photograph::id_type
+                );
+        void set_photograph_tags(
+                hades::connection&,
+                helios::photograph::id_type,
+                std::vector<std::string> tags
+                );
+        void set_photograph_tags(
+                hades::connection&,
+                helios::photograph::id_type,
+                std::string tags
                 );
     }
 }

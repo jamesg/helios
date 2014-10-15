@@ -27,6 +27,9 @@ var popularityComparator = function(x, y) {
 
 var TagPage = PageView.extend(
     {
+        pageTitle: function() {
+            return this.tag.get('tag');
+        },
         fullPage: true,
         initialize: function(options) {
             this.application = options.application;

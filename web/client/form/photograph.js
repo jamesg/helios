@@ -13,13 +13,14 @@ exports.PhotographForm = StaticView.extend(
         initialize: function(options) {
             if(!_.has(this, 'model'))
                 this.model = new Photograph;
-            this.render();
+            StaticView.prototype.initialize.apply(this, arguments);
         },
         template: function() {
             var title = input({ type: 'text', name: 'title', value: this.model.get('title') });
             var caption = input({ type: 'text', name: 'caption', value: this.model.get('caption') });
             var date = input({ type: 'text', name: 'date', value: this.model.get('taken') });
             var location = input({ type: 'text', name: 'location', value: this.model.get('location') });
+            var tags = input({ type: 'text', name: 'tags', value: this.model.get('tags') });
             return form(
                 {
                     class: 'pure-form pure-form-aligned',
@@ -28,6 +29,7 @@ exports.PhotographForm = StaticView.extend(
                         this.model.set('caption', caption().value);
                         this.model.set('taken', date().value);
                         this.model.set('location', location().value);
+                        this.model.set('tags', tags().value);
                         this.model.save();
                         this.trigger('saved', this.model);
                         return false;
@@ -37,6 +39,7 @@ exports.PhotographForm = StaticView.extend(
                 ui.inlineInput('Caption', caption),
                 ui.inlineInput('Date', date),
                 ui.inlineInput('Location', location),
+                ui.inlineInput('Tags', tags),
                 ui.inlineInput(
                     '',
                     ui.saveButton()
