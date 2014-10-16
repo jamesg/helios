@@ -98,6 +98,7 @@ void helios::api::photograph::install(
             // attributes all NULL.
             return hades::outer_join<helios::photograph, helios::photograph_in_album>(
                 conn,
+                "photograph.photograph_id = photograph_in_album.photograph_id",
                 hades::where<>("photograph_in_album.photograph_id IS NULL")
                 );
         }

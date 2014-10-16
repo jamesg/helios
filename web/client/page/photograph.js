@@ -84,21 +84,8 @@ exports.PhotographPage = PageView.extend(
          * The photograph page template consists of a the photograph,
          * descriptive text, a form, an album list and a tools list.
          *
-         * On small screens, everything is displayed in one column.
-         *
-         * +-------------------------+
-         * |photograph               |
-         * +-------------------------+
-         * |description              |
-         * +-------------------------+
-         * |form                     |
-         * +-------------------------+
-         * |album list               |
-         * +-------------------------+
-         * |tools list               |
-         * +-------------------------+
-         *
-         * On medium screens, the photograph has its own row, the description
+         * On small screens, everything is displayed in one column.  On medium
+         * and large screens, the photograph has its own row, the description
          * and form are on the second row, and the album list and tools list
          * are on a third row.
          *
@@ -109,15 +96,6 @@ exports.PhotographPage = PageView.extend(
          * +------------+------------+
          * |album list  |tools list  |
          * +------------+------------+
-         *
-         * On large screens, the photograph and description share a row and all
-         * following components are on a second row.
-         *
-         * +----------------+-----------------+
-         * |photograph      |description      |
-         * +----------+-----+-----+-----------+
-         * |form      |album list |tools list |
-         * +----------+-----------+-----------+
          */
         template: function() {
             div(
@@ -126,7 +104,7 @@ exports.PhotographPage = PageView.extend(
                 this.messageBox.el
                 );
             div(
-                { class: 'pure-u-1-1 pure-u-md-1-1 pure-u-lg-17-24 pure-u-xl-17-24' },
+                { class: 'pure-u-1-1' },
                 img(
                     {
                         class: 'pure-img',
@@ -138,24 +116,24 @@ exports.PhotographPage = PageView.extend(
                    )
                );
             div(
-                { class: 'pure-u-1-1 pure-u-md-10-24 pure-u-lg-7-24 pure-u-xl-7-24' },
+                { class: 'pure-u-1-1 pure-u-md-10-24' },
                 h3('Photograph Details'),
                 this.photographDetails.el
                );
             div(
-                { class: 'pure-u-1-1 pure-u-md-14-24 pure-u-lg-11-24 pure-u-xl-8-24' },
+                { class: 'pure-u-1-1 pure-u-md-14-24' },
                 h3('Edit'),
                 this.form.el
                );
             div(
-                { class: 'pure-u-1-1 pure-u-md-12-24 pure-u-lg-7-24 pure-u-xl-8-24' },
+                { class: 'pure-u-1-1 pure-u-md-12-24' },
                 h3('Albums'),
                 p('Add this photograph to another album.'),
                 this.albumForm.el,
                 this.albumList.el
                );
             div(
-                { class: 'pure-u-1-1 pure-u-md-12-24 pure-u-lg-6-24 pure-u-xl-8-24' },
+                { class: 'pure-u-1-1 pure-u-md-12-24' },
                 h3('Tools'),
                 p('Download the image at a different size.'),
                 div(

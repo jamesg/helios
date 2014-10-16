@@ -80,7 +80,7 @@ int helios::uri::insert_photograph(
     int data_len;
     char var_name[100], file_name[100];
 
-    std::string tags;
+    std::string location, tags;
 
     int skip = 0, skip_total = 0;
     while((skip = mg_parse_multipart(
@@ -99,8 +99,8 @@ int helios::uri::insert_photograph(
         if(strcmp(var_name, "caption") == 0)
             photo.get_string<db::attr::photograph::caption>() =
                 std::string(data, data_len);
-        //if(strcmp(var_name, "location") == 0)
-            //photo.location() = std::string(data, data_len);
+        if(strcmp(var_name, "location") == 0)
+            location = std::string(data, data_len);
         if(strcmp(var_name, "tags") == 0)
             tags = std::string(data, data_len);
         if(strcmp(var_name, "file") == 0)
@@ -117,16 +117,23 @@ int helios::uri::insert_photograph(
         }
     }
 
-    typedef boost::tokenizer<boost::escaped_list_separator<char> > tokenizer;
-    tokenizer t(tags, boost::escaped_list_separator<char>());
-    //for(auto it = t.begin(); it != t.end(); ++it)
-        //photo.tags().append(*it);
-
     photo.save(conn);
 
     data_db.photograph_id =
         photo.get_int<db::attr::photograph::photograph_id>();
     db::jpeg_data::insert(data_db, conn);
+
+    db::set_photograph_tags(
+            conn,
+            photo.id(),
+            tags
+            );
+
+    helios::photograph_location photograph_location;
+    photograph_location.set_id(photo.id());
+    photograph_location.get_string<db::attr::photograph_location::location>() =
+        location;
+    photograph_location.save(conn);
 
     mg_send_status(mg_conn, 200);
     mg_send_header(mg_conn, "Content-type", "text/json");
