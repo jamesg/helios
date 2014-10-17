@@ -49,9 +49,12 @@ void helios::api::photograph::install(
             styx::serialise(
                 tags,
                 [](const std::string& tag, std::ostream& os) {
-                    os << tag;
+                    if(std::find(tag.cbegin(), tag.cend(), ' ') == tag.cend())
+                        os << tag;
+                    else
+                        os << "\"" << tag << "\"";
                 },
-                ", ",
+                " ",
                 oss
                 );
 

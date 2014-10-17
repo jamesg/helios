@@ -150,8 +150,8 @@ void helios::db::set_photograph_tags(
         )
 {
     std::vector<std::string> tags_vector;
-    typedef boost::tokenizer<boost::escaped_list_separator<char> > tokenizer;
-    tokenizer t(tags, boost::escaped_list_separator<char>());
+    typedef boost::tokenizer<boost::escaped_list_separator<char>> tokenizer;
+    tokenizer t(tags, boost::escaped_list_separator<char>("\\", " ", "\""));
     for(auto it = t.begin(); it != t.end(); ++it)
         tags_vector.push_back(*it);
     set_photograph_tags(conn, id, tags_vector);

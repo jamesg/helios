@@ -8,6 +8,7 @@ add_custom_target(
 # Copy the client source to the web directory to be picked up by Webmake.
 add_custom_target(
     copy_web
+    DEPENDS copy_atlas_web
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_CURRENT_SOURCE_DIR}/client ${CMAKE_CURRENT_BINARY_DIR}/client
     )
@@ -21,7 +22,7 @@ add_custom_target(
 
 add_custom_target(
     bundle
-    DEPENDS node_modules copy_web copy_atlas_web
+    DEPENDS node_modules copy_web
     COMMAND
         node_modules/webmake/bin/webmake
         ${CMAKE_CURRENT_BINARY_DIR}/client/index.js
@@ -45,7 +46,6 @@ add_custom_target(
     #)
 
 configure_file(static/index.html static/index.html COPYONLY)
-#configure_file(static/screen.css static/screen.css COPYONLY)
 configure_file(static/favicon.png static/favicon.png COPYONLY)
 configure_file(static/pure-min.css static/pure-min.css COPYONLY)
 configure_file(static/grids-responsive-min.css static/grids-responsive-min.css COPYONLY)
