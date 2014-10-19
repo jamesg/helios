@@ -33,7 +33,7 @@ exports.HomePage = PageView.extend(
                 { class: 'pure-g' },
                 div(
                     { class: 'pure-u-1-1' },
-                    h2('Helios: ', small('Photo Storage')),
+                    h2('Helios ', small('Photograph Album')),
                     div(
                         { class: 'mainmenu pure-g' },
                         menuButton(AlbumsPage, span(icon('book'), 'Albums')),

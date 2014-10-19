@@ -31,7 +31,7 @@ void helios::api::photograph::install(
                 hades::row<int>(id)
                 );
             styx::list l =
-                hades::equi_join<helios::photograph, helios::photograph_location>(
+                hades::equi_outer_join<helios::photograph, helios::photograph_location>(
                     conn,
                     where
                     );
@@ -67,7 +67,7 @@ void helios::api::photograph::install(
     server.install<styx::list>(
         "photograph_list",
         boost::bind(
-            &hades::equi_join<helios::photograph, helios::photograph_location>,
+            &hades::equi_outer_join<helios::photograph, helios::photograph_location>,
             boost::ref(conn)
             )
         );
