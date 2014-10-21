@@ -139,8 +139,25 @@ exports.PhotographPage = PageView.extend(
                 div(
                     { class: 'pure-menu pure-menu-vertical pure-menu-open' },
                     ul(
-                        li(a({ href: '/jpeg_image?height=1000&width=1200' }, '1200x1000')),
-                        li(a({ href: '/jpeg_image_fullsize' }, 'Fullsize'))
+                        li( a( {
+                            href: '/jpeg_image?photograph_id=' +
+                                this.model.get('photograph_id') +
+                                '&height=300&width=400'
+                        }, '400x300')),
+                        li( a( {
+                            href: '/jpeg_image?photograph_id=' +
+                                this.model.get('photograph_id') +
+                                '&height=600&width=800'
+                        }, '800x600')),
+                        li( a( {
+                            href: '/jpeg_image?photograph_id=' +
+                                this.model.get('photograph_id') +
+                                '&height=1000&width=1200'
+                        }, '1200x1000')),
+                        li( a( {
+                            href: '/jpeg_image_fullsize?photograph_id=' +
+                                this.model.get('photograph_id')
+                        }, 'Fullsize'))
                       )
                    )
                );
