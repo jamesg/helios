@@ -6,6 +6,7 @@ var TagsPage = require('./tags').TagsPage;
 var UploadPage = require('./upload').UploadPage;
 
 var icon = require('../ui').icon;
+var ui = require('./ui');
 
 exports.HomePage = PageView.extend(
     {
@@ -29,18 +30,18 @@ exports.HomePage = PageView.extend(
                     );
             }).bind(this);
 
+            var menuButton = ui.menuButton.bind(this, this.application);
             return div(
                 { class: 'pure-g' },
                 div(
                     { class: 'pure-u-1-1' },
                     h2('Helios ', small('Photograph Album')),
-                    div(
-                        { class: 'mainmenu pure-g' },
+                    ui.mainMenu(
                         menuButton(AlbumsPage, span(icon('book'), 'Albums')),
                         menuButton(TagsPage, span(icon('tags'), 'Tags')),
                         menuButton(LocationsPage, span(icon('map'), 'Locations')),
                         menuButton(UploadPage, span(icon('data-transfer-upload'), 'Upload'))
-                       )
+                        )
                    )
                 );
         }
