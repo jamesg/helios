@@ -4,6 +4,7 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "commandline/commandline.hpp"
 #include "hades/connection.hpp"
@@ -19,11 +20,12 @@
 int helios::exports::main(int argc, const char* argv[])
 {
     bool show_help = false, fullsize = false;
-    std::string db_file, output_directory, geometry;
+    std::string db_file, output_directory, height_s, width_s, geometry;
     std::vector<commandline::option> options{
         commandline::parameter("db", db_file, "Database file path"),
         commandline::parameter("out", output_directory, "Output directory"),
-        commandline::parameter("geometry", geometry, "ImageMagick geometry"),
+        commandline::parameter("height", height_s, "Maximum height of output"),
+        commandline::parameter("width", width_s, "Maximum width of output"),
         commandline::flag("fullsize", fullsize, "Do not scale images"),
         commandline::flag("help", show_help, "Show a help message")
     };
@@ -41,7 +43,6 @@ int helios::exports::main(int argc, const char* argv[])
         commandline::print(argc, argv, options);
         return 1;
     }
-
     if(output_directory.empty())
     {
         std::cerr << "output directory not specified" << std::endl;
@@ -49,13 +50,30 @@ int helios::exports::main(int argc, const char* argv[])
         return 1;
     }
 
-    if((!fullsize && geometry.empty()) || (fullsize && geometry.length()))
+    const bool geometry_empty = height_s.empty() || width_s.empty();
+    if((!fullsize && geometry_empty) || (fullsize && !geometry_empty))
     {
         std::cerr <<
-            "exactly one of --fullsize and --geometry must be specified" <<
+            "either --fullsize or --height and --width must be specified" <<
             std::endl;
         commandline::print(argc, argv, options);
         return 1;
+    }
+
+    int height = 0, width = 0;
+    try
+    {
+        if(!geometry_empty)
+        {
+            height = boost::lexical_cast<int>(height_s);
+            width = boost ::lexical_cast<int>(width_s);
+        }
+    }
+    catch(const std::exception&)
+    {
+        std::cerr << "both --height and --width must be integers" << std::endl;
+        commandline::print(argc, argv, options);
+        return -1;
     }
 
     hades::connection conn(db_file);
@@ -122,12 +140,8 @@ int helios::exports::main(int argc, const char* argv[])
             }
             else
             {
-                std::vector<unsigned char> data_scaled;
-                util::scale(
-                        data.data,
-                        geometry,
-                        data_scaled
-                        );
+                std::vector<unsigned char> data_scaled =
+                    util::scale_and_rotate(data.data, height, width);
                 os << std::string((const char*)(&(data_scaled[0])), data_scaled.size());
             }
             os.close();

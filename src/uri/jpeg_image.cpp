@@ -79,8 +79,8 @@ void helios::uri::jpeg_image(
         Magick::Image image(Magick::Blob(
             reinterpret_cast<const void*>(&(data.data[0])), data.data.size())
             );
-        short orientation = 1;
 
+        short orientation = 1;
         try
         {   // Retrieve orientation
             auto exiv_image = Exiv2::ImageFactory::open(
