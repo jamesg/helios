@@ -54,3 +54,9 @@ target_link_libraries(
     helios-server-lib
     )
 
+add_executable(exports src/main/exports.cpp)
+target_link_libraries(
+    exports
+    helios-exports-lib
+    )
+

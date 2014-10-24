@@ -145,7 +145,7 @@ namespace helios
         album()
         {
         }
-        album(styx::element& e) :
+        album(const styx::element& e) :
             styx::object_accessor(e)
         {
         }

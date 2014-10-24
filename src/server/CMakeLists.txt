@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
 
-project("Helios")
-
 file(GLOB server_sources *.cpp)
 add_library(helios-server-lib ${server_sources})
 target_link_libraries(
