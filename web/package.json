@@ -8,6 +8,7 @@
         "domjs": "latest",
         "jbone": "latest",
         "jquery": "latest",
+        "less": "latest",
         "webmake": "latest",
         "q": "latest",
         "uglify-js": "latest",

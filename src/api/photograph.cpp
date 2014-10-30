@@ -17,6 +17,7 @@
 
 #include "api/server.hpp"
 #include "db/photograph.hpp"
+#include "jsonrpc/auth.hpp"
 
 void helios::api::photograph::install(
         hades::connection& conn,
@@ -62,14 +63,16 @@ void helios::api::photograph::install(
             photograph.tags() = oss.str();
 
             return photograph.get_element();
-        }
+        },
+        boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
     server.install<styx::list>(
         "photograph_list",
         boost::bind(
             &hades::equi_outer_join<helios::photograph, helios::photograph_location>,
             boost::ref(conn)
-            )
+            ),
+        boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
     server.install<styx::element, styx::element>(
         "photograph_save",
@@ -82,7 +85,8 @@ void helios::api::photograph::install(
 
             db::set_photograph_tags(conn, photograph.id(), photograph.tags());
             return photograph.get_element();
-        }
+        },
+        boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
     server.install<styx::list>(
         "photograph_recent",
@@ -91,7 +95,8 @@ void helios::api::photograph::install(
                 conn,
                 hades::order_by("photograph.taken DESC", 36)
                 );
-        }
+        },
+        boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
     server.install<styx::list>(
         "photograph_uncategorised",
@@ -104,7 +109,8 @@ void helios::api::photograph::install(
                 "photograph.photograph_id = photograph_in_album.photograph_id",
                 hades::where<>("photograph_in_album.photograph_id IS NULL")
                 );
-        }
+        },
+        boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
 
     server.install<styx::element, int>(
@@ -113,14 +119,16 @@ void helios::api::photograph::install(
             helios::album a;
             a.from_id(conn, helios::album::id_type{album_id});
             return a.get_element();
-        }
+        },
+        boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
     server.install<styx::list>(
         "album_list",
         [&conn]() {
             auto ob = hades::order_by("album.name ASC");
             return helios::album::get_collection(conn, ob);
-        }
+        },
+        boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
     server.install<styx::element, styx::element>(
         "album_save",
@@ -128,14 +136,16 @@ void helios::api::photograph::install(
             helios::album album(album_e);
             album.save(conn);
             return album.get_element();
-        }
+        },
+        boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
     server.install<bool, styx::element>(
         "album_destroy",
         [&conn](styx::element album_e) {
             helios::album album(album_e);
             return album.destroy(conn);
-        }
+        },
+        boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
     server.install<bool, int, int>(
         "add_photograph_to_album",
@@ -144,7 +154,8 @@ void helios::api::photograph::install(
                 helios::photograph_in_album::id_type{photograph_id, album_id}
                 );
             return photograph_in_album.save(conn);
-        }
+        },
+        boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
     server.install<styx::list, int>(
         "photographs_in_album",
@@ -163,7 +174,8 @@ void helios::api::photograph::install(
                     hades::row<int>(album_id)
                     )
                 );
-        }
+        },
+        boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
     server.install<styx::list, int>(
         "photograph_albums",
@@ -177,7 +189,8 @@ void helios::api::photograph::install(
                     hades::row<int>(photograph_id)
                     )
                 );
-        }
+        },
+        boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
     server.install<styx::list>(
         "location_list",
@@ -192,7 +205,8 @@ void helios::api::photograph::install(
                     " WHERE location IS NOT NULL AND location != '' "
                     "GROUP BY location ORDER BY location ASC "
                     );
-        }
+        },
+        boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
     server.install<styx::list>(
         "tag_list",
@@ -206,7 +220,8 @@ void helios::api::photograph::install(
                     "WHERE tag IS NOT NULL AND tag != '' "
                     "GROUP BY tag ORDER BY tag ASC "
                     );
-        }
+        },
+        boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
     server.install<styx::list, std::string>(
         "photographs_with_tag",
@@ -223,7 +238,8 @@ void helios::api::photograph::install(
                     hades::order_by("photograph.taken ASC")
                     )
                 );
-        }
+        },
+        boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
     server.install<styx::list, std::string>(
         "photographs_with_location",
@@ -240,7 +256,8 @@ void helios::api::photograph::install(
                     hades::order_by("photograph.taken ASC")
                     )
                 );
-        }
+        },
+        boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
 
     // JPEG data methods.

@@ -6,7 +6,7 @@ var TagsPage = require('./tags').TagsPage;
 var UploadPage = require('./upload').UploadPage;
 
 var icon = require('../ui').icon;
-var ui = require('./ui');
+var ui = require('../ui');
 
 exports.HomePage = PageView.extend(
     {
@@ -16,20 +16,6 @@ exports.HomePage = PageView.extend(
             this.render();
         },
         template: function() {
-            var menuButton = (function(constructor, content) {
-                return div(
-                    { class: 'pure-u-12-24 pure-u-md-8-24 pure-u-lg-6-24 pure-u-xl-4-24' },
-                    button(
-                        {
-                            class: 'pure-button',
-                            onclick: this.application.pushPage
-                                    .bind(this.application, constructor)
-                        },
-                        content
-                        )
-                    );
-            }).bind(this);
-
             var menuButton = ui.menuButton.bind(this, this.application);
             return div(
                 { class: 'pure-g' },

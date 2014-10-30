@@ -37,6 +37,7 @@ helios::server::server(
     atlas::http::install_static_file(m_http_server, *m_mime_information, "index.html");
     atlas::http::install_static_file(m_http_server, *m_mime_information, "bundle.js");
     atlas::http::install_static_file(m_http_server, *m_mime_information, "pure-min.css");
+    atlas::http::install_static_file(m_http_server, *m_mime_information, "main.css");
     atlas::http::install_static_file(m_http_server, *m_mime_information, "favicon.png");
     atlas::http::install_static_file(m_http_server, *m_mime_information, "grids-responsive-old-ie-min.css");
     atlas::http::install_static_file(m_http_server, *m_mime_information, "grids-responsive-min.css");

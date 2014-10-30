@@ -17,7 +17,7 @@ add_custom_target(
 add_custom_target(
     copy_atlas_web
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_CURRENT_SOURCE_DIR}/../atlas-com/web ${CMAKE_CURRENT_BINARY_DIR}/client
+    ${CMAKE_CURRENT_SOURCE_DIR}/../atlas-com/web/client ${CMAKE_CURRENT_BINARY_DIR}/client
     )
 
 add_custom_target(
@@ -29,13 +29,42 @@ add_custom_target(
         ${CMAKE_CURRENT_BINARY_DIR}/static/bundle.js
     )
 
+# Similarly for CSS, copy the Less files.
 add_custom_target(
-    web
+    copy_atlas_less
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/../atlas-com/web/less ${CMAKE_CURRENT_BINARY_DIR}/less
+    )
+# Copy the application Less files.
+add_custom_target(
+    copy_less
+    DEPENDS copy_atlas_less
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/less ${CMAKE_CURRENT_BINARY_DIR}/less
+    )
+
+add_custom_target(
+    css
+    DEPENDS copy_less node_modules
+    COMMAND
+        node_modules/less/bin/lessc
+        ${CMAKE_CURRENT_BINARY_DIR}/less/main.less
+        --include-path=${CMAKE_CURRENT_BINARY_DIR}/less >
+        ${CMAKE_CURRENT_BINARY_DIR}/static/main.css
+    )
+
+add_custom_target(
+    minify
     DEPENDS bundle
     COMMAND
         node_modules/uglify-js/bin/uglifyjs
         ${CMAKE_CURRENT_BINARY_DIR}/static/bundle.js >
         ${CMAKE_CURRENT_BINARY_DIR}/static/bundle.min.js
+    )
+
+add_custom_target(
+    web
+    DEPENDS css minify
     )
 #add_custom_target(
     #web

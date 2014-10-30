@@ -22,6 +22,9 @@ var CategoryPage = PageView.extend(
             this.listenTo(this.thumbList, 'click', this.gotoPhotograph.bind(this));
             this.render();
         },
+        reset: function() {
+            this.model.fetch();
+        },
         gotoPhotograph: function(photograph) {
             this.application.pushPage(new PhotographPage({ model: photograph }));
         },

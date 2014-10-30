@@ -18,7 +18,7 @@ std::string helios::uri::detail::extract_token(mg_connection *mg_conn)
 
     // Fall back: try to extract a token from the GET parameter.
     {
-        char token_str[db::auth::token_length+1];
+        char token_str[atlas::db::auth::token_length+1];
         mg_get_var(mg_conn, "token", token_str, sizeof(token_str));
         return std::string(token_str);
     }
