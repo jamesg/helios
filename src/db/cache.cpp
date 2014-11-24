@@ -4,7 +4,10 @@
 
 #include "hades/connection.hpp"
 #include "hades/devoid.hpp"
+#include "hades/row.hpp"
 #include "hades/step.hpp"
+
+#include "log/log.hpp"
 
 void helios::db::cache::create(hades::connection& conn)
 {
@@ -86,6 +89,12 @@ void helios::db::cache::insert(
         hades::connection& conn
         )
 {
+    hades::devoid(
+            "DELETE FROM jpeg_cache WHERE "
+            " photograph_id = ? AND height = ? AND width = ? ",
+            hades::row<int, int, int>(data.photograph_id, data.height, data.width),
+            conn
+            );
     sqlite3_stmt *stmt;
     sqlite3_prepare(
             conn.handle(),
@@ -98,7 +107,19 @@ void helios::db::cache::insert(
     hades::bind(2, data.height, stmt);
     hades::bind(3, data.width, stmt);
     hades::bind(4, &(data.data[0]), data.data.size(), stmt);
-    hades::step(stmt);
+    try
+    {
+        hades::step(stmt, conn);
+    }
+    catch(const std::exception& e)
+    {
+        atlas::log::warning("helios::db::cache::insert") <<
+            "photograph_id: " << data.photograph_id <<
+            ", height: " << data.height <<
+            ", width: " << data.width <<
+            ", size: " << data.data.size();
+        throw;
+    }
     sqlite3_finalize(stmt);
 }
 

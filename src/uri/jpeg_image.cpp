@@ -6,9 +6,12 @@
 #include <exiv2/exiv2.hpp>
 #include <Magick++.h>
 
+#include "hades/mkstr.hpp"
+
 //#include "db/auth.hpp"
 #include "db/cache.hpp"
 #include "db/jpeg_data.hpp"
+#include "http/server/error.hpp"
 #include "uri/detail.hpp"
 
 void helios::uri::jpeg_image(
@@ -51,7 +54,8 @@ void helios::uri::jpeg_image(
     catch(const std::exception&)
     {
         // Cannot provide a photograph if no id was given.
-        callback_failure();
+        atlas::http::error(400, "no photograph id provided", mg_conn);
+        callback_success();
         return;
     }
 
@@ -150,7 +154,8 @@ void helios::uri::jpeg_image(
     }
     catch(const std::exception& e)
     {
-        callback_failure();
+        atlas::http::error(400, hades::mkstr() << "scaling the image: " << e.what(), mg_conn);
+        callback_success();
         return;
     }
 
