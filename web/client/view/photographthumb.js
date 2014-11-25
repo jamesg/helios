@@ -2,6 +2,10 @@ var StaticView = require('./static').StaticView;
 
 exports.PhotographThumbView = StaticView.extend(
     {
+        initialize: function() {
+            StaticView.prototype.initialize.apply(this, arguments);
+            this.render();
+        },
         template: function() {
             span({ class: 'vertical-align-helper' });
             img(

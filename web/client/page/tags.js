@@ -32,7 +32,7 @@ var TagPage = PageView.extend(
         },
         fullPage: true,
         initialize: function(options) {
-            this.application = options.application;
+            PageView.prototype.initialize.apply(this, arguments);
             // Pass the tag on to new PhotographPages.
             this.tag = options.model;
             this.model = new TagPhotographs({ tag: this.tag });
@@ -46,7 +46,9 @@ var TagPage = PageView.extend(
             this.model.fetch();
         },
         gotoPhotograph: function(photograph) {
-            this.application.pushPage(new PhotographPage({ model: photograph, withTag: this.tag }));
+            this.application.pushPage(
+                    new PhotographPage({ model: photograph, withTag: this.tag })
+                    );
         },
         template: function() {
             return div(
@@ -66,7 +68,7 @@ exports.TagsPage = PageView.extend(
         pageTitle: 'Tags',
         fullPage: true,
         initialize: function(options) {
-            this.application = options.application;
+            PageView.prototype.initialize.apply(this, arguments);
             this.tagCollection = new TagCollection(
                 {
                     comparator: alphaComparator
@@ -75,7 +77,7 @@ exports.TagsPage = PageView.extend(
             this.tagCollection.fetch();
             this.tagList = new TagListView({ model: this.tagCollection });
             this.listenTo(this.tagList, 'click', this.gotoTag.bind(this));
-            PageView.prototype.initialize.apply(this, arguments);
+            this.render();
         },
         template: function() {
             div(
