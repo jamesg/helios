@@ -94,7 +94,7 @@ void helios::api::note::install(
         boost::bind(
             &hades::join<helios::note, helios::note_version>,
             boost::ref(conn),
-            hades::where<int>(
+            hades::where(
                 "note.note_id = note_version.note_id AND note.phase = ?",
                 hades::row<int>(helios::note_version::published)
                 )

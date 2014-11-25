@@ -95,7 +95,7 @@ styx::list helios::db::get_photographs_by_album(
     boost::fusion::vector<int> params(album_id);
     return hades::join<helios::photograph, helios::photograph_in_album>(
             conn,
-            hades::where<int>("album_id = ?", hades::row<int>(album_id))
+            hades::where("album_id = ?", hades::row<int>(album_id))
             );
 }
 
@@ -104,7 +104,7 @@ std::vector<std::string> helios::db::photograph_tags(
         helios::photograph::id_type id
         )
 {
-    auto where = hades::where<int>(
+    hades::where where(
         "photograph_id = ?",
         hades::row<int>(
             id.get_int<db::attr::photograph::photograph_id>()

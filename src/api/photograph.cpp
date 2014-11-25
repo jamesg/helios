@@ -27,7 +27,7 @@ void helios::api::photograph::install(
     server.install<styx::element, int>(
         "photograph_get",
         [&conn](int id) {
-            auto where = hades::where<int>(
+            hades::where where(
                 "photograph.photograph_id = ?",
                 hades::row<int>(id)
                 );
@@ -107,7 +107,7 @@ void helios::api::photograph::install(
             return hades::outer_join<helios::photograph, helios::photograph_in_album>(
                 conn,
                 "photograph.photograph_id = photograph_in_album.photograph_id",
-                hades::where<>("photograph_in_album.photograph_id IS NULL")
+                hades::where("photograph_in_album.photograph_id IS NULL")
                 );
         },
         boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
@@ -166,7 +166,7 @@ void helios::api::photograph::install(
                 helios::photograph_location,
                 helios::album>(
                 conn,
-                hades::where<int>(
+                hades::where(
                     "photograph.photograph_id = photograph_in_album.photograph_id AND "
                     "photograph_in_album.album_id = album.album_id AND "
                     "photograph.photograph_id = photograph_location.photograph_id AND "
@@ -182,7 +182,7 @@ void helios::api::photograph::install(
         [&conn](int photograph_id) {
             return hades::join<helios::photograph, helios::photograph_in_album, helios::album>(
                 conn,
-                hades::where<int>(
+                hades::where(
                     "photograph.photograph_id = photograph_in_album.photograph_id AND "
                     "photograph_in_album.album_id = album.album_id AND "
                     "photograph.photograph_id = ?",
@@ -228,8 +228,8 @@ void helios::api::photograph::install(
         [&conn](std::string tag) {
             return hades::join<helios::photograph, helios::basic_tag>(
                 conn,
-                hades::filter<hades::where<std::string>>(
-                    hades::where<std::string>(
+                hades::filter(
+                    hades::where(
                         "photograph.photograph_id = "
                         " photograph_tagged.photograph_id AND "
                         "photograph_tagged.tag = ? ",
@@ -246,8 +246,8 @@ void helios::api::photograph::install(
         [&conn](std::string location) {
             return hades::join<helios::photograph, helios::basic_location>(
                 conn,
-                hades::filter<hades::where<std::string>>(
-                    hades::where<std::string>(
+                hades::filter(
+                    hades::where(
                         "photograph.photograph_id = "
                         " photograph_location.photograph_id AND "
                         "photograph_location.location = ? ",

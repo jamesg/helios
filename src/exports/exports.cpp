@@ -89,7 +89,7 @@ int helios::exports::main(int argc, const char* argv[])
         boost::filesystem::create_directory(album_dir);
 
         auto where =
-            hades::where<int>(
+            hades::where(
                 "album.album_id = ? AND "
                 "photograph.photograph_id = photograph_in_album.photograph_id AND "
                 "album.album_id = photograph_in_album.album_id ",
@@ -101,7 +101,7 @@ int helios::exports::main(int argc, const char* argv[])
             helios::photograph_in_album,
             helios::album>(
                 conn,
-                hades::filter<hades::where<int>>(where, order)
+                hades::filter(where, order)
                 );
 
         static const char *unknown_string = "unknown";
