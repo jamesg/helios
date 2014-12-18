@@ -32,7 +32,7 @@ var LocationPage = PageView.extend(
         },
         fullPage: true,
         initialize: function(options) {
-            this.application = options.application;
+            PageView.prototype.initialize.apply(this, arguments);
             // Pass the location on to new PhotographPages.
             this.location = options.model;
             this.model = new LocationPhotographs({ location: this.location });
@@ -66,7 +66,7 @@ exports.LocationsPage = PageView.extend(
         pageTitle: 'Locations',
         fullPage: true,
         initialize: function(options) {
-            this.application = options.application;
+            PageView.prototype.initialize.apply(this, arguments);
             this.locationCollection = new LocationCollection(
                 {
                     comparator: alphaComparator
@@ -75,7 +75,7 @@ exports.LocationsPage = PageView.extend(
             this.locationCollection.fetch();
             this.locationList = new LocationListView({ model: this.locationCollection });
             this.listenTo(this.locationList, 'click', this.gotoLocation.bind(this));
-            PageView.prototype.initialize.apply(this, arguments);
+            this.render();
         },
         template: function() {
             div(

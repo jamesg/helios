@@ -40,7 +40,7 @@ exports.PhotographPage = PageView.extend(
         },
         fullPage: true,
         initialize: function(options) {
-            console.log('fetching photograph model');
+            PageView.prototype.initialize.apply(this, arguments);
             this.model.fetch();
             this.photographDetails =
                 new PhotographDetails({ model: this.model });

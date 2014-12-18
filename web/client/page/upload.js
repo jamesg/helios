@@ -6,6 +6,10 @@ var icon = require('../ui').icon;
 
 exports.UploadPage = PageView.extend(
     {
+        initialize: function() {
+            PageView.prototype.initialize.apply(this, arguments);
+            this.render();
+        },
         template: function() {
             var messageBox = new MessageBox;
 

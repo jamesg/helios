@@ -11,9 +11,10 @@ var ui = require('../ui');
 exports.PhotographForm = StaticView.extend(
     {
         initialize: function(options) {
+            StaticView.prototype.initialize.apply(this, arguments);
             if(!_.has(this, 'model'))
                 this.model = new Photograph;
-            StaticView.prototype.initialize.apply(this, arguments);
+            this.render();
         },
         template: function() {
             var title = input({ type: 'text', name: 'title', value: this.model.get('title') });
