@@ -31,7 +31,7 @@ void helios::api::note::install(
         [&conn](const styx::element markdown_e) {
             helios::markdown markdown(markdown_e);
             markdown.save(conn);
-            return markdown.get_element();
+            return markdown;
         }
         );
     server.install<styx::element, int>(
@@ -39,7 +39,7 @@ void helios::api::note::install(
         [&conn](const int id) {
             helios::note note;
             note.from_id(conn, helios::note::id_type{id});
-            return note.get_element();
+            return note;
         }
         );
     server.install<styx::list>(
@@ -51,7 +51,7 @@ void helios::api::note::install(
         [&conn](const int note_id, const int phase) {
             helios::note_version note_version;
             note_version.from_id(conn, helios::note_version::id_type{note_id, phase});
-            return note_version.get_element();
+            return note_version;
         }
         );
     server.install<styx::element, styx::element>(
@@ -59,7 +59,7 @@ void helios::api::note::install(
         [&conn](const styx::element note_e) {
             helios::note note(note_e);
             note.save(conn);
-            return note.get_element();
+            return note;
         }
         );
     server.install<styx::element, std::string>(
@@ -78,7 +78,7 @@ void helios::api::note::install(
             // TODO: note temporal
 
             tr.commit();
-            return note_version.get_element();
+            return note_version;
         }
         );
     server.install<bool, int>(

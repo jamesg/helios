@@ -12,7 +12,7 @@ void helios::api::statistics::install(
             "statistics",
             [&conn]() {
                 helios::statistics s = db::get_statistics(conn);
-                return s.get_element();
+                return s;
             }
             );
 }

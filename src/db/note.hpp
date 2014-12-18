@@ -47,7 +47,7 @@ namespace helios
         {
         }
         note(const styx::element& e) :
-            styx::object_accessor(e)
+            styx::object(e)
         {
         }
         //std::string& title()    const { return get_string("title"); }
@@ -78,7 +78,7 @@ namespace helios
         {
         }
         note_version(const styx::element& e) :
-            styx::object_accessor(e)
+            styx::object(e)
         {
         }
     };
@@ -98,7 +98,7 @@ namespace helios
         {
         }
         markdown(const styx::element& e) :
-            styx::object_accessor(e)
+            styx::object(e)
         {
         }
     };

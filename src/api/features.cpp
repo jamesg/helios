@@ -27,7 +27,7 @@ void helios::api::features::install(
     server.install<styx::element, int>(
             "features",
             [&conn](int id) {
-                return get_features().get_element();
+                return get_features();
             }
             );
 }

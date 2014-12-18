@@ -68,10 +68,10 @@ namespace helios
         {
         }
         photograph(const styx::element& e) :
-            styx::object_accessor(e)
+            styx::object(e)
         {
         }
-        std::string& tags() { return styx::object_accessor::get_string("tags"); }
+        std::string& tags() { return styx::object::get_string("tags"); }
     };
     struct photograph_in_album :
         public hades::has_candidate_key<
@@ -87,11 +87,11 @@ namespace helios
         {
         }
         photograph_in_album(styx::element& e) :
-            styx::object_accessor(e)
+            styx::object(e)
         {
         }
         photograph_in_album(id_type id) :
-            styx::object_accessor(id.get_element())
+            styx::object(id)
         {
         }
         //int& photograph_id() const { return get_int("photograph_id"); }
@@ -109,8 +109,8 @@ namespace helios
         photograph_location()
         {
         }
-        photograph_location(styx::element& e) :
-            styx::object_accessor(e)
+        photograph_location(const styx::element& e) :
+            styx::object(e)
         {
         }
     };
@@ -128,7 +128,7 @@ namespace helios
         {
         }
         photograph_tagged(styx::element& e) :
-            styx::object_accessor(e)
+            styx::object(e)
         {
         }
         //int& photograph_id() const { return get_int("photograph_id"); }
@@ -146,7 +146,7 @@ namespace helios
         {
         }
         album(const styx::element& e) :
-            styx::object_accessor(e)
+            styx::object(e)
         {
         }
         //std::string& name() const { return get_string("name"); }

@@ -8,6 +8,7 @@
 #include <exiv2/exiv2.hpp>
 
 #include "hades/crud.ipp"
+#include "styx/serialise_json.hpp"
 
 #include "db/jpeg_data.hpp"
 #include "db/photograph.hpp"
@@ -142,7 +143,7 @@ int helios::uri::insert_photograph(
 
     res.data() = styx::element("Success");
 
-    std::string json_s = styx::serialise_json(res.get_element());
+    std::string json_s = styx::serialise_json(res);
     mg_send_data(mg_conn, json_s.c_str(), json_s.length());
 
     callback_success();

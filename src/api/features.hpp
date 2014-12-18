@@ -1,7 +1,7 @@
 #ifndef HELIOS_API_FEATURES_HPP
 #define HELIOS_API_FEATURES_HPP
 
-#include "styx/object_accessor.hpp"
+#include "styx/object.hpp"
 
 namespace hades
 {
@@ -25,7 +25,7 @@ namespace helios
         }
     }
     struct features :
-        styx::object_accessor
+        styx::object
     {
         bool& gazetteer() { return get_bool("gazetteer"); }
         bool& photographs() { return get_bool("photographs"); }

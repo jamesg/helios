@@ -27,7 +27,7 @@ namespace helios
         {
         }
         statistics(const styx::element& e) :
-            styx::object_accessor(e)
+            styx::object(e)
         {
         }
         /*!

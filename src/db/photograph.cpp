@@ -5,6 +5,7 @@
 
 #include "hades/crud.ipp"
 #include "hades/devoid.hpp"
+#include "hades/filter.hpp"
 #include "hades/join.hpp"
 
 const char helios::db::attr::photograph::photograph_id[] = "photograph_id";
@@ -104,7 +105,7 @@ std::vector<std::string> helios::db::photograph_tags(
         helios::photograph::id_type id
         )
 {
-    hades::where where(
+    auto where = hades::where(
         "photograph_id = ?",
         hades::row<int>(
             id.get_int<db::attr::photograph::photograph_id>()

@@ -27,7 +27,7 @@ void helios::api::photograph::install(
     server.install<styx::element, int>(
         "photograph_get",
         [&conn](int id) {
-            hades::where where(
+            auto where = hades::where(
                 "photograph.photograph_id = ?",
                 hades::row<int>(id)
                 );
@@ -62,7 +62,7 @@ void helios::api::photograph::install(
             atlas::log::information("api::photograph") << "tags " << oss.str();
             photograph.tags() = oss.str();
 
-            return photograph.get_element();
+            return photograph;
         },
         boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
@@ -80,11 +80,11 @@ void helios::api::photograph::install(
             helios::photograph photograph(photograph_e);
             photograph.save(conn);
 
-            helios::photograph_location photograph_location(photograph.get_element());
+            helios::photograph_location photograph_location(photograph);
             photograph_location.save(conn);
 
             db::set_photograph_tags(conn, photograph.id(), photograph.tags());
-            return photograph.get_element();
+            return photograph;
         },
         boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
@@ -118,7 +118,7 @@ void helios::api::photograph::install(
         [&conn](int album_id) {
             helios::album a;
             a.from_id(conn, helios::album::id_type{album_id});
-            return a.get_element();
+            return a;
         },
         boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
@@ -135,7 +135,7 @@ void helios::api::photograph::install(
         [&conn](styx::element album_e) {
             helios::album album(album_e);
             album.save(conn);
-            return album.get_element();
+            return album;
         },
         boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
