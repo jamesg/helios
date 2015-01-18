@@ -13,6 +13,10 @@ var ui = require('../ui');
 
 var PhotographDetails = StaticView.extend(
     {
+        initialize: function() {
+            StaticView.prototype.initialize.apply(this, arguments);
+            this.render();
+        },
         template: function() {
             return dl(
                 { compact: 'compact' },
