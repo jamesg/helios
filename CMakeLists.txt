@@ -15,28 +15,24 @@ include_directories("atlas-com/src")
 include_directories("src")
 include_directories("commandline/include")
 include_directories("hades/include")
-include_directories("styx/include")
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${ImageMagick_INCLUDE_DIRS})
 include_directories(${CURL_INCLUDE_DIRS})
 
 # Documentation
-#find_package(Doxygen)
-#if(DOXYGEN_FOUND)
-    #configure_file(
-        #${CMAKE_CURRENT_SOURCE_DIR}/doxygen/doxygen.conf.in
-        #${CMAKE_CURRENT_BINARY_DIR}/doxygen/doxygen.conf @ONLY
-        #)
-    #add_custom_target(
-        #doc
-        #${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doxygen/doxygen.conf
-        #WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        #COMMENT "Generating API documentation with Doxygen" VERBATIM
-        #)
-#endif(DOXYGEN_FOUND)
-
-# Styx components
-add_subdirectory(styx)
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/doxygen/doxygen.conf.in
+        ${CMAKE_CURRENT_BINARY_DIR}/doxygen/doxygen.conf @ONLY
+        )
+    add_custom_target(
+        doc
+        ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doxygen/doxygen.conf
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Generating API documentation with Doxygen" VERBATIM
+        )
+endif(DOXYGEN_FOUND)
 
 # Hades components
 add_subdirectory(hades)

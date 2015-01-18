@@ -7,6 +7,3 @@
 [submodule "hades"]
 	path = hades
 	url = oak-git:~/projects/hades
-[submodule "styx"]
-	path = styx
-	url = oak-git:~/projects/styx
