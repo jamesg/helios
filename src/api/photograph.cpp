@@ -9,6 +9,7 @@
 
 #include "hades/crud.ipp"
 #include "hades/custom_select.hpp"
+#include "hades/devoid.hpp"
 #include "hades/filter.hpp"
 #include "hades/get_by_id.hpp"
 #include "hades/get_collection.hpp"
@@ -87,6 +88,20 @@ void helios::api::photograph::install(
             return photograph;
         },
         boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
+        );
+    server.install<bool, styx::element>(
+        "photograph_delete",
+        [&conn](styx::element photograph_e) {
+            helios::photograph photograph(photograph_e);
+            hades::devoid(
+                "DELETE FROM photograph WHERE photograph_id = ?",
+                hades::row<int>(
+                    photograph.get_int<db::attr::photograph::photograph_id>()
+                    ),
+                conn
+                );
+            return true;
+        }
         );
     server.install<styx::list>(
         "photograph_recent",

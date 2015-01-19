@@ -27,9 +27,14 @@ exports.AlbumPage = PageView.extend(
             this.model.fetch();
         },
         gotoPhotograph: function(photograph) {
+            console.log('gotoPhotograph', this.application);
             this.application.pushPage(
                 new PhotographPage(
-                    { model: photograph, inAlbum: this.model }
+                    {
+                        application: this.application,
+                        model: photograph,
+                        inAlbum: this.model
+                    }
                     )
                 );
         },

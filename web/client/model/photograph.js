@@ -22,7 +22,7 @@ exports.Photograph = Backbone.Model.extend(
             return api.backboneSyncFunction(
                 {
                     create: 'photograph_save',
-                    delete: 'photograph_destroy',
+                    delete: 'photograph_delete',
                     read: api.rpc.bind(
                         this,
                         {

@@ -47,7 +47,13 @@ var TagPage = PageView.extend(
         },
         gotoPhotograph: function(photograph) {
             this.application.pushPage(
-                    new PhotographPage({ model: photograph, withTag: this.tag })
+                    new PhotographPage(
+                        {
+                            application: this.application,
+                            model: photograph,
+                            withTag: this.tag
+                        }
+                        )
                     );
         },
         template: function() {

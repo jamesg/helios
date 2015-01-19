@@ -46,7 +46,15 @@ var LocationPage = PageView.extend(
             this.model.fetch();
         },
         gotoPhotograph: function(photograph) {
-            this.application.pushPage(new PhotographPage({ model: photograph, atLocation: this.location }));
+            this.application.pushPage(
+                    new PhotographPage(
+                        {
+                            application: this.application,
+                            model: photograph,
+                            atLocation: this.location
+                        }
+                        )
+                    );
         },
         template: function() {
             return div(

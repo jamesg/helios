@@ -26,7 +26,14 @@ var CategoryPage = PageView.extend(
             this.model.fetch();
         },
         gotoPhotograph: function(photograph) {
-            this.application.pushPage(new PhotographPage({ model: photograph }));
+            this.application.pushPage(
+                new PhotographPage(
+                    {
+                        application: this.application,
+                        model: photograph
+                    }
+                    ))
+                ;
         },
         template: function() {
             return div(
@@ -70,6 +77,7 @@ var UncategorisedPage = CategoryPage.extend(
     {
         pageTitle: 'Uncategorised',
         initialize: function(options) {
+            CategoryPage.prototype.initialize.apply(this, arguments);
             this.model = new Uncategorised;
             this.listenTo(this.model, 'all', this.render.bind(this));
             this.model.fetch();

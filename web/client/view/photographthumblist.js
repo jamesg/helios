@@ -8,7 +8,12 @@ var LiView = StaticView.extend(
         className: 'editable-li',
         initialize: function(options) {
             StaticView.prototype.initialize.apply(this, arguments);
-            this.thumb = new PhotographThumbView({ model: options.model });
+            this.thumb = new PhotographThumbView(
+                {
+                    application: options.application,
+                    model: options.model
+                }
+                );
             this.listenTo(
                 this.thumb,
                 'click',

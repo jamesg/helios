@@ -65,6 +65,17 @@ exports.PhotographPage = PageView.extend(
             this.albumList = new AlbumListView({ model: photographAlbums });
             this.render();
         },
+        deletePhotograph: function() {
+            this.model.destroy().then(
+                    (function() {
+                        console.log('delete photograph');
+                        this.application.popPage();
+                    }).bind(this),
+                    (function() {
+                        this.messageBox.displayError('Deleting photograph');
+                    }).bind(this)
+                    );
+        },
         addPhotographToAlbum: function(photographId, albumId) {
             api.rpcFunction('add_photograph_to_album')(
                 photographId,
@@ -163,7 +174,9 @@ exports.PhotographPage = PageView.extend(
                                 this.model.get('photograph_id')
                         }, 'Fullsize'))
                       )
-                   )
+                   ),
+                   h3('Delete Photograph'),
+                   ui.confirmButton('Delete', this.deletePhotograph.bind(this))
                );
         }
     }
