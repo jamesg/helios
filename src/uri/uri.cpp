@@ -1,6 +1,6 @@
 #include "uri/uri.hpp"
 
-#include "http/server/handler.hpp"
+#include "http/server/router.hpp"
 #include "http/server/server.hpp"
 
 #include "uri/insert_photograph.hpp"
@@ -16,7 +16,8 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
             boost::ref(conn),
             _1,
             _2,
-            _3
+            _3,
+            _4
             )
         );
     server.router().install(
@@ -26,7 +27,8 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
             boost::ref(conn),
             _1,
             _2,
-            _3
+            _3,
+            _4
             )
         );
     server.router().install(
@@ -36,7 +38,8 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
             boost::ref(conn),
             _1,
             _2,
-            _3
+            _3,
+            _4
             )
         );
 }

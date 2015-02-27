@@ -5,7 +5,7 @@
 
 #include "api/api.hpp"
 #include "db/create.hpp"
-#include "http/server/handler.hpp"
+#include "http/server/router.hpp"
 #include "http/server/install_static_file.hpp"
 #include "http/server/static_file.hpp"
 #include "jsonrpc/uri.hpp"
@@ -49,7 +49,7 @@ helios::server::server(
     api::install(*m_connection, m_api_server);
     m_http_server.router().install(
         "/api_call",
-        boost::bind(&atlas::jsonrpc::uri, m_io, boost::ref(m_api_server), _1, _2, _3)
+        boost::bind(&atlas::jsonrpc::uri, m_io, boost::ref(m_api_server), _1, _2, _3, _4)
         );
 
     atlas::log::information("server::server") << "server listening on port " <<

@@ -18,6 +18,7 @@ namespace helios
         void jpeg_image_fullsize(
                 hades::connection&,
                 mg_connection*,
+                boost::smatch,
                 atlas::http::uri_callback_type callback_success,
                 atlas::http::uri_callback_type callback_failure
                 );

@@ -70,6 +70,7 @@ namespace
 int helios::uri::insert_photograph(
         hades::connection& conn,
         mg_connection *mg_conn,
+        boost::smatch,
         atlas::http::uri_callback_type callback_success,
         atlas::http::uri_callback_type callback_failure
         )
