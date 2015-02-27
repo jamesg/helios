@@ -33,22 +33,37 @@ helios::server::server(
     m_connection.reset(new hades::connection(options.db_file));
     db::create(*m_connection);
 
-    atlas::http::install_static_file(m_http_server, *m_mime_information, "index.html", "/");
-    atlas::http::install_static_file(m_http_server, *m_mime_information, "index.html");
-    atlas::http::install_static_file(m_http_server, *m_mime_information, "bundle.js");
-    atlas::http::install_static_file(m_http_server, *m_mime_information, "pure-min.css");
-    atlas::http::install_static_file(m_http_server, *m_mime_information, "main.css");
-    atlas::http::install_static_file(m_http_server, *m_mime_information, "favicon.png");
-    atlas::http::install_static_file(m_http_server, *m_mime_information, "grids-responsive-old-ie-min.css");
-    atlas::http::install_static_file(m_http_server, *m_mime_information, "grids-responsive-min.css");
-    atlas::http::install_static_file(m_http_server, *m_mime_information, "open-iconic/font/css/open-iconic.css");
-    atlas::http::install_static_file(m_http_server, *m_mime_information, "open-iconic/font/fonts/open-iconic.ttf");
-    atlas::http::install_static_file(m_http_server, *m_mime_information, "open-iconic/font/fonts/open-iconic.woff");
+    std::string html_root = "web/static";
+    auto install_static_file = [this, html_root](const char *filename) {
+        atlas::http::install_static_file(
+                m_http_server,
+                *m_mime_information,
+                hades::mkstr() << html_root << filename,
+                filename
+                );
+    };
+
+    atlas::http::install_static_file(
+            m_http_server,
+            *m_mime_information,
+            hades::mkstr() << html_root << "/index.html",
+            "/"
+            );
+    install_static_file("/index.html");
+    install_static_file("/bundle.js");
+    install_static_file("/pure-min.css");
+    install_static_file("/main.css");
+    install_static_file("/favicon.png");
+    install_static_file("/grids-responsive-old-ie-min.css");
+    install_static_file("/grids-responsive-min.css");
+    install_static_file("/open-iconic/font/css/open-iconic.css");
+    install_static_file("/open-iconic/font/fonts/open-iconic.ttf");
+    install_static_file("/open-iconic/font/fonts/open-iconic.woff");
     uri::install(*m_connection, m_http_server);
 
     api::install(*m_connection, m_api_server);
     m_http_server.router().install(
-        "/api_call",
+        atlas::http::matcher("/api_call", "post"),
         boost::bind(&atlas::jsonrpc::uri, m_io, boost::ref(m_api_server), _1, _2, _3, _4)
         );
 
