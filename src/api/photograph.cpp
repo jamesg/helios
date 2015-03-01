@@ -181,12 +181,15 @@ void helios::api::photograph::install(
                 helios::photograph_location,
                 helios::album>(
                 conn,
-                hades::where(
-                    "photograph.photograph_id = photograph_in_album.photograph_id AND "
-                    "photograph_in_album.album_id = album.album_id AND "
-                    "photograph.photograph_id = photograph_location.photograph_id AND "
-                    "album.album_id = ?",
-                    hades::row<int>(album_id)
+                hades::filter(
+                    hades::where(
+                        "photograph.photograph_id = photograph_in_album.photograph_id AND "
+                        "photograph_in_album.album_id = album.album_id AND "
+                        "photograph.photograph_id = photograph_location.photograph_id AND "
+                        "album.album_id = ?",
+                        hades::row<int>(album_id)
+                        ),
+                    hades::order_by("photograph.taken ASC")
                     )
                 );
         },
