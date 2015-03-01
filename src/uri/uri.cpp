@@ -10,7 +10,7 @@
 void helios::uri::install(hades::connection& conn, atlas::http::server& server)
 {
     server.router().install(
-        "/insert_photograph",
+        atlas::http::matcher("/insert_photograph", "post"),
         boost::bind(
             &helios::uri::insert_photograph,
             boost::ref(conn),
