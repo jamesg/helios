@@ -5,6 +5,7 @@
 #include "hades/crud.ipp"
 #include "hades/join.hpp"
 #include "styx/serialise_json.hpp"
+#include "styx/serialisers/vector.hpp"
 
 #include "db/photograph.hpp"
 #include "uri/insert_photograph.hpp"
@@ -62,7 +63,26 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
             if(l.size() != 1)
                 return atlas::http::json_error_response("Photograph not found");
 
-            return atlas::http::json_response(l.at(0));
+            helios::photograph photograph(l.at(0));
+            std::vector<std::string> tags = db::photograph_tags(
+                conn,
+                photograph.id()
+                );
+            std::ostringstream oss;
+            styx::serialise(
+                tags,
+                [](const std::string& tag, std::ostream& os) {
+                    if(std::find(tag.cbegin(), tag.cend(), ' ') == tag.cend())
+                        os << tag;
+                    else
+                        os << "\"" << tag << "\"";
+                },
+                " ",
+                oss
+                );
+            photograph.get_string("tags") = oss.str();
+
+            return atlas::http::json_response(photograph);
         }
         );
     server.router().install<>(
@@ -113,14 +133,64 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
         atlas::http::matcher("/photograph/(.+)", "put"),
         [&conn](const styx::element photograph_e, const int photograph_id) {
             helios::photograph photograph(photograph_e);
-            atlas::log::test("put photograph") << "saving " << styx::serialise_json(photograph);
-            atlas::log::test("put photograph") << "id " << photograph.get_int<db::attr::photograph::photograph_id>() << " incoming " << photograph_id;
             if(photograph.get_int<db::attr::photograph::photograph_id>() != photograph_id)
                 return atlas::http::json_error_response("Photograph id does not match.");
+
             photograph.save(conn);
-            atlas::log::test("put photograph") << "saved " << styx::serialise_json(photograph);
+            helios::photograph_location(photograph_e).save(conn);
+            db::set_photograph_tags(conn, photograph.id(), photograph.get_string("tags"));
             return atlas::http::json_response(
                 hades::get_by_id<helios::photograph>(conn, photograph.id())
+                );
+        }
+        );
+    server.router().install<int>(
+        atlas::http::matcher("/photograph/(.*)", "delete"),
+        [&conn](int photograph_id) {
+            helios::photograph photograph;
+            photograph.get_int<db::attr::photograph::photograph_id>() = photograph_id;
+            if(photograph.destroy(conn))
+                return atlas::http::json_response(photograph);
+            else
+                return atlas::http::json_error_response("deleting photograph");
+        }
+        );
+    server.router().install<std::string>(
+        atlas::http::matcher("/tag/([^/]*)/photograph"),
+        [&conn](const std::string tag) {
+            return atlas::http::json_response(
+                hades::join<helios::photograph, helios::basic_tag>(
+                    conn,
+                    hades::filter(
+                        hades::where(
+                            "photograph.photograph_id = "
+                            " photograph_tagged.photograph_id AND "
+                            "photograph_tagged.tag = ? ",
+                            hades::row<std::string>(tag)
+                            ),
+                        hades::order_by("photograph.taken ASC")
+                        )
+                    )
+                );
+        }
+        );
+    server.router().install<std::string>(
+        atlas::http::matcher("/location/([^/]*)/photograph"),
+        [&conn](const std::string location) {
+            atlas::log::test("photograph location") << location;
+            return atlas::http::json_response(
+                hades::join<helios::photograph, helios::basic_location>(
+                    conn,
+                    hades::filter(
+                        hades::where(
+                            "photograph.photograph_id = "
+                            " photograph_location.photograph_id AND "
+                            "photograph_location.location = ? ",
+                            hades::row<std::string>(location)
+                            ),
+                        hades::order_by("photograph.taken ASC")
+                        )
+                    )
                 );
         }
         );
