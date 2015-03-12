@@ -177,7 +177,6 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
     server.router().install<std::string>(
         atlas::http::matcher("/location/([^/]*)/photograph"),
         [&conn](const std::string location) {
-            atlas::log::test("photograph location") << location;
             return atlas::http::json_response(
                 hades::join<helios::photograph, helios::basic_location>(
                     conn,
