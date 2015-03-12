@@ -7,12 +7,12 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/fusion/include/vector.hpp>
 
+#include "atlas/api/server.hpp"
 #include "hades/crud.ipp"
 #include "hades/devoid.hpp"
 #include "hades/join.hpp"
 #include "hades/transaction.hpp"
 
-#include "api/server.hpp"
 #include "db/note.hpp"
 
 void helios::api::note::install(

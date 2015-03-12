@@ -7,6 +7,8 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/fusion/include/vector.hpp>
 
+#include "atlas/api/server.hpp"
+#include "atlas/jsonrpc/auth.hpp"
 #include "hades/crud.ipp"
 #include "hades/custom_select.hpp"
 #include "hades/devoid.hpp"
@@ -16,9 +18,7 @@
 #include "hades/join.hpp"
 #include "styx/serialisers/vector.hpp"
 
-#include "api/server.hpp"
 #include "db/photograph.hpp"
-#include "jsonrpc/auth.hpp"
 
 void helios::api::photograph::install(
         hades::connection& conn,

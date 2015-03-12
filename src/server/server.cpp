@@ -3,13 +3,14 @@
 #include "hades/connection.hpp"
 #include "hades/mkstr.hpp"
 
+#include "atlas/http/server/router.hpp"
+#include "atlas/http/server/install_static_file.hpp"
+#include "atlas/http/server/static_file.hpp"
+#include "atlas/jsonrpc/uri.hpp"
+#include "atlas/log/log.hpp"
+
 #include "api/api.hpp"
 #include "db/create.hpp"
-#include "http/server/router.hpp"
-#include "http/server/install_static_file.hpp"
-#include "http/server/static_file.hpp"
-#include "jsonrpc/uri.hpp"
-#include "log/log.hpp"
 #include "uri/uri.hpp"
 
 helios::server::server(
@@ -33,12 +34,11 @@ helios::server::server(
     m_connection.reset(new hades::connection(options.db_file));
     db::create(*m_connection);
 
-    std::string html_root = "web/static";
-    auto install_static_file = [this, html_root](const char *filename) {
+    auto install_static_file = [this, &options](const char *filename) {
         atlas::http::install_static_file(
                 m_http_server,
                 *m_mime_information,
-                hades::mkstr() << html_root << filename,
+                hades::mkstr() << options.html_root << filename,
                 filename
                 );
     };
@@ -46,16 +46,20 @@ helios::server::server(
     atlas::http::install_static_file(
             m_http_server,
             *m_mime_information,
-            hades::mkstr() << html_root << "/index.html",
+            hades::mkstr() << options.html_root << "/index.html",
             "/"
             );
     install_static_file("/index.html");
-    install_static_file("/bundle.js");
+    install_static_file("/backbone.js");
+    install_static_file("/underscore.js");
+    install_static_file("/backbone-min.js");
+    install_static_file("/underscore-min.js");
+    install_static_file("/jquery.js");
+    install_static_file("/application.js");
+    install_static_file("/stacked_application.js");
+    install_static_file("/models.js");
+    install_static_file("/style.css");
     install_static_file("/pure-min.css");
-    install_static_file("/main.css");
-    install_static_file("/favicon.png");
-    install_static_file("/grids-responsive-old-ie-min.css");
-    install_static_file("/grids-responsive-min.css");
     install_static_file("/open-iconic/font/css/open-iconic.css");
     install_static_file("/open-iconic/font/fonts/open-iconic.ttf");
     install_static_file("/open-iconic/font/fonts/open-iconic.woff");

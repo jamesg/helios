@@ -12,6 +12,7 @@ int main(int argc, const char *argv[])
         commandline::parameter("address", options.address, "Address to listen on"),
         commandline::parameter("port", options.port, "Port to listen on"),
         commandline::parameter("db", options.db_file, "Database file"),
+        commandline::parameter("html-root", options.html_root, "HTML document root"),
         commandline::flag("help", show_help, "Show this help message")
     };
     commandline::parse(argc, argv, cmd_options);

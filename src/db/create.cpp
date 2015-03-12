@@ -1,6 +1,6 @@
 #include "create.hpp"
 
-#include "db/auth.hpp"
+#include "atlas/db/auth.hpp"
 #include "cache.hpp"
 #include "note.hpp"
 #include "photograph.hpp"

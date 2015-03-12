@@ -6,12 +6,11 @@
 #include <exiv2/exiv2.hpp>
 #include <Magick++.h>
 
+#include "atlas/http/server/error.hpp"
 #include "hades/mkstr.hpp"
 
-//#include "db/auth.hpp"
 #include "db/cache.hpp"
 #include "db/jpeg_data.hpp"
-#include "http/server/error.hpp"
 #include "uri/detail.hpp"
 
 void helios::uri::jpeg_image(

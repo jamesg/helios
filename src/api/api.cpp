@@ -1,8 +1,8 @@
 #include "api.hpp"
 
-#include "api/server.hpp"
+#include "atlas/api/server.hpp"
+#include "atlas/api/auth.hpp"
 
-#include "api/auth.hpp"
 #include "features.hpp"
 #include "note.hpp"
 #include "photograph.hpp"

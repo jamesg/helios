@@ -7,7 +7,7 @@
 #include "hades/row.hpp"
 #include "hades/step.hpp"
 
-#include "log/log.hpp"
+#include "atlas/log/log.hpp"
 
 void helios::db::cache::create(hades::connection& conn)
 {

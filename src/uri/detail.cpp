@@ -5,7 +5,7 @@
 #include <boost/date_time/local_time/local_time.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#include "db/auth.hpp"
+#include "atlas/db/auth.hpp"
 
 std::string helios::uri::detail::extract_token(mg_connection *mg_conn)
 {

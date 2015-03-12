@@ -5,9 +5,9 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 
-#include "api/server.hpp"
-#include "http/server/mimetypes.hpp"
-#include "http/server/server.hpp"
+#include "atlas/api/server.hpp"
+#include "atlas/http/server/mimetypes.hpp"
+#include "atlas/http/server/server.hpp"
 
 namespace hades
 {
@@ -29,6 +29,7 @@ namespace helios
         {
             std::string address;
             std::string db_file;
+            std::string html_root;
             std::string port;
             options() :
                 address("0.0.0.0")

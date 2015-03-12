@@ -7,13 +7,13 @@
 
 #include <exiv2/exiv2.hpp>
 
+#include "atlas/jsonrpc/request.hpp"
+#include "atlas/jsonrpc/result.hpp"
 #include "hades/crud.ipp"
 #include "styx/serialise_json.hpp"
 
 #include "db/jpeg_data.hpp"
 #include "db/photograph.hpp"
-#include "jsonrpc/request.hpp"
-#include "jsonrpc/result.hpp"
 
 namespace
 {

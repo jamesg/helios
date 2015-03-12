@@ -5,7 +5,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include "db/jpeg_data.hpp"
-#include "uri/detail.hpp"
+#include "detail.hpp"
 
 void helios::uri::jpeg_image_fullsize(
         hades::connection& conn,

@@ -4,7 +4,7 @@
 
 #include "hades/crud.ipp"
 
-#include "api/server.hpp"
+#include "atlas/api/server.hpp"
 
 namespace
 {

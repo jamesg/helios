@@ -1,6 +1,7 @@
 #include "statistics.hpp"
 
-#include "api/server.hpp"
+#include "atlas/api/server.hpp"
+
 #include "db/statistics.hpp"
 
 void helios::api::statistics::install(
