@@ -84,6 +84,110 @@ var jsonRpc = function(options) {
     req.send(JSON.stringify(requestContent));
 };
 
+/*
+ * Single message to be visualised in a MessageBox.
+ */
+var Message = Backbone.Model.extend(
+    {
+        defaults: { severity: 'information', message: '', closeButton: true },
+        timeout: function(delay) {
+            setTimeout(
+                (function() {
+                    this.trigger('fadeout');
+                    setTimeout(this.destroy.bind(this), 1000);
+                }).bind(this),
+            delay
+            );
+        }
+    }
+    );
+
+var MessageCollection = Backbone.Collection.extend(
+    {
+        model: Message
+    }
+    );
+
+/*
+ * A single message displayed in a box with appropriate styling.
+ */
+var MessageView = StaticView.extend(
+    {
+        initialize: function() {
+            StaticView.prototype.initialize.apply(this, arguments);
+            this.render();
+        },
+        model: Message,
+        className: function() {
+            return 'messagebox messagebox-' + this.model.get('severity');
+        },
+        fadeout: function() {
+            this.$el.attr('style', 'opacity: 0;')
+        },
+        events: {
+            'click button[name=close]': function() { this.model.destroy(); }
+        },
+        template: '<span><%-message%></span><button name="close">Close</button>'
+    }
+    );
+
+var MessageCollectionView = CollectionView.extend(
+    {
+        view: MessageView,
+        initializeView: function(view) {
+            this.listenTo(view.model, 'fadeout', view.fadeout.bind(view));
+        }
+    }
+    );
+
+/*
+ * Default message box dismissal timeout in milliseconds.
+ */
+var defaultTimeout = 5000;
+
+/*
+ * View onto a list of messages which inform the user of recent events.
+ * Messages may be dismissed by clicking the (optional) close button, or will
+ * be dismissed automatically after a timeout.
+ */
+var MessageBox = StaticView.extend(
+    {
+        initialize: function(options) {
+            StaticView.prototype.initialize.apply(this, arguments);
+            if(!_.has(this, 'model'))
+                this.model = new MessageCollection;
+            this._collectionView = new MessageCollectionView({ model: this.model });
+            this._collectionView.render();
+            this.render();
+        },
+        displayError: function(str) {
+            var message = new Message({ severity: 'error', message: str });
+            message.timeout(defaultTimeout);
+            this.model.add(message);
+        },
+        displayInformation: function(str) {
+            var message = new Message({ severity: 'information', message: str });
+            message.timeout(defaultTimeout);
+            this.model.add(message);
+        },
+        displaySuccess: function(str) {
+            var message = new Message({ severity: 'success', message: str });
+            message.timeout(defaultTimeout);
+            this.model.add(message);
+        },
+        displayWarning: function(str) {
+            var message = new Message({ severity: 'warning', message: str });
+            message.timeout(defaultTimeout);
+            this.model.add(message);
+        },
+        render: function() {
+            this.$el.empty();
+            this.$el.append(this._collectionView.$el);
+        }
+    }
+    );
+
+
 var TbodyView = CollectionView.extend(
     {
         tagName: 'tbody',
@@ -136,11 +240,11 @@ var TableView = ModelView.extend(
         },
         render: function() {
             this.$el.empty();
-            this.$el.append(this._thead.el);
+            this.$el.append(this._thead.$el);
             if(this.model.length == 0)
-                this.$el.append(this._empty.el);
+                this.$el.append(this._empty.$el);
             else
-                this.$el.append(this._tbody.el);
+                this.$el.append(this._tbody.$el);
         },
         initializeTrView: function(trView) {
         }
@@ -265,12 +369,13 @@ var PhotographNewForm = Backbone.View.extend(
         create: function() {
             var photographData = new FormData(this.el);
             var el = this.el;
+            var messageBox = this._messageBox;
             var reqListener = function() {
                 el.disabled = false;
                 if(this.response['error'])
-                    console.log('upload', this.response.error);
+                    messageBox.displayError('Upload failed: ' + this.response.error);
                 else
-                    console.log('Upload Complete');
+                    messageBox.displaySuccess('Upload complete');
             };
             var xhr = new XMLHttpRequest();
             xhr.open(
@@ -282,8 +387,7 @@ var PhotographNewForm = Backbone.View.extend(
             xhr.addEventListener(
                     'progress',
                     function(event) {
-                        if(event.lengthComputable)
-                        {
+                        if(event.lengthComputable) {
                             var percent = (event.loaded/event.total)*100;
                             console.log('upload percentage', percent);
                         }
@@ -294,9 +398,16 @@ var PhotographNewForm = Backbone.View.extend(
             return false;
         },
         initialize: function() {
-            this.render();
+            this.initRender();
+            this._messageBox = new MessageBox(
+                    {
+                        el: this.$('div[name=message-box]')
+                    }
+                    );
         },
         render: function() {
+        },
+        initRender: function() {
             this.$el.html(this.template(this.model.attributes));
             this.$title = this.$('[name=title]');
             this.$caption = this.$('[name=caption]');
