@@ -351,6 +351,7 @@ var PhotographEditForm = Backbone.View.extend(
         },
         initialize: function(options) {
             this._application = options.application;
+            this.listenTo(this.model, 'change', this.render);
             this.render();
         },
         render: function() {
@@ -589,6 +590,7 @@ var ThumbnailPage = PageView.extend(
                             template: $('#photograph-thumb-view').html(),
                             events: { 'click': 'gotoPhotograph' },
                             gotoPhotograph: function() {
+                                this.model.fetch();
                                 var page = new PhotographPage(
                                     {
                                         application: options.application,
