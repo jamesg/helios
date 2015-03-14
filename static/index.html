@@ -5,6 +5,7 @@
 
 <title>Photograph Album</title>
 <link href="pure-min.css" rel="stylesheet" type="text/css" media="all"></link>
+<link href="modal.css" rel="stylesheet" type="text/css" media="all"></link>
 <link href="style.css" rel="stylesheet" type="text/css" media="all"></link>
 <link
     href="open-iconic/font/css/open-iconic.css"
@@ -113,15 +114,62 @@
         <button type="submit" class="pure-button pure-button-primary">
             Save
         </button>
+        <button
+            class="pure-button button-warning"
+            data-target="#deletemodal"
+            data-toggle="modal">
+        Delete
+        </button>
     </div>
 </fieldset>
+
+<div
+    id="deletemodal"
+    tabindex="-1"
+    class="modal fade hide"
+    role="dialog"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Delete Photograph</h4>
+            </div>
+            <div class="modal-body">
+                <img src="/jpeg_image?height=300&width=400&photograph_id=<%-photograph_id%>">
+                <p>
+                    Are you sure that you wish to delete '<%-title%>'?
+                </p>
+            </div>
+            <div class="modal-footer">
+               <button
+                    class="pure-button"
+                    type="button"
+                    data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Cancel</span>
+                </button>
+                <button
+                    class="pure-button button-warning"
+                    type="button"
+                    name="delete-confirm">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 </script>
 
 <script type="text/template" id="albums-form">
 <h2>Albums</h2>
-<label for="albums">Album</label>
-<select name="albums"></select>
-<button type="submit" name="add">Add</button>
+<div class="pure-control-group">
+    <label for="albums">Album</label>
+    <select class="pure-input" name="albums"></select>
+</div>
+<div class="pure-control-group">
+    <label for="add"></label>
+    <button type="submit" class="pure-button" name="add">Add</button>
+</div>
 <ul class="album-list album-list-small" name="photograph-albums"></ul>
 </script>
 
@@ -161,6 +209,7 @@
 <script type="text/javascript" src="underscore.js"></script>
 <script type="text/javascript" src="backbone.js"></script>
 <script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="modal.js"></script>
 <script type="text/javascript" src="models.js"></script>
 <script type="text/javascript" src="stacked_application.js"></script>
 <script type="text/javascript" src="application.js"></script>

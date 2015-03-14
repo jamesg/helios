@@ -322,7 +322,8 @@ var PhotographEditForm = Backbone.View.extend(
         tagName: 'form',
         className: 'pure-form pure-form-aligned',
         events: {
-            'submit': 'save'
+            'submit': 'save',
+            'click button[name=delete-confirm]': 'deletePhotograph'
         },
         save: function() {
             this.model.set(
@@ -344,7 +345,12 @@ var PhotographEditForm = Backbone.View.extend(
                 );
             return false;
         },
-        initialize: function() {
+        deletePhotograph: function() {
+            this.model.destroy();
+            this._application.popPage();
+        },
+        initialize: function(options) {
+            this._application = options.application;
             this.render();
         },
         render: function() {
@@ -462,7 +468,7 @@ var PhotographAlbumsView = StaticView.extend(
                     view: ModelView.extend(
                         {
                             tagName: 'li',
-                            template: '<%-name%> (<button class="display-link">Remove</button>)',
+                            template: '<%-name%> (<button type="button" class="display-link">Remove</button>)',
                             events: {
                                 'click button': 'removeFromAlbum'
                             },
@@ -481,6 +487,7 @@ var PhotographAlbumsView = StaticView.extend(
                                         error: function(err) { console.log('err',err); }
                                     }
                                     );
+                                return false;
                             }
                         }
                         )
@@ -527,6 +534,8 @@ var PhotographAlbumsView = StaticView.extend(
                 );
             return false;
         },
+        tagName: 'form',
+        className: 'pure-form pure-form-aligned',
         template: _.template($('#albums-form').html()),
         initRender: function() {
             this.$el.html(this.template());
@@ -541,10 +550,10 @@ var PhotographAlbumsView = StaticView.extend(
 var PhotographPage = PageView.extend(
     {
         pageTitle: function() { return this.model.get('title'); },
-        initialize: function() {
+        initialize: function(options) {
             this._detailsView = new PhotographDetailsView({ model: this.model });
             this._detailsView.render();
-            this._form = new PhotographEditForm({ model: this.model });
+            this._form = new PhotographEditForm({ model: this.model, application: options.application });
             this._form.render();
             this._albumsForm = new PhotographAlbumsView({ photograph: this.model });
             this._albumsForm.render();
@@ -595,7 +604,7 @@ var ThumbnailPage = PageView.extend(
             this.render();
         },
         reset: function() {
-            this._photographs.fetch();
+            this.model.fetch();
         },
         render: function() {
             this.$el.empty();
