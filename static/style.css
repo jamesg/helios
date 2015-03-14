@@ -57,16 +57,16 @@ h1 {
 }
 .thumbnail-list li {
     display: inline-block;
-    height: 164px;
-    width: 164px;
+    height: 194px;
+    width: 194px;
     padding: 2px;
     white-space: nowrap;
     text-align: center;
     vertical-align: middle;
 }
 .thumbnail-list img {
-    max-height: 160px;
-    max-width: 160px;
+    max-height: 190px;
+    max-width: 190px;
     margin: 0px;
     vertical-align: middle;
 }
