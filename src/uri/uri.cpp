@@ -3,6 +3,7 @@
 #include "atlas/http/server/router.hpp"
 #include "atlas/http/server/server.hpp"
 #include "hades/crud.ipp"
+#include "hades/custom_select.hpp"
 #include "hades/join.hpp"
 #include "styx/serialise_json.hpp"
 #include "styx/serialisers/vector.hpp"
@@ -48,7 +49,7 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
             )
         );
     server.router().install<int>(
-        "/photograph/(.+)",
+        "/photograph/([^/]+)",
         [&conn](const int photograph_id) {
             auto where = hades::where(
                 "photograph.photograph_id = ?",
@@ -106,7 +107,7 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
         }
         );
     server.router().install<int>(
-        "/album/(.+)/photograph",
+        "/album/([^/]+)/photograph",
         [&conn](const int album_id) {
             return atlas::http::json_response(
                 hades::join<
@@ -129,8 +130,22 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
                 );
         }
         );
+    server.router().install<>(
+            "/uncategorised/photograph",
+            [&conn]() {
+            return atlas::http::json_response(
+                hades::outer_join<
+                    helios::photograph,
+                    helios::photograph_in_album>(
+                    conn,
+                    "photograph.photograph_id = photograph_in_album.photograph_id",
+                    hades::where("photograph_in_album.photograph_id IS NULL")
+                    )
+                );
+            }
+            );
     server.router().install_json<int>(
-        atlas::http::matcher("/photograph/(.+)", "put"),
+        atlas::http::matcher("/photograph/([^/]+)", "put"),
         [&conn](const styx::element photograph_e, const int photograph_id) {
             helios::photograph photograph(photograph_e);
             if(photograph.get_int<db::attr::photograph::photograph_id>() != photograph_id)
@@ -145,7 +160,7 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
         }
         );
     server.router().install<int>(
-        atlas::http::matcher("/photograph/(.*)", "delete"),
+        atlas::http::matcher("/photograph/([^/]+)", "delete"),
         [&conn](int photograph_id) {
             helios::photograph photograph;
             photograph.get_int<db::attr::photograph::photograph_id>() = photograph_id;
@@ -153,6 +168,21 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
                 return atlas::http::json_response(photograph);
             else
                 return atlas::http::json_error_response("deleting photograph");
+        }
+        );
+    server.router().install<int>(
+        "/photograph/([^/]+)/album",
+        [&conn](int photograph_id) {
+            return atlas::http::json_response(
+                hades::join<helios::photograph_in_album, helios::album>(
+                    conn,
+                    hades::where(
+                        "photograph_in_album.album_id = album.album_id AND "
+                        "photograph_in_album.photograph_id = ?",
+                        hades::row<int>(photograph_id)
+                        )
+                    )
+                );
         }
         );
     server.router().install<std::string>(
@@ -191,6 +221,38 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
                         )
                     )
                 );
+        }
+        );
+    server.router().install<>(
+        "/tag",
+        [&conn]() {
+            return atlas::http::json_response(
+                hades::custom_select<
+                    helios::tag,
+                    db::attr::tag::tag,
+                    db::attr::tag::photograph_count>(
+                        conn,
+                        "SELECT tag, COUNT(photograph_id) FROM photograph_tagged "
+                        "WHERE tag IS NOT NULL AND tag != '' "
+                        "GROUP BY tag ORDER BY tag ASC "
+                        )
+                    );
+        }
+        );
+    server.router().install<>(
+        "/location",
+        [&conn]() {
+            return atlas::http::json_response(
+                hades::custom_select<
+                    helios::photograph_location,
+                    db::attr::photograph_location::location,
+                    db::attr::tag::photograph_count>(
+                        conn,
+                        "SELECT location, COUNT(photograph_id) FROM photograph_location "
+                        "WHERE location IS NOT NULL AND location != '' "
+                        "GROUP BY location ORDER BY location ASC "
+                        )
+                    );
         }
         );
 }
