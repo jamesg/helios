@@ -51,15 +51,17 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
     server.router().install<int>(
         "/photograph/([^/]+)",
         [&conn](const int photograph_id) {
-            auto where = hades::where(
-                "photograph.photograph_id = ?",
-                hades::row<int>(photograph_id)
-                );
             styx::list l = hades::equi_outer_join<
                 helios::photograph,
                 helios::photograph_location>(
                     conn,
-                    where
+                    hades::filter(
+                        hades::where(
+                            "photograph.photograph_id = ?",
+                            hades::row<int>(photograph_id)
+                            ),
+                        hades::order_by("photograph.taken")
+                        )
                     );
             if(l.size() != 1)
                 return atlas::http::json_error_response("Photograph not found");
@@ -89,8 +91,9 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
     server.router().install<>(
         "/album",
         [&conn]() {
+            auto filter = hades::order_by("album.name ASC");
             return atlas::http::json_response(
-                helios::album::get_collection(conn)
+                helios::album::get_collection(conn, filter)
                 );
         }
         );
@@ -139,7 +142,10 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
                     helios::photograph_in_album>(
                     conn,
                     "photograph.photograph_id = photograph_in_album.photograph_id",
-                    hades::where("photograph_in_album.photograph_id IS NULL")
+                    hades::filter(
+                        hades::where("photograph_in_album.photograph_id IS NULL"),
+                        hades::order_by("photograph.taken ASC")
+                        )
                     )
                 );
             }
