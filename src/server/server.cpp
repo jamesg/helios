@@ -55,6 +55,8 @@ helios::server::server(
     install_static_file("/backbone-min.js");
     install_static_file("/underscore-min.js");
     install_static_file("/jquery.js");
+    install_static_file("/modal.css");
+    install_static_file("/modal.js");
     install_static_file("/application.js");
     install_static_file("/stacked_application.js");
     install_static_file("/models.js");
