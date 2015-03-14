@@ -25,16 +25,34 @@
 <script type="text/template" id="main-menu">
 <div class="pure-g main-menu">
     <div class="pure-u-12-24">
-        <button class="pure-button" name="albums">Albums</button>
+        <button class="pure-button" name="albums">
+            <span aria-hidden="aria-hidden" data-glyph="book" class="oi"> </span>
+            Albums
+        </button>
     </div>
     <div class="pure-u-12-24">
-        <button class="pure-button" name="locations">Locations</button>
+        <button class="pure-button" name="locations">
+            <span aria-hidden="aria-hidden" data-glyph="map" class="oi"> </span>
+            Locations
+        </button>
     </div>
     <div class="pure-u-12-24">
-        <button class="pure-button" name="tags">Tags</button>
+        <button class="pure-button" name="tags">
+            <span aria-hidden="aria-hidden" data-glyph="tags" class="oi"> </span>
+            Tags
+        </button>
     </div>
     <div class="pure-u-12-24">
-        <button class="pure-button" name="upload">Upload</button>
+        <button class="pure-button" name="uncategorised">
+            <span aria-hidden="aria-hidden" data-glyph="puzzle-piece" class="oi"> </span>
+            Uncategorised
+        </button>
+    </div>
+    <div class="pure-u-12-24">
+        <button class="pure-button" name="upload">
+            <span aria-hidden="aria-hidden" data-glyph="data-transfer-upload" class="oi"> </span>
+            Upload
+        </button>
     </div>
 </div>
 </script>
@@ -49,12 +67,15 @@
 </script>
 
 <script type="text/template" id="photograph-thumb-view">
-<img
+<span class="vertical-align-helper"></span><img
     src="/jpeg_image?width=160&height=160&photograph_id=<%-photograph_id%>"
     alt="<%-title%>">
 </script>
 
 <script type="text/template" id="photograph-view">
+<img
+    src="/jpeg_image?width=800&height=600&photograph_id=<%-photograph_id%>"
+    alt="<%-title%>">
 <h2>Photograph Details</h2>
 <dl type="compact">
 <dt>Title</dt><dd><%-title%></dd>
@@ -96,21 +117,44 @@
 </fieldset>
 </script>
 
+<script type="text/template" id="albums-form">
+<h2>Albums</h2>
+<label for="albums">Album</label>
+<select name="albums"></select>
+<button type="submit" name="add">Add</button>
+<ul class="album-list album-list-small" name="photograph-albums"></ul>
+</script>
+
 <script type="text/template" id="photograph-new-form">
 <h2>New Photograph</h2>
 <fieldset class="pure-control-group">
-    <label for="title">Title</label>
-    <input type="text" name="title" value="<%-title%>"></input>
-    <label for="caption">Caption</label>
-    <input type="text" name="caption" value="<%-caption%>"></input>
-    <label for="location">Location</label>
-    <input type="text" name="location" value="<%-location%>"></input>
-    <label for="tags">Tags</label>
-    <input type="text" name="tags" value="<%-tags%>"></input>
-    <label for="file">File</label>
-    <input type="file" name="file"></input>
+<fieldset>
+    <div class="pure-control-group">
+        <label for="title">Title</label>
+        <input type="text" name="title"></input>
+    </div>
+    <div class="pure-control-group">
+        <label for="caption">Caption</label>
+        <input type="text" name="caption"></input>
+    </div>
+    <div class="pure-control-group">
+        <label for="location">Location</label>
+        <input type="text" name="location"></input>
+    </div>
+    <div class="pure-control-group">
+        <label for="tags">Tags</label>
+        <input type="text" name="tags"></input>
+    </div>
+    <div class="pure-control-group">
+        <label for="file">File</label>
+        <input type="file" name="file"></input>
+    </div>
+    <div class="pure-controls">
+        <button type="submit" class="pure-button pure-button-primary">
+            Upload
+        </button>
+    </div>
 </fieldset>
-<button type="submit" class="pure-button pure-button-primary">Upload</button>
 </script>
 
 <script type="text/javascript" src="underscore.js"></script>

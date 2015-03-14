@@ -44,11 +44,39 @@ var Album = RestModel.extend(
 var AlbumCollection = RestCollection.extend(
     {
         model: Album,
-        url: '/album',
-        set: function(models) {
-            console.log('set',models);
-            return RestCollection.prototype.set.apply(this, arguments);
-        }
+        url: '/album'
+    }
+    );
+
+var Tag = RestModel.extend(
+    {
+        defaults: {
+            photograph_count: 0
+        },
+        idAttribute: 'tag'
+    }
+    );
+
+var TagCollection = RestCollection.extend(
+    {
+        model: Tag,
+        url: '/tag'
+    }
+    );
+
+var Location = RestModel.extend(
+    {
+        defaults: {
+            photograph_count: 0
+        },
+        idAttribute: 'location'
+    }
+    );
+
+var LocationCollection = RestCollection.extend(
+    {
+        model: Location,
+        url: '/location'
     }
     );
 
@@ -90,15 +118,46 @@ var PhotographsInAlbum = RestCollection.extend(
     }
     );
 
+var UncategorisedPhotographs = RestCollection.extend(
+    {
+        model: Photograph,
+        url: '/uncategorised/photograph'
+    }
+    );
+
 var PhotographsWithTag = RestCollection.extend(
     {
-        initialize: function(options) {
+        initialize: function(models, options) {
             RestCollection.prototype.initialize.apply(this, options);
             this._tag = options.tag;
         },
         model: Photograph,
-        // TODO: what about tags with spaces?
-        uri: function() { return '/tag/' + this._tag + '/photograph'; }
+        url: function() { return '/tag/' + this._tag + '/photograph'; }
+    }
+    );
+
+var PhotographsWithLocation = RestCollection.extend(
+    {
+        initialize: function(models, options) {
+            RestCollection.prototype.initialize.apply(this, arguments);
+            this._location = options.location;
+        },
+        model: Photograph,
+        url: function() { return '/location/' + this._location + '/photograph'; }
+    }
+    );
+
+var PhotographAlbums = RestCollection.extend(
+    {
+        initialize: function(models, options) {
+            RestCollection.prototype.initialize.apply(this, arguments);
+            this._photograph = options.photograph;
+        },
+        model: Album,
+        url: function() {
+            return '/photograph/' + this._photograph.get('photograph_id') +
+                '/album';
+        }
     }
     );
 

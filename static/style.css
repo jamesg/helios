@@ -1,13 +1,77 @@
 body {
     background-color: slategrey;
+    color: black;
+}
+
+h1 {
     color: white;
+}
+
+.pure-g > div {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0.5em;
+}
+
+.navigation ul {
+    list-style-type: none;
+    padding-left: 1em;
 }
 
 .main-menu button {
     display: block;
+    font-size: 150%;
+    height: 3em;
+    width: 100%;
 }
 
-.album-list ul:hover {
+.album-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.album-list li {
+    padding: 1em;
+}
+
+.album-list li:hover {
+    background-color: lightgrey;
+}
+
+.thumbnail-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.thumbnail-list li {
+    padding: 1em;
+}
+
+.vertical-align-helper {
+    display: inline-block;
+    height: 100%;
+    width: 0;
+    margin: 0;
+    vertical-align: middle;
+}
+.thumbnail-list li {
+    display: inline-block;
+    height: 164px;
+    width: 164px;
+    padding: 2px;
+    white-space: nowrap;
+    text-align: center;
+    vertical-align: middle;
+}
+.thumbnail-list img {
+    max-height: 160px;
+    max-width: 160px;
+    margin: 0px;
+    vertical-align: middle;
+}
+
+.thumbnail-list li:hover {
     background-color: lightgrey;
 }
 

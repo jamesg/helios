@@ -22,6 +22,7 @@ var ModelView = StaticView.extend({});
 var CollectionView = Backbone.View.extend(
     {
         initialize: function(options) {
+            Backbone.View.prototype.initialize.apply(this, arguments);
             _(this).bindAll('add', 'remove');
             if(_.has(options, 'view')) this.view = options.view;
             this._views = [];
@@ -69,10 +70,9 @@ var CollectionView = Backbone.View.extend(
             this._rendered = true;
             this.$el.empty();
             _(this._views).each(
-                function(dv) { dv.render(); this.$el.append(dv.$el); },
+                function(dv) { dv.render(); this.$el.append(dv.el); },
                 this
                 );
-            return this;
         }
     }
     );
@@ -102,7 +102,9 @@ var BreadcrumbView = ModelView.extend(
             // TODO: should this be 'button click'?
             'click': 'revisit'
         },
-        template: '<button class="display-link"><%-page_title%></button>'
+        template:
+            '<span aria-hidden="aria-hidden" data-glyph="chevron-right" class="oi"> </span>' +
+            '<button class="display-link"><%-page_title%></button>  '
     }
     );
 
