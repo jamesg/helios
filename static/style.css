@@ -4,7 +4,7 @@ body {
 }
 
 h1 {
-    color: white;
+    padding-top: 0.5em;
 }
 
 .pure-g > div {
@@ -17,6 +17,7 @@ h1 {
 .navigation ul {
     list-style-type: none;
     padding-left: 1em;
+    font-size: large;
 }
 
 .main-menu button {
@@ -29,6 +30,11 @@ h1 {
 .album-list {
     list-style-type: none;
     padding: 0;
+}
+
+.album-list-large {
+    -moz-column-count: 3;
+    column-count: 3;
 }
 
 .album-list li {
@@ -80,17 +86,19 @@ h1 {
     color: black;
 }
 
-.display-link {
-    background: none!important;
-    border: none;
-    padding: 0!important;
-    border-bottom: 1px solid #444;
+/*
+ * All anchors should be displayed as links, even if they don't have a href
+ * attribute.
+ */
+a {
+    text-decoration: underline;
     cursor: pointer;
 }
 
 /*
  * Message box styles.
  */
+
 .messagebox {
     border-bottom: 4px solid black;
     padding: 1em;

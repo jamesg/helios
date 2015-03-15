@@ -469,9 +469,9 @@ var PhotographAlbumsView = StaticView.extend(
                     view: ModelView.extend(
                         {
                             tagName: 'li',
-                            template: '<%-name%> (<button type="button" class="display-link">Remove</button>)',
+                            template: '<%-name%> (<a>Remove</a>)',
                             events: {
-                                'click button': 'removeFromAlbum'
+                                'click a': 'removeFromAlbum'
                             },
                             removeFromAlbum: function() {
                                 // RPC
@@ -635,7 +635,7 @@ var AlbumsPage = PageView.extend(
                     view: ModelView.extend(
                         {
                             tagName: 'li',
-                            template: '<%-name%>',
+                            template: '<a><%-name%></a>',
                             events: { 'click': 'gotoAlbum' },
                             gotoAlbum: function() {
                                 var model = new PhotographsInAlbum([], { album: this.model });

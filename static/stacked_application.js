@@ -99,12 +99,11 @@ var BreadcrumbView = ModelView.extend(
             this.application.revisit(this.model);
         },
         events: {
-            // TODO: should this be 'button click'?
-            'click': 'revisit'
+            'click a': 'revisit'
         },
         template:
             '<span aria-hidden="aria-hidden" data-glyph="chevron-right" class="oi"> </span>' +
-            '<button class="display-link"><%-page_title%></button>  '
+            '<a><%-page_title%></a>  '
     }
     );
 
