@@ -51,6 +51,7 @@ namespace helios
         // initialisation.
         boost::scoped_ptr<hades::connection> m_connection;
         atlas::api::server m_api_server;
+        atlas::api::server m_auth_api_server;
         atlas::http::server m_http_server;
         boost::scoped_ptr<atlas::http::mimetypes> m_mime_information;
     };

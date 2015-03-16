@@ -3,6 +3,7 @@
 #include "hades/connection.hpp"
 #include "hades/mkstr.hpp"
 
+#include "atlas/api/auth.hpp"
 #include "atlas/http/server/router.hpp"
 #include "atlas/http/server/install_static_file.hpp"
 #include "atlas/http/server/static_file.hpp"
@@ -71,6 +72,11 @@ helios::server::server(
     m_http_server.router().install(
         atlas::http::matcher("/api_call", "post"),
         boost::bind(&atlas::jsonrpc::uri, m_io, boost::ref(m_api_server), _1, _2, _3, _4)
+        );
+    atlas::api::auth::install(*m_connection, m_auth_api_server);
+    m_http_server.router().install(
+        atlas::http::matcher("/auth", "post"),
+        boost::bind(&atlas::jsonrpc::uri, m_io, boost::ref(m_auth_api_server), _1, _2, _3, _4)
         );
 
     atlas::log::information("server::server") << "server listening on port " <<
