@@ -11,10 +11,9 @@
 
 #include "db/cache.hpp"
 #include "db/jpeg_data.hpp"
-#include "uri/detail.hpp"
+#include "detail.hpp"
 
 void helios::uri::jpeg_image(
-        //const server& serve,
         hades::connection& conn,
         mg_connection *mg_conn,
         boost::smatch,
@@ -22,11 +21,13 @@ void helios::uri::jpeg_image(
         atlas::http::uri_callback_type callback_failure
         )
 {
-    //if(!db::auth::token_valid(detail::extract_token(conn), auth_db))
+    //if(!atlas::auth::is_signed_in(conn, detail::extract_token(mg_conn)))
     //{
-        //detail::text_response(conn, detail::status_unauthorized, "Not authorised");
-        //return MG_TRUE;
+        //atlas::http::error(403, "not authorised", mg_conn);
+        //callback_success();
+        //return;
     //}
+
     char id_s[10], width_s[10], height_s[10];
     mg_get_var(mg_conn, "photograph_id", id_s, sizeof(id_s));
     mg_get_var(mg_conn, "width", width_s, sizeof(width_s));

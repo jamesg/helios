@@ -7,6 +7,8 @@
 
 #include <exiv2/exiv2.hpp>
 
+#include "atlas/auth.hpp"
+#include "atlas/http/server/error.hpp"
 #include "atlas/jsonrpc/request.hpp"
 #include "atlas/jsonrpc/result.hpp"
 #include "hades/crud.ipp"
@@ -14,6 +16,7 @@
 
 #include "db/jpeg_data.hpp"
 #include "db/photograph.hpp"
+#include "detail.hpp"
 
 namespace
 {
@@ -67,7 +70,7 @@ namespace
     }
 }
 
-int helios::uri::insert_photograph(
+void helios::uri::insert_photograph(
         hades::connection& conn,
         mg_connection *mg_conn,
         boost::smatch,
@@ -75,6 +78,15 @@ int helios::uri::insert_photograph(
         atlas::http::uri_callback_type callback_failure
         )
 {
+    // TODO: None of this nice logic will work until the client sets an
+    // Authorization header on outgoing requests.
+    //if(!atlas::auth::is_signed_in(conn, detail::extract_token(mg_conn)))
+    //{
+        //atlas::http::error(403, "not authorised", mg_conn);
+        //callback_success();
+        //return;
+    //}
+
     helios::photograph photo;
     helios::jpeg_data_db data_db;
 

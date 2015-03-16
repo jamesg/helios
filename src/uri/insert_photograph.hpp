@@ -14,7 +14,7 @@ namespace helios
 {
     namespace uri
     {
-        int insert_photograph(
+        void insert_photograph(
                 hades::connection& conn,
                 mg_connection *mg_conn,
                 boost::smatch,

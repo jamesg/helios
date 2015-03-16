@@ -4,6 +4,8 @@
 
 #include <boost/lexical_cast.hpp>
 
+#include "atlas/http/server/error.hpp"
+
 #include "db/jpeg_data.hpp"
 #include "detail.hpp"
 
@@ -15,11 +17,13 @@ void helios::uri::jpeg_image_fullsize(
         atlas::http::uri_callback_type callback_failure
         )
 {
-    //if(!db::auth::token_valid(detail::extract_token(conn), auth_db))
+    //if(!atlas::auth::is_signed_in(conn, detail::extract_token(mg_conn)))
     //{
-        //detail::text_response(conn, detail::status_unauthorized);
-        //return MG_TRUE;
+        //atlas::http::error(403, "not authorised", mg_conn);
+        //callback_success();
+        //return;
     //}
+
     mg_send_status(mg_conn, 200);
     mg_send_header(mg_conn, "Content-type", "image/jpeg");
     // Images cannot be modified after they are uploaded, so we can safely give
