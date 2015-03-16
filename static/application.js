@@ -53,6 +53,31 @@ if(
 }
 
 /*
+ * Set the 'Authorization' header on an outgoing XMLHttpRequest.
+ */
+var setHeader = function(xhr) {
+    xhr.setRequestHeader('Authorization', storage.get('token'));
+};
+
+{
+    var oldSync = Backbone.sync;
+    Backbone.sync = function(method, model, options) {
+        options.beforeSend = setHeader;
+        oldSync(method, model, options);
+    };
+}
+
+/*
+ * Push a sign in page to the application whenever a jQuery request receives a
+ * 403 error.
+ */
+$(document).ajaxError(
+        function (e, xhr, options) {
+            gApplication.pushPage(SignInPage);
+        }
+        );
+
+/*
  * Make a JSONRPC request.
  *
  * 'options' is a map of:
@@ -67,19 +92,26 @@ var jsonRpc = function(options) {
     var url = _.has(options, 'url')?options.url:'/api_call';
     var req = _.has(options, 'xhr')?options.xhr:new XMLHttpRequest;
     var reqListener = function() {
-        var jsonIn = JSON.parse(this.responseText);
-        if(_.has(jsonIn, 'result'))
-            options.success(jsonIn.result);
-        else if(_.has(jsonIn, 'error'))
-            options.error(jsonIn.error);
-        else
-            options.error();
+        switch(this.status) {
+            case 200:
+                var jsonIn = JSON.parse(this.responseText);
+                if(_.has(jsonIn, 'result'))
+                    options.success(jsonIn.result);
+                else if(_.has(jsonIn, 'error'))
+                    options.error(jsonIn.error);
+                else
+                    options.error();
+                break;
+            case 403:
+                gApplication.pushPage(SignInPage);
+                break;
+        }
     }
 
     var requestContent = _.pick(options, 'method', 'params');
     console.log(requestContent);
     req.open('post', url, true);
-    req.setRequestHeader('Authorization', storage.get('token'));
+    setHeader(req);
     req.onload = reqListener;
     req.send(JSON.stringify(requestContent));
 };
@@ -286,6 +318,31 @@ var HomePage = PageView.extend(
                     this.application.pushPage(LocationsPage);
                 }).bind(this)
                 );
+            this.$('button[name=signin]').on(
+                'click',
+                (function() {
+                    this.application.pushPage(SignInPage);
+                }).bind(this)
+                );
+            this.$('button[name=signout]').on(
+                'click',
+                function() {
+                    jsonRpc(
+                        {
+                            url: '/auth',
+                            method: 'sign_out',
+                            params: [ storage.get('token') ],
+                            success: function() {
+                                console.log('signed out');
+                                storage.remove('token');
+                            },
+                            error: function(err) {
+                                console.log('signing out', err);
+                            }
+                        }
+                        );
+                }
+                ),
             this.$('button[name=uncategorised]').on(
                 'click',
                 (function() {
@@ -313,7 +370,52 @@ var HomePage = PageView.extend(
                 }).bind(this)
                 );
         },
-        template: _.template($('#main-menu').html())
+        template: _.template($('#homepage').html())
+    }
+    );
+
+var SignInPage = PageView.extend(
+    {
+        pageTitle: 'Sign In',
+        initialize: function(options) {
+            PageView.prototype.initialize.apply(this, arguments);
+            this._application = options.application;
+            this.initRender();
+            this._messageBox = new MessageBox(
+                    {
+                        el: this.$('div[name=messagebox]')
+                    }
+                    );
+            this._messageBox.render();
+        },
+        events: {
+            'submit form': 'signIn'
+        },
+        signIn: function() {
+            var application = this._application;
+            var messageBox = this._messageBox;
+            jsonRpc(
+                {
+                    url: '/auth',
+                    method: 'sign_in',
+                    params: [this.$username.val(), this.$password.val()],
+                    success: function(user) {
+                        storage.set('token', user.token);
+                        application.popPage();
+                    },
+                    error: function(err) {
+                        messageBox.displayError('Sign in failed; ' + err);
+                    }
+                }
+                );
+            return false;
+        },
+        template: _.template($('#signin-page').html()),
+        initRender: function() {
+            this.$el.html(this.template());
+            this.$username = this.$('input[name=username]');
+            this.$password = this.$('input[name=password]');
+        }
     }
     );
 
@@ -408,11 +510,9 @@ var PhotographNewForm = Backbone.View.extend(
             this.initRender();
             this._messageBox = new MessageBox(
                     {
-                        el: this.$('div[name=message-box]')
+                        el: this.$('div[name=messagebox]')
                     }
                     );
-        },
-        render: function() {
         },
         initRender: function() {
             this.$el.html(this.template(this.model.attributes));

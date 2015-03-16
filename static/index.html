@@ -21,7 +21,7 @@
 <div id="template_header"></div>
 <div id="template_content"></div>
 
-<script type="text/template" id="main-menu">
+<script type="text/template" id="homepage">
 <h1>Helios <small>Photograph Album</small></h1>
 <div class="pure-g main-menu">
     <div class="pure-u-12-24">
@@ -34,6 +34,18 @@
         <button class="pure-button" name="locations">
             <span aria-hidden="aria-hidden" data-glyph="map" class="oi"> </span>
             Locations
+        </button>
+    </div>
+    <div class="pure-u-12-24">
+        <button class="pure-button" name="signin">
+            <span aria-hidden="aria-hidden" data-glyph="account-login" class="oi"> </span>
+            Sign In
+        </button>
+    </div>
+    <div class="pure-u-12-24">
+        <button class="pure-button" name="signout">
+            <span aria-hidden="aria-hidden" data-glyph="account-logout" class="oi"> </span>
+            Sign Out
         </button>
     </div>
     <div class="pure-u-12-24">
@@ -174,7 +186,7 @@
 
 <script type="text/template" id="photograph-new-form">
 <h2>New Photograph</h2>
-<div name="message-box"></div>
+<div name="messagebox"></div>
 <fieldset class="pure-control-group">
 <fieldset>
     <div class="pure-control-group">
@@ -203,6 +215,27 @@
         </button>
     </div>
 </fieldset>
+</script>
+
+<script type="text/template" id="signin-page">
+<h2>Sign In</h2>
+<div name="messagebox"></div>
+<form>
+<fieldset>
+<div class="pure-control-group">
+    <label for="username">Username</label>
+    <input type="text" name="username"></input>
+</div>
+<div class="pure-control-group">
+    <label for="password">Password</label>
+    <input type="password" name="password"></input>
+</div>
+<div class="pure-controls">
+    <button type="submit" class="pure-button pure-button-primary">
+        Sign In
+    </button>
+</div>
+</form>
 </script>
 
 <script type="text/javascript" src="underscore.js"></script>
