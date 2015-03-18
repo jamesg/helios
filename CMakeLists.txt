@@ -9,8 +9,8 @@ find_package(OpenSSL)
 find_package(Boost COMPONENTS date_time filesystem random regex system thread)
 find_package(ImageMagick COMPONENTS Magick++)
 
-include_directories("atlas-com/lib/mongoose/include")
-include_directories("atlas-com/include")
+include_directories("atlas/lib/mongoose/include")
+include_directories("atlas/include")
 include_directories("src")
 include_directories("commandline/include")
 include_directories("hades/include")
@@ -40,8 +40,8 @@ add_subdirectory(hades)
 # Helios web components
 add_subdirectory(web)
 
-# Helios components
-add_subdirectory(atlas-com)
+# Atlas components
+add_subdirectory(atlas)
 add_subdirectory(src)
 
 add_executable(helios src/main/server.cpp)

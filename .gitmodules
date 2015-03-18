@@ -1,5 +1,5 @@
 [submodule "atlas-com"]
-	path = atlas-com
+	path = atlas
 	url = oak-git:~/projects/atlas-com
 [submodule "commandline"]
 	path = commandline
