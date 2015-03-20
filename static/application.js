@@ -740,7 +740,6 @@ var AlbumsPage = PageView.extend(
             this._albumsView = new CollectionView(
                 {
                     el: this.$('ul[name=albums-list]'),
-                    className: 'album-list album-list-large',
                     model: this._albums,
                     view: ModelView.extend(
                         {
