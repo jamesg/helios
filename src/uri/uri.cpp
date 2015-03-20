@@ -100,6 +100,14 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
+    server.router().install_json<>(
+        atlas::http::matcher("/album", "post"),
+        [&conn](styx::element album_e) {
+            helios::album album(album_e);
+            album.insert(conn);
+            return atlas::http::json_response(album);
+        }
+        );
     server.router().install<int>(
         "/album/([^/]+)",
         [&conn](const int album_id) {

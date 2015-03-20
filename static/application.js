@@ -723,13 +723,23 @@ var ThumbnailPage = PageView.extend(
 var AlbumsPage = PageView.extend(
     {
         pageTitle: 'Albums',
+        template: _.template($('#albums-page').html()),
+        events: {
+            'submit form': 'createAlbum'
+        },
+        createAlbum: function() {
+            var album = new Album({ name: this.$('input[name=name]').val() });
+            album.save({}, { success: this.reset.bind(this) });
+            return false;
+        },
         initialize: function(options) {
             PageView.prototype.initialize.apply(this, arguments);
+            this.$el.html(this.template());
             this._albums = new AlbumCollection;
             this._albums.fetch();
             this._albumsView = new CollectionView(
                 {
-                    tagName: 'ul',
+                    el: this.$('ul[name=albums-list]'),
                     className: 'album-list album-list-large',
                     model: this._albums,
                     view: ModelView.extend(
@@ -738,7 +748,10 @@ var AlbumsPage = PageView.extend(
                             template: '<a><%-name%></a>',
                             events: { 'click': 'gotoAlbum' },
                             gotoAlbum: function() {
-                                var model = new PhotographsInAlbum([], { album: this.model });
+                                var model = new PhotographsInAlbum(
+                                    [],
+                                    { album: this.model }
+                                    );
                                 var page = new ThumbnailPage(
                                     {
                                         application: options.application,
@@ -752,15 +765,10 @@ var AlbumsPage = PageView.extend(
                         )
                 }
                 );
-            this.render();
+            this._albumsView.render();
         },
         reset: function() {
             this._albums.fetch();
-        },
-        render: function() {
-            this.$el.empty();
-            this._albumsView.render();
-            this.$el.append(this._albumsView.$el);
         }
     }
     );

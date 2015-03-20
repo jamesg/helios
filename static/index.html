@@ -98,6 +98,53 @@
 </dl>
 </script>
 
+<script type="text/template" id="albums-page">
+<button
+    type="button"
+    class="pure-button"
+    data-target="#album-new-modal"
+    data-toggle="modal">
+    New Album
+</button>
+<div
+    id="album-new-modal"
+    tabindex="-1"
+    class="modal fade hide"
+    role="dialog"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form name="new-album-form" class="pure-form pure-form-aligned">
+                <div class="modal-header">
+                    <h3>New Album</h3>
+                </div>
+                <div class="modal-body">
+                        <div class="pure-control-group">
+                            <label for="name">Name</label>
+                            <input type="text" name="name"></input>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                   <button
+                        class="pure-button"
+                        type="button"
+                        data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Cancel</span>
+                    </button>
+                    <button
+                        type="submit"
+                        class="pure-button pure-button-primary">
+                        Create
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<ul name="albums-list"></ul>
+</script>
+
 <script type="text/template" id="photograph-edit-form">
 <h2>Edit Photograph</h2>
 <fieldset>
@@ -143,7 +190,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Delete Photograph</h4>
+                <h3>Delete Photograph</h3>
             </div>
             <div class="modal-body">
                 <img src="/jpeg_image?height=300&width=400&photograph_id=<%-photograph_id%>">
