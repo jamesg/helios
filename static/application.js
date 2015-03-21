@@ -421,8 +421,6 @@ var SignInPage = PageView.extend(
 
 var PhotographEditForm = Backbone.View.extend(
     {
-        tagName: 'form',
-        className: 'pure-form pure-form-aligned',
         events: {
             'submit': 'save',
             'click button[name=delete-confirm]': 'deletePhotograph'
@@ -635,8 +633,6 @@ var PhotographAlbumsView = StaticView.extend(
                 );
             return false;
         },
-        tagName: 'form',
-        className: 'pure-form pure-form-aligned',
         template: _.template($('#albums-form').html()),
         initRender: function() {
             this.$el.html(this.template());
@@ -651,24 +647,53 @@ var PhotographAlbumsView = StaticView.extend(
 var PhotographPage = PageView.extend(
     {
         pageTitle: function() { return this.model.get('title'); },
+        template: _.template($('#photograph-page').html()),
         initialize: function(options) {
-            this._detailsView = new PhotographDetailsView({ model: this.model });
+            PageView.prototype.initialize.apply(this, arguments);
+            this.$el.html(
+                this.template(
+                    _.extend(
+                        this.model.toJSON(),
+                        {
+                            disablePrev: !_.has(options, 'prevPhotograph'),
+                            disableNext: !_.has(options, 'nextPhotograph')
+                        }
+                        )
+                    )
+                );
+
+            this._detailsView = new PhotographDetailsView(
+                { el: this.$('div[name=details]'), model: this.model }
+                );
             this._detailsView.render();
-            this._form = new PhotographEditForm({ model: this.model, application: options.application });
+            this._form = new PhotographEditForm(
+                {
+                    el: this.$('form[name=edit]'),
+                    model: this.model,
+                    application: options.application
+                }
+                );
             this._form.render();
-            this._albumsForm = new PhotographAlbumsView({ photograph: this.model });
+            this._albumsForm = new PhotographAlbumsView(
+                { el: this.$('form[name=albums]'), photograph: this.model }
+                );
             this._albumsForm.render();
-            this.listenTo(this._form, 'save', this.model.fetch.bind(this.model));
-            this.render();
+
+            this.listenTo(
+                this._form,
+                'save',
+                this.model.fetch.bind(this.model)
+                );
+
+            if(_(options).has('prevPhotograph'))
+                this.$('button[name=prev]').on('click', options.prevPhotograph);
+            if(_(options).has('nextPhotograph'))
+                this.$('button[name=next]').on('click', options.nextPhotograph);
+        },
+        render: function() {
         },
         reset: function() {
             this.model.fetch();
-        },
-        render: function() {
-            this.$el.empty();
-            this.$el.append(this._detailsView.$el);
-            this.$el.append(this._albumsForm.$el);
-            this.$el.append(this._form.$el);
         }
     }
     );
@@ -676,9 +701,31 @@ var PhotographPage = PageView.extend(
 var ThumbnailPage = PageView.extend(
     {
         pageTitle: function() { return this._name; },
+        gotoPhotograph: function(index) {
+            this.model.at(index).fetch();
+            var opts =
+                {
+                    application: this.application,
+                    model: this.model.at(index)
+                };
+            if(index > 0)
+                opts.prevPhotograph = (function() {
+                    this.application.popPage();
+                    this.gotoPhotograph(index-1);
+                }).bind(this);
+            if(index < this.model.length-1)
+                opts.nextPhotograph = (function() {
+                    this.application.popPage();
+                    this.gotoPhotograph(index+1);
+                }).bind(this);
+            var page = new PhotographPage(opts);
+            this.application.pushPage(page);
+        },
         initialize: function(options) {
+            PageView.prototype.initialize.apply(this, arguments);
             this._name = options.name;
             this.model.fetch();
+            var thumbnailPage = this;
             this._photographsView = new CollectionView(
                 {
                     tagName: 'ul',
@@ -690,14 +737,9 @@ var ThumbnailPage = PageView.extend(
                             template: $('#photograph-thumb-view').html(),
                             events: { 'click': 'gotoPhotograph' },
                             gotoPhotograph: function() {
-                                this.model.fetch();
-                                var page = new PhotographPage(
-                                    {
-                                        application: options.application,
-                                        model: this.model
-                                    }
-                                    );
-                                options.application.pushPage(page);
+                                var index =
+                                    thumbnailPage.model.indexOf(this.model);
+                                thumbnailPage.gotoPhotograph(index);
                             }
                         }
                         )

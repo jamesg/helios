@@ -84,10 +84,35 @@
     alt="<%-title%>">
 </script>
 
-<script type="text/template" id="photograph-view">
+<script type="text/template" id="photograph-page">
+<h2><%-title%></h2>
 <img
     src="/jpeg_image?width=800&height=600&photograph_id=<%-photograph_id%>"
     alt="<%-title%>">
+<div class="pure-controls">
+    <button
+        type="button"
+        <% if(disablePrev) print('disabled') %>
+        name="prev"
+        class="pure-button">
+        <span aria-hidden="aria-hidden" data-glyph="chevron-left" class="oi">
+        </span>
+    </button>
+    <button
+        type="button"
+        <% if(disableNext) print('disabled') %>
+        name="next"
+        class="pure-button">
+        <span aria-hidden="aria-hidden" data-glyph="chevron-right" class="oi">
+        </span>
+    </button>
+</div>
+<div name="details"></div>
+<form name="edit" class="pure-form pure-form-aligned"></form>
+<form name="albums" class="pure-form pure-form-aligned"></form>
+</script>
+
+<script type="text/template" id="photograph-view">
 <h2>Photograph Details</h2>
 <dl type="compact">
 <dt>Title</dt><dd><%-title%></dd>
@@ -275,7 +300,7 @@
 <script type="text/template" id="signin-page">
 <h2>Sign In</h2>
 <div name="messagebox"></div>
-<form>
+<form class="pure-form pure-form-aligned">
 <fieldset>
 <div class="pure-control-group">
     <label for="username">Username</label>
