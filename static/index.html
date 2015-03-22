@@ -83,17 +83,16 @@
 </script>
 
 <script type="text/template" id="photograph-thumb-view">
-<span class="vertical-align-helper"></span><img
+<img
     src="/jpeg_image?width=190&height=190&photograph_id=<%-photograph_id%>"
-    alt="<%-title%>">
+    alt="<%-title%>"><span class="vertical-align-helper"></span>
 </script>
 
 <script type="text/template" id="photograph-page">
-<h2><%-title%></h2>
 <div class="image-container" style="height: 480px">
-    <span class="vertical-align-helper"></span><img
+    <img
         src="/jpeg_image?width=800&height=480&photograph_id=<%-photograph_id%>"
-        alt="<%-title%>">
+        alt="<%-title%>"><span class="vertical-align-helper"></span>
 </div>
 <div class="pure-controls image-controls">
     <button
@@ -113,13 +112,13 @@
         </span>
     </button>
 </div>
+<h2><%-title%></h2>
 <div name="details"></div>
 <form name="edit" class="pure-form pure-form-aligned"></form>
 <form name="albums" class="pure-form pure-form-aligned"></form>
 </script>
 
 <script type="text/template" id="photograph-view">
-<h2>Photograph Details</h2>
 <dl type="compact">
 <dt>Title</dt><dd><%-title%></dd>
 <dt>Caption</dt><dd><%-caption%></dd>

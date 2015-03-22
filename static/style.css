@@ -1,12 +1,3 @@
-body {
-    background-color: slategrey;
-    color: black;
-}
-
-h1 {
-    padding-top: 0.5em;
-}
-
 .pure-g > div {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -15,15 +6,17 @@ h1 {
 }
 
 .navigation ul {
+    background-color: #ddd;
+    margin: 0;
+    padding: 0.5em;
     list-style-type: none;
-    padding-left: 1em;
     font-size: large;
 }
 
 .main-menu button {
     display: block;
     font-size: 150%;
-    height: 3em;
+    height: 3.5em;
     width: 100%;
 }
 
@@ -123,6 +116,16 @@ a {
 .image-container, .image-controls {
     background-color: #444;
     text-align: center;
-    padding: 1em;
+    padding: 0.5em;
+    overflow: hidden;
+}
+
+.image-controls button {
+    padding: 2em;
+    margin: 1em;
+}
+
+.image-container img {
+    vertical-align: middle;
 }
 
