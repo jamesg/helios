@@ -725,11 +725,11 @@ var ThumbnailPage = PageView.extend(
             PageView.prototype.initialize.apply(this, arguments);
             this._name = options.name;
             this.model.fetch();
+            this.$el.html(this.template(this.model.toJSON()));
             var thumbnailPage = this;
             this._photographsView = new CollectionView(
                 {
-                    tagName: 'ul',
-                    className: 'thumbnail-list',
+                    el: this.$('ul[name=thumbnails]'),
                     model: this.model,
                     view: ModelView.extend(
                         {
@@ -745,15 +745,13 @@ var ThumbnailPage = PageView.extend(
                         )
                 }
                 );
-            this.render();
+            this._photographsView.render();
         },
         reset: function() {
             this.model.fetch();
         },
+        template: _.template($('#thumbnail-page').html()),
         render: function() {
-            this.$el.empty();
-            this._photographsView.render();
-            this.$el.append(this._photographsView.$el);
         }
     }
     );
