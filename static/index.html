@@ -90,10 +90,12 @@
 
 <script type="text/template" id="photograph-page">
 <h2><%-title%></h2>
-<img
-    src="/jpeg_image?width=800&height=600&photograph_id=<%-photograph_id%>"
-    alt="<%-title%>">
-<div class="pure-controls">
+<div class="image-container" style="height: 480px">
+    <span class="vertical-align-helper"></span><img
+        src="/jpeg_image?width=800&height=480&photograph_id=<%-photograph_id%>"
+        alt="<%-title%>">
+</div>
+<div class="pure-controls image-controls">
     <button
         type="button"
         <% if(disablePrev) print('disabled') %>
