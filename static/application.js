@@ -419,53 +419,6 @@ var SignInPage = PageView.extend(
     }
     );
 
-var PhotographEditForm = Backbone.View.extend(
-    {
-        events: {
-            'submit': 'save',
-            'click button[name=delete-confirm]': 'deletePhotograph'
-        },
-        save: function() {
-            this.model.set(
-                {
-                    'title': this.$title.val(),
-                    'caption': this.$caption.val(),
-                    'taken': this.$date.val(),
-                    'location': this.$location.val(),
-                    'tags': this.$tags.val()
-                }
-                );
-            this.model.save(
-                { },
-                {
-                    wait: true,
-                    success: this.trigger.bind(this, 'save'),
-                    error: function(err) { console.log('error saving photograph', err); }
-                }
-                );
-            return false;
-        },
-        deletePhotograph: function() {
-            this.model.destroy();
-            this._application.popPage();
-        },
-        initialize: function(options) {
-            this._application = options.application;
-            this.listenTo(this.model, 'change', this.render);
-            this.render();
-        },
-        render: function() {
-            this.$el.html(this.template(this.model.attributes));
-            this.$title = this.$('[name=title]');
-            this.$caption = this.$('[name=caption]');
-            this.$date = this.$('[name=date]');
-            this.$location = this.$('[name=location]');
-            this.$tags = this.$('[name=tags]');
-        },
-        template: _.template($('#photograph-edit-form').html())
-    }
-    );
-
 var PhotographNewForm = Backbone.View.extend(
     {
         tagName: 'form',
@@ -536,12 +489,6 @@ var UploadPage = PageView.extend(
             this.$el.empty();
             this.$el.append(this._form.$el);
         }
-    }
-    );
-
-var PhotographDetailsView = StaticView.extend(
-    {
-        template: $('#photograph-view').html()
     }
     );
 
@@ -648,6 +595,18 @@ var PhotographPage = PageView.extend(
     {
         pageTitle: function() { return this.model.get('title'); },
         template: _.template($('#photograph-page').html()),
+        events: {
+            'click button[name=delete]': 'showDeletePhotograph',
+            'click button[name=delete-confirm]': 'deletePhotograph'
+        },
+        showDeletePhotograph: function() {
+            $('#delete-modal').modal();
+        },
+        deletePhotograph: function() {
+            this.model.destroy();
+            this.$('#delete-modal').modal('hide');
+            this.application.popPage();
+        },
         initialize: function(options) {
             PageView.prototype.initialize.apply(this, arguments);
             this.$el.html(
@@ -662,10 +621,57 @@ var PhotographPage = PageView.extend(
                     )
                 );
 
+            var PhotographDetailsView = StaticView.extend(
+                {
+                    template: $('#photograph-view').html()
+                }
+                );
             this._detailsView = new PhotographDetailsView(
-                { el: this.$('div[name=details]'), model: this.model }
+                {
+                    template: $('#photograph-view').html(),
+                    el: this.$('div[name=details]'),
+                    model: this.model
+                }
                 );
             this._detailsView.render();
+
+            var PhotographEditForm = Backbone.View.extend(
+                {
+                    events: {
+                        'submit': 'save'
+                    },
+                    save: function() {
+                        this.model.set(
+                            {
+                                'title': this.$('[name=title]').val(),
+                                'caption': this.$('[name=caption]').val(),
+                                'taken': this.$('[name=date]').val(),
+                                'location': this.$('[name=location]').val(),
+                                'tags': this.$('[name=tags]').val()
+                            }
+                            );
+                        this.model.save(
+                            { },
+                            {
+                                wait: true,
+                                success: this.trigger.bind(this, 'save'),
+                                error: function(err) {
+                                    console.log('error saving photograph', err);
+                                }
+                            }
+                            );
+                        return false;
+                    },
+                    initialize: function(options) {
+                        this.listenTo(this.model, 'change', this.render);
+                        this.render();
+                    },
+                    render: function() {
+                        this.$el.html(this.template(this.model.attributes));
+                    },
+                    template: _.template($('#photograph-edit-form').html())
+                }
+                );
             this._form = new PhotographEditForm(
                 {
                     el: this.$('form[name=edit]'),
@@ -765,11 +771,23 @@ var AlbumsPage = PageView.extend(
         pageTitle: 'Albums',
         template: _.template($('#albums-page').html()),
         events: {
-            'submit form': 'createAlbum'
+            'click button[name=new-album]': 'showCreateAlbum',
+            'submit form[name=new-album-form]': 'createAlbum'
+        },
+        showCreateAlbum: function() {
+            this.$('#new-album-modal').modal();
         },
         createAlbum: function() {
             var album = new Album({ name: this.$('input[name=name]').val() });
-            album.save({}, { success: this.reset.bind(this) });
+            album.save(
+                {},
+                {
+                    success: (function() {
+                        this.reset();
+                        this.$('#new-album-modal').modal('hide');
+                    }).bind(this)
+                }
+                );
             return false;
         },
         initialize: function(options) {
