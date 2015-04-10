@@ -49,19 +49,50 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
             _4
             )
         );
+    server.router().install<>(
+        "/photograph/random",
+        [&conn]() {
+            styx::list l = hades::equi_outer_join<
+                helios::photograph,
+                helios::photograph_location>(
+                    conn,
+                    hades::order_by("RANDOM()", 1)
+                    );
+            if(l.size() != 1)
+                return atlas::http::json_error_response("Photograph not found");
+
+            helios::photograph photograph(l.at(0));
+            std::vector<std::string> tags = db::photograph_tags(
+                conn,
+                photograph.id()
+                );
+            std::ostringstream oss;
+            styx::serialise(
+                tags,
+                [](const std::string& tag, std::ostream& os) {
+                    if(std::find(tag.cbegin(), tag.cend(), ' ') == tag.cend())
+                        os << tag;
+                    else
+                        os << "\"" << tag << "\"";
+                },
+                " ",
+                oss
+                );
+            photograph.get_string("tags") = oss.str();
+
+            return atlas::http::json_response(photograph);
+        }
+        );
     server.router().install<int>(
-        "/photograph/([^/]+)",
+        "/photograph/([0-9]+)",
         [&conn](const int photograph_id) {
             styx::list l = hades::equi_outer_join<
                 helios::photograph,
                 helios::photograph_location>(
                     conn,
-                    hades::filter(
-                        hades::where(
-                            "photograph.photograph_id = ?",
-                            hades::row<int>(photograph_id)
-                            ),
-                        hades::order_by("photograph.taken")
+                    hades::where(
+                        "photograph.photograph_id = ?",
+                        hades::row<int>(photograph_id)
                         )
                     );
             if(l.size() != 1)

@@ -105,6 +105,14 @@ var Photograph = RestModel.extend(
     }
     );
 
+var RandomPhotograph = Photograph.extend(
+    {
+        url: function() {
+            return this.isNew()?'/photograph/random':('/photograph/' + this.get('photograph_id'));
+        }
+    }
+    );
+
 var PhotographsInAlbum = RestCollection.extend(
     {
         initialize: function(models, options) {

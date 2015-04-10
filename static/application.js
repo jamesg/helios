@@ -318,6 +318,26 @@ var HomePage = PageView.extend(
                     this.application.pushPage(LocationsPage);
                 }).bind(this)
                 );
+            this.$('button[name=random]').on(
+                'click',
+                (function() {
+                    var model = new RandomPhotograph;
+                    // TODO Is it possble/sensible/reasonable to display the
+                    // page immediately?
+                    // The main problem is that an empty photograph model will
+                    // not have an id and the PhotographPage templates choke on
+                    // this.
+                    model.fetch(
+                        {
+                            success: (function() {
+                                this.application.pushPage(
+                                    new PhotographPage({ model: model })
+                                    );
+                            }).bind(this)
+                        }
+                        );
+                }).bind(this)
+                );
             this.$('button[name=signin]').on(
                 'click',
                 (function() {
@@ -609,6 +629,7 @@ var PhotographPage = PageView.extend(
         },
         initialize: function(options) {
             PageView.prototype.initialize.apply(this, arguments);
+            console.log(this.model.attributes);
             this.$el.html(
                 this.template(
                     _.extend(
