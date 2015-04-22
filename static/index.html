@@ -95,28 +95,34 @@
 </script>
 
 <script type="text/template" id="photograph-page">
-<div class="image-container" style="height: 480px">
-    <img
-        src="/jpeg_image?width=800&height=480&photograph_id=<%-photograph_id%>"
-        alt="<%-title%>"><span class="vertical-align-helper"></span>
-</div>
-<div class="pure-controls image-controls">
-    <button
-        type="button"
-        <% if(disablePrev) print('disabled') %>
-        name="prev"
-        class="pure-button">
-        <span aria-hidden="aria-hidden" data-glyph="chevron-left" class="oi">
-        </span>
-    </button>
-    <button
-        type="button"
-        <% if(disableNext) print('disabled') %>
-        name="next"
-        class="pure-button">
-        <span aria-hidden="aria-hidden" data-glyph="chevron-right" class="oi">
-        </span>
-    </button>
+<div class="pure-g" style="height: 500px;">
+    <div class="pure-u-2-24 image-controls" style="height: 100%;">
+        <button
+            type="button"
+            class="button-block"
+            <% if(disablePrev) print('disabled') %>
+            name="prev"
+            class="pure-button">
+            <span aria-hidden="aria-hidden" data-glyph="chevron-left" class="oi">
+            </span>
+        </button>
+    </div>
+    <div class="pure-u-20-24 image-container" style="height: 100%;">
+        <img
+            src="/jpeg_image?width=800&height=480&photograph_id=<%-photograph_id%>"
+            alt="<%-title%>"><span class="vertical-align-helper"></span>
+    </div>
+    <div class="pure-u-2-24 image-controls" style="height: 100%;">
+        <button
+            type="button"
+            class="button-block"
+            <% if(disableNext) print('disabled') %>
+            name="next"
+            class="pure-button">
+            <span aria-hidden="aria-hidden" data-glyph="chevron-right" class="oi">
+            </span>
+        </button>
+    </div>
 </div>
 <h2><%-title%></h2>
 <div name="details"></div>

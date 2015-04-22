@@ -116,16 +116,25 @@ a {
 .image-container, .image-controls {
     background-color: #444;
     text-align: center;
-    padding: 0.5em;
+    padding: 10px;
     overflow: hidden;
-}
-
-.image-controls button {
-    padding: 2em;
-    margin: 1em;
 }
 
 .image-container img {
     vertical-align: middle;
+}
+
+.button-block {
+    color: lightgrey;
+    background-color: transparent;
+    border: none;
+    display: block;
+    font-size: 150%;
+    height: 100%;
+    width: 100%;
+}
+
+.button-block[disabled] {
+    color: #555;
 }
 
