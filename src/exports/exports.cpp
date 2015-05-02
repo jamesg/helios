@@ -20,8 +20,9 @@
 int helios::exports::main(int argc, const char* argv[])
 {
     bool show_help = false, fullsize = false;
-    std::string db_file, output_directory, height_s, width_s, geometry;
+    std::string album, db_file, output_directory, height_s, width_s, geometry;
     std::vector<commandline::option> options{
+        commandline::parameter("album", album, "Album to export (default all)"),
         commandline::parameter("db", db_file, "Database file path"),
         commandline::parameter("out", output_directory, "Output directory"),
         commandline::parameter("height", height_s, "Maximum height of output"),
@@ -79,7 +80,14 @@ int helios::exports::main(int argc, const char* argv[])
     hades::connection conn(db_file);
     boost::filesystem::path out_dir(output_directory);
 
-    styx::list albums = helios::album::get_collection(conn);
+    styx::list albums;
+    if(album.empty())
+        albums = helios::album::get_collection(conn);
+    else
+        albums = helios::album::get_collection(
+                conn,
+                hades::where("name = ?", hades::row<std::string>(album))
+                );
     for(const styx::element& album_e : albums)
     {
         helios::album album(album_e);
