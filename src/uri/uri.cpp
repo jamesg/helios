@@ -181,15 +181,13 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
         "/uncategorised/photograph",
         [&conn]() {
         return atlas::http::json_response(
-            hades::outer_join<
-                helios::photograph,
-                helios::photograph_in_album>(
+            hades::custom_select<helios::photograph, db::attr::photograph::photograph_id, db::attr::photograph::title>(
                 conn,
-                "photograph.photograph_id = photograph_in_album.photograph_id",
-                hades::filter(
-                    hades::where("photograph_in_album.photograph_id IS NULL"),
-                    hades::order_by("photograph.taken ASC")
-                    )
+                "SELECT photograph.photograph_id, title "
+                "FROM photograph "
+                "LEFT OUTER JOIN photograph_in_album "
+                "ON photograph_in_album.photograph_id = photograph.photograph_id "
+                "WHERE photograph_in_album.album_id IS NULL"
                 )
             );
         },
