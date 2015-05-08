@@ -29,7 +29,6 @@ namespace helios
         {
             std::string address;
             std::string db_file;
-            std::string html_root;
             std::string port;
             options() :
                 address("0.0.0.0")
@@ -50,8 +49,6 @@ namespace helios
         // This is a scoped_ptr rather than a plain member to allow deferred
         // initialisation.
         boost::scoped_ptr<hades::connection> m_connection;
-        atlas::api::server m_api_server;
-        atlas::api::server m_auth_api_server;
         atlas::http::server m_http_server;
         boost::scoped_ptr<atlas::http::mimetypes> m_mime_information;
     };

@@ -245,12 +245,12 @@ var TbodyView = CollectionView.extend(
  * theadView: Header view constructor.
  * trView: Row view constructor.
  */
-var TableView = ModelView.extend(
+var TableView = StaticView.extend(
     {
         tagName: 'table',
         className: 'pure-table',
         initialize: function(options) {
-            ModelView.prototype.initialize.apply(this, arguments);
+            StaticView.prototype.initialize.apply(this, arguments);
 
             this._thead = new options.theadView;
             this._thead.render();
@@ -531,7 +531,7 @@ var PhotographAlbumsView = StaticView.extend(
                 {
                     el: this.$photographAlbums,
                     model: photographAlbums,
-                    view: ModelView.extend(
+                    view: StaticView.extend(
                         {
                             tagName: 'li',
                             template: '<%-name%> (<a>Remove</a>)',
@@ -566,7 +566,7 @@ var PhotographAlbumsView = StaticView.extend(
                 {
                     el: this.$albums,
                     model: albums,
-                    view: ModelView.extend(
+                    view: StaticView.extend(
                         {
                             tagName: 'option',
                             template: '<%-name%>'
@@ -758,7 +758,7 @@ var ThumbnailPage = PageView.extend(
                 {
                     el: this.$('ul[name=thumbnails]'),
                     model: this.model,
-                    view: ModelView.extend(
+                    view: StaticView.extend(
                         {
                             tagName: 'li',
                             template: $('#photograph-thumb-view').html(),
@@ -820,7 +820,7 @@ var AlbumsPage = PageView.extend(
                 {
                     el: this.$('ul[name=albums-list]'),
                     model: this._albums,
-                    view: ModelView.extend(
+                    view: StaticView.extend(
                         {
                             tagName: 'li',
                             template: '<a><%-name%></a>',
@@ -867,7 +867,7 @@ var TagsPage = PageView.extend(
                     tagName: 'ul',
                     className: 'album-list album-list-large',
                     model: this._tags,
-                    view: ModelView.extend(
+                    view: StaticView.extend(
                         {
                             tagName: 'li',
                             template: '<%-tag%> (<%-photograph_count%>)',
@@ -917,7 +917,7 @@ var LocationsPage = PageView.extend(
                     tagName: 'ul',
                     className: 'album-list album-list-large',
                     model: this._locations,
-                    view: ModelView.extend(
+                    view: StaticView.extend(
                         {
                             tagName: 'li',
                             template: '<%-location%> (<%-photograph_count%>)',

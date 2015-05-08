@@ -1,22 +1,97 @@
-#include "uri.hpp"
+#include "router.hpp"
 
-#include "atlas/auth.hpp"
-#include "atlas/http/server/router.hpp"
-#include "atlas/http/server/server.hpp"
+#include <boost/bind.hpp>
+
+#include "atlas/api/auth.hpp"
+#include "atlas/api/server.hpp"
+#include "atlas/http/server/mimetypes.hpp"
+#include "atlas/http/server/static_text.hpp"
 #include "hades/crud.ipp"
 #include "hades/custom_select.hpp"
+#include "hades/get_by_id.hpp"
+#include "hades/get_one.hpp"
 #include "hades/join.hpp"
-#include "styx/serialise_json.hpp"
-#include "styx/serialisers/vector.hpp"
+#include "styx/styx.hpp"
 
 #include "db/photograph.hpp"
 #include "uri/insert_photograph.hpp"
 #include "uri/jpeg_image.hpp"
 #include "uri/jpeg_image_fullsize.hpp"
 
-void helios::uri::install(hades::connection& conn, atlas::http::server& server)
+#define HELIOS_DECLARE_STATIC_STRING(PREFIX) \
+    extern "C" { \
+        extern char helios_binary_##PREFIX##_start; \
+        extern char helios_binary_##PREFIX##_end; \
+        extern size_t helios_binary_##PREFIX##_size; \
+    }
+
+#define HELIOS_STATIC_STD_STRING(PREFIX) \
+    std::string(&helios_binary_##PREFIX##_start, &helios_binary_##PREFIX##_end)
+
+HELIOS_DECLARE_STATIC_STRING(index_html)
+HELIOS_DECLARE_STATIC_STRING(index_js)
+HELIOS_DECLARE_STATIC_STRING(application_js)
+HELIOS_DECLARE_STATIC_STRING(models_js)
+HELIOS_DECLARE_STATIC_STRING(style_css)
+
+boost::shared_ptr<atlas::http::router> helios::router(hades::connection& conn, boost::shared_ptr<boost::asio::io_service> io)
 {
-    server.router().install(
+    boost::shared_ptr<atlas::http::router> out(new atlas::http::router);
+
+    atlas::http::mimetypes mime_information;
+
+    auto install_static_text = [&mime_information, out](
+            const std::string& url,
+            const std::string& text
+            )
+    {
+        std::string extension;
+        {
+            std::string::size_type dot_pos = url.find_last_of('.');
+            if(dot_pos != std::string::npos)
+                extension = url.substr(dot_pos+1);
+        }
+        out->install(
+                atlas::http::matcher(url, "GET"),
+                boost::bind(
+                    &atlas::http::static_text,
+                    mime_information.content_type(extension),
+                    text,
+                    _1,
+                    _2,
+                    _3,
+                    _4
+                    )
+                );
+    };
+
+    // Special case; index.html should be served on requests to /, but as the
+    // file extension cannot be deduced from the URL the MIME type must be
+    // specified.
+    out->install(
+            atlas::http::matcher("/", "GET"),
+            boost::bind(
+                &atlas::http::static_text,
+                mime_information.content_type("html"),
+                HELIOS_STATIC_STD_STRING(index_html),
+                _1,
+                _2,
+                _3,
+                _4
+                )
+            );
+
+    //
+    // Install static files.
+    //
+
+    install_static_text("/index.html", HELIOS_STATIC_STD_STRING(index_html));
+    install_static_text("/index.js", HELIOS_STATIC_STD_STRING(index_js));
+    install_static_text("/application.js", HELIOS_STATIC_STD_STRING(application_js));
+    install_static_text("/models.js", HELIOS_STATIC_STD_STRING(models_js));
+    install_static_text("/style.css", HELIOS_STATIC_STD_STRING(style_css));
+
+    out->install(
         atlas::http::matcher("/insert_photograph", "post"),
         boost::bind(
             &helios::uri::insert_photograph,
@@ -27,8 +102,8 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
             _4
             )
         );
-    server.router().install(
-        "/jpeg_image",
+    out->install(
+        atlas::http::matcher("/jpeg_image", "GET"),
         boost::bind(
             &helios::uri::jpeg_image,
             boost::ref(conn),
@@ -38,8 +113,8 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
             _4
             )
         );
-    server.router().install(
-        "/jpeg_image_fullsize",
+    out->install(
+        atlas::http::matcher("/jpeg_image_fullsize", "GET"),
         boost::bind(
             &helios::uri::jpeg_image_fullsize,
             boost::ref(conn),
@@ -49,8 +124,8 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
             _4
             )
         );
-    server.router().install<>(
-        "/photograph/random",
+    out->install<>(
+        atlas::http::matcher("/photograph/random", "GET"),
         [&conn]() {
             styx::list l = hades::equi_outer_join<
                 helios::photograph,
@@ -83,8 +158,8 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
             return atlas::http::json_response(photograph);
         }
         );
-    server.router().install<int>(
-        "/photograph/([0-9]+)",
+    out->install<int>(
+        atlas::http::matcher("/photograph/([0-9]+)", "GET"),
         [&conn](const int photograph_id) {
             styx::list l = hades::equi_outer_join<
                 helios::photograph,
@@ -121,8 +196,8 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
-    server.router().install<>(
-        "/album",
+    out->install<>(
+        atlas::http::matcher("/album", "GET"),
         [&conn]() {
             auto filter = hades::order_by("album.name ASC");
             return atlas::http::json_response(
@@ -131,7 +206,7 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
-    server.router().install_json<>(
+    out->install_json<>(
         atlas::http::matcher("/album", "post"),
         [&conn](styx::element album_e) {
             helios::album album(album_e);
@@ -139,8 +214,8 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
             return atlas::http::json_response(album);
         }
         );
-    server.router().install<int>(
-        "/album/([^/]+)",
+    out->install<int>(
+        atlas::http::matcher("/album/([^/]+)", "GET"),
         [&conn](const int album_id) {
             helios::album album(
                 hades::get_one<helios::album>(
@@ -152,8 +227,8 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
-    server.router().install<int>(
-        "/album/([^/]+)/photograph",
+    out->install<int>(
+        atlas::http::matcher("/album/([^/]+)/photograph", "GET"),
         [&conn](const int album_id) {
             return atlas::http::json_response(
                 hades::join<
@@ -177,8 +252,8 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
-    server.router().install<>(
-        "/uncategorised/photograph",
+    out->install<>(
+        atlas::http::matcher("/uncategorised/photograph", "GET"),
         [&conn]() {
         return atlas::http::json_response(
             hades::custom_select<helios::photograph, db::attr::photograph::photograph_id, db::attr::photograph::title>(
@@ -193,7 +268,7 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
-    server.router().install_json<int>(
+    out->install_json<int>(
         atlas::http::matcher("/photograph/([^/]+)", "put"),
         [&conn](const styx::element photograph_e, const int photograph_id) {
             helios::photograph photograph(photograph_e);
@@ -209,7 +284,7 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
-    server.router().install<int>(
+    out->install<int>(
         atlas::http::matcher("/photograph/([^/]+)", "delete"),
         [&conn](int photograph_id) {
             helios::photograph photograph;
@@ -221,8 +296,8 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
-    server.router().install<int>(
-        "/photograph/([^/]+)/album",
+    out->install<int>(
+        atlas::http::matcher("/photograph/([^/]+)/album", "GET"),
         [&conn](int photograph_id) {
             return atlas::http::json_response(
                 hades::join<helios::photograph_in_album, helios::album>(
@@ -237,8 +312,8 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
-    server.router().install<std::string>(
-        atlas::http::matcher("/tag/([^/]*)/photograph"),
+    out->install<std::string>(
+        atlas::http::matcher("/tag/([^/]*)/photograph", "GET"),
         [&conn](const std::string tag) {
             return atlas::http::json_response(
                 hades::join<helios::photograph, helios::basic_tag>(
@@ -257,8 +332,8 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
-    server.router().install<std::string>(
-        atlas::http::matcher("/location/([^/]*)/photograph"),
+    out->install<std::string>(
+        atlas::http::matcher("/location/([^/]*)/photograph", "GET"),
         [&conn](const std::string location) {
             return atlas::http::json_response(
                 hades::join<helios::photograph, helios::basic_location>(
@@ -277,8 +352,8 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
-    server.router().install<>(
-        "/tag",
+    out->install<>(
+        atlas::http::matcher("/tag", "GET"),
         [&conn]() {
             return atlas::http::json_response(
                 hades::custom_select<
@@ -294,8 +369,8 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
-    server.router().install<>(
-        "/location",
+    out->install<>(
+        atlas::http::matcher("/location", "GET"),
         [&conn]() {
             return atlas::http::json_response(
                 hades::custom_select<
@@ -311,5 +386,14 @@ void helios::uri::install(hades::connection& conn, atlas::http::server& server)
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
+
+    boost::shared_ptr<atlas::api::server> auth_api_server(new atlas::api::server(io));
+    atlas::api::auth::install(conn, *auth_api_server);
+    out->install(
+        atlas::http::matcher("/auth", "POST"),
+        boost::bind(&atlas::api::server::serve, auth_api_server, _1, _2, _3, _4)
+        );
+
+    return out;
 }
 

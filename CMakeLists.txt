@@ -37,14 +37,17 @@ endif(DOXYGEN_FOUND)
 # Hades components
 add_subdirectory(hades)
 
+# Atlas components
+add_subdirectory(atlas)
+
 # Helios web components
 add_subdirectory(web)
 
-# Atlas components
-add_subdirectory(atlas)
+# Helios C++ components
 add_subdirectory(src)
 
 add_executable(helios src/main/server.cpp)
+add_dependencies(helios helios-web)
 target_link_libraries(
     helios
     helios-server-lib
