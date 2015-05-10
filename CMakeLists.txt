@@ -9,12 +9,7 @@ find_package(OpenSSL)
 find_package(Boost COMPONENTS date_time filesystem random regex system thread)
 find_package(ImageMagick COMPONENTS Magick++)
 
-include_directories("atlas/lib/mongoose/include")
-include_directories("atlas/include")
 include_directories("src")
-include_directories("commandline/include")
-include_directories("hades/include")
-include_directories("hades/lib/sqlite3/include")
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${ImageMagick_INCLUDE_DIRS})
 include_directories(${CURL_INCLUDE_DIRS})
@@ -33,12 +28,6 @@ if(DOXYGEN_FOUND)
         COMMENT "Generating API documentation with Doxygen" VERBATIM
         )
 endif(DOXYGEN_FOUND)
-
-# Hades components
-add_subdirectory(hades)
-
-# Atlas components
-add_subdirectory(atlas)
 
 # Helios web components
 add_subdirectory(web)
