@@ -10,6 +10,7 @@ find_package(Boost COMPONENTS date_time filesystem random regex system thread)
 find_package(ImageMagick COMPONENTS Magick++)
 
 include_directories("src")
+include_directories("include")
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${ImageMagick_INCLUDE_DIRS})
 include_directories(${CURL_INCLUDE_DIRS})
@@ -36,7 +37,7 @@ add_subdirectory(web)
 add_subdirectory(src)
 
 add_executable(helios src/main/server.cpp)
-add_dependencies(helios helios-web)
+add_dependencies(helios-server-lib helios-web)
 target_link_libraries(
     helios
     helios-server-lib

@@ -349,7 +349,7 @@ var HomePage = PageView.extend(
                 function() {
                     jsonRpc(
                         {
-                            url: '/auth',
+                            url: 'auth',
                             method: 'sign_out',
                             params: [ storage.get('token') ],
                             success: function() {
@@ -416,7 +416,7 @@ var SignInPage = PageView.extend(
             var messageBox = this._messageBox;
             jsonRpc(
                 {
-                    url: '/auth',
+                    url: 'auth',
                     method: 'sign_in',
                     params: [this.$username.val(), this.$password.val()],
                     success: function(user) {

@@ -1,8 +1,8 @@
-#include "server.hpp"
-
 #include <boost/make_shared.hpp>
 
 #include "commandline/commandline.hpp"
+
+#include "helios/server.hpp"
 
 int main(int argc, const char *argv[])
 {
