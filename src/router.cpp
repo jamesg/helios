@@ -36,26 +36,11 @@ HELIOS_DECLARE_STATIC_STRING(style_css)
 
 helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::io_service> io)
 {
-    // Special case; index.html should be served on requests to /, but as the
-    // file extension cannot be deduced from the URL the MIME type must be
-    // specified.
-    install(
-            atlas::http::matcher("/", "GET"),
-            boost::bind(
-                &atlas::http::static_text,
-                m_mime_information.content_type("html"),
-                HELIOS_STATIC_STD_STRING(index_html),
-                _1,
-                _2,
-                _3,
-                _4
-                )
-            );
-
     //
     // Install static files.
     //
 
+    install_static_text("/", "html", HELIOS_STATIC_STD_STRING(index_html));
     install_static_text("/index.html", HELIOS_STATIC_STD_STRING(index_html));
     install_static_text("/index.js", HELIOS_STATIC_STD_STRING(index_js));
     install_static_text("/application.js", HELIOS_STATIC_STD_STRING(application_js));
@@ -364,31 +349,5 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
         atlas::http::matcher("/auth", "POST"),
         boost::bind(&atlas::api::server::serve, auth_api_server, _1, _2, _3, _4)
         );
-}
-
-void helios::router::install_static_text(
-        const std::string& url,
-        const std::string& text
-        )
-{
-    std::string extension;
-    {
-        std::string::size_type dot_pos = url.find_last_of('.');
-        if(dot_pos != std::string::npos)
-            extension = url.substr(dot_pos+1);
-    }
-    auto mimetype = m_mime_information.content_type(extension);
-    install(
-            atlas::http::matcher(url, "GET"),
-            boost::bind(
-                &atlas::http::static_text,
-                mimetype,
-                text,
-                _1,
-                _2,
-                _3,
-                _4
-                )
-            );
 }
 

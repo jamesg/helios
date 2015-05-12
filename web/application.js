@@ -861,7 +861,7 @@ var TagsPage = PageView.extend(
             this._tagsView = new CollectionView(
                 {
                     tagName: 'ul',
-                    className: 'album-list album-list-large',
+                    className: 'action-list action-list-large',
                     model: this._tags,
                     view: StaticView.extend(
                         {
@@ -911,7 +911,7 @@ var LocationsPage = PageView.extend(
             this._locationsView = new CollectionView(
                 {
                     tagName: 'ul',
-                    className: 'album-list album-list-large',
+                    className: 'action-list action-list-large',
                     model: this._locations,
                     view: StaticView.extend(
                         {
