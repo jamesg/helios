@@ -36,7 +36,7 @@ var Album = RestModel.extend(
                 return errors;
         },
         url: function() {
-            return this.isNew()?'/album':('/album/' + this.id());
+            return this.isNew()?'album':('album/' + this.id());
         }
     }
     );
@@ -44,7 +44,7 @@ var Album = RestModel.extend(
 var AlbumCollection = RestCollection.extend(
     {
         model: Album,
-        url: '/album'
+        url: 'album'
     }
     );
 
@@ -60,7 +60,7 @@ var Tag = RestModel.extend(
 var TagCollection = RestCollection.extend(
     {
         model: Tag,
-        url: '/tag'
+        url: 'tag'
     }
     );
 
@@ -76,7 +76,7 @@ var Location = RestModel.extend(
 var LocationCollection = RestCollection.extend(
     {
         model: Location,
-        url: '/location'
+        url: 'location'
     }
     );
 
@@ -100,7 +100,7 @@ var Photograph = RestModel.extend(
                 return errors;
         },
         url: function() {
-            return this.isNew()?'/photograph':('/photograph/' + this.get('photograph_id'));
+            return this.isNew()?'photograph':('photograph/' + this.get('photograph_id'));
         }
     }
     );
@@ -108,7 +108,7 @@ var Photograph = RestModel.extend(
 var RandomPhotograph = Photograph.extend(
     {
         url: function() {
-            return this.isNew()?'/photograph/random':('/photograph/' + this.get('photograph_id'));
+            return this.isNew()?'photograph/random':('photograph/' + this.get('photograph_id'));
         }
     }
     );
@@ -121,7 +121,7 @@ var PhotographsInAlbum = RestCollection.extend(
         },
         model: Photograph,
         url: function() {
-            return '/album/' + this._album.get('album_id') + '/photograph';
+            return 'album/' + this._album.get('album_id') + '/photograph';
         }
     }
     );
@@ -129,7 +129,7 @@ var PhotographsInAlbum = RestCollection.extend(
 var UncategorisedPhotographs = RestCollection.extend(
     {
         model: Photograph,
-        url: '/uncategorised/photograph'
+        url: 'uncategorised/photograph'
     }
     );
 
@@ -140,7 +140,7 @@ var PhotographsWithTag = RestCollection.extend(
             this._tag = options.tag;
         },
         model: Photograph,
-        url: function() { return '/tag/' + this._tag + '/photograph'; }
+        url: function() { return 'tag/' + this._tag + '/photograph'; }
     }
     );
 
@@ -151,7 +151,7 @@ var PhotographsWithLocation = RestCollection.extend(
             this._location = options.location;
         },
         model: Photograph,
-        url: function() { return '/location/' + this._location + '/photograph'; }
+        url: function() { return 'location/' + this._location + '/photograph'; }
     }
     );
 
@@ -163,7 +163,7 @@ var PhotographAlbums = RestCollection.extend(
         },
         model: Album,
         url: function() {
-            return '/photograph/' + this._photograph.get('photograph_id') +
+            return 'photograph/' + this._photograph.get('photograph_id') +
                 '/album';
         }
     }

@@ -5,7 +5,14 @@
 
 <title>Photograph Album</title>
 <link href="/atlas/pure-min.css" rel="stylesheet" type="text/css" media="all"></link>
+<!-- bootstrap modal -->
 <link href="/atlas/modal.css" rel="stylesheet" type="text/css" media="all"></link>
+<link href="/atlas/css/defaults.css" rel="stylesheet" type="text/css" media="all"></link>
+<link href="/atlas/css/form.css" rel="stylesheet" type="text/css" media="all"></link>
+<link href="/atlas/css/grid.css" rel="stylesheet" type="text/css" media="all"></link>
+<link href="/atlas/css/list.css" rel="stylesheet" type="text/css" media="all"></link>
+<link href="/atlas/css/navigation.css" rel="stylesheet" type="text/css" media="all"></link>
+<link href="/atlas/css/teletype-theme.css" rel="stylesheet" type="text/css" media="all"></link>
 <link href="style.css" rel="stylesheet" type="text/css" media="all"></link>
 <link
     href="/atlas/open-iconic/font/css/open-iconic.css"
@@ -76,7 +83,7 @@
 </script>
 
 <script type="text/template" id="thumbnail-page">
-<ul name="thumbnails" class="thumbnail-list"></ul>
+<ul name="thumbnails" class="image-list"></ul>
 </script>
 
 <script type="text/template" id="album-form">
@@ -90,7 +97,7 @@
 
 <script type="text/template" id="photograph-thumb-view">
 <img
-    src="/jpeg_image?width=190&height=190&photograph_id=<%-photograph_id%>"
+    src="jpeg_image?width=190&height=190&photograph_id=<%-photograph_id%>"
     alt="<%-title%>"><span class="vertical-align-helper"></span>
 </script>
 
@@ -109,7 +116,7 @@
     </div>
     <div class="pure-u-20-24 image-container" style="height: 100%;">
         <img
-            src="/jpeg_image?width=800&height=480&photograph_id=<%-photograph_id%>"
+            src="jpeg_image?width=800&height=480&photograph_id=<%-photograph_id%>"
             alt="<%-title%>"><span class="vertical-align-helper"></span>
     </div>
     <div class="pure-u-2-24 image-controls" style="height: 100%;">
@@ -140,12 +147,12 @@
 </dl>
 
 <h2>Tools</h2>
-<ul class="album-list">
-<li><a href="/jpeg_image?width=400&height=300&photograph_id=<%-photograph_id%>">400x300</a></li>
-<li><a href="/jpeg_image?width=800&height=600&photograph_id=<%-photograph_id%>">800x600</a></li>
-<li><a href="/jpeg_image?width=1024&height=768&photograph_id=<%-photograph_id%>">1024x768</a></li>
-<li><a href="/jpeg_image?width=1200&height=1000&photograph_id=<%-photograph_id%>">1200x1000</a></li>
-<li><a href="/jpeg_image_fullsize?photograph_id=<%-photograph_id%>">Original size</a></li>
+<ul class="action-list">
+<li><a href="jpeg_image?width=400&height=300&photograph_id=<%-photograph_id%>">400x300</a></li>
+<li><a href="jpeg_image?width=800&height=600&photograph_id=<%-photograph_id%>">800x600</a></li>
+<li><a href="jpeg_image?width=1024&height=768&photograph_id=<%-photograph_id%>">1024x768</a></li>
+<li><a href="jpeg_image?width=1200&height=1000&photograph_id=<%-photograph_id%>">1200x1000</a></li>
+<li><a href="jpeg_image_fullsize?photograph_id=<%-photograph_id%>">Original size</a></li>
 </script>
 
 <script type="text/template" id="albums-page">
@@ -191,7 +198,7 @@
         </div>
     </div>
 </div>
-<ul name="albums-list" class="album-list album-list-large"></ul>
+<ul name="albums-list" class="action-list action-list-large"></ul>
 </script>
 
 <script type="text/template" id="photograph-edit-form">
@@ -241,7 +248,7 @@
                 <h3>Delete Photograph</h3>
             </div>
             <div class="modal-body">
-                <img src="/jpeg_image?height=252&width=336&photograph_id=<%-photograph_id%>">
+                <img src="jpeg_image?height=252&width=336&photograph_id=<%-photograph_id%>">
                 <p>
                     Are you sure that you wish to delete '<%-title%>'?
                 </p>
@@ -276,7 +283,7 @@
     <label for="add"></label>
     <button type="submit" class="pure-button" name="add">Add</button>
 </div>
-<ul class="album-list album-list-small" name="photograph-albums"></ul>
+<ul class="action-list action-list-small" name="photograph-albums"></ul>
 </script>
 
 <script type="text/template" id="photograph-new-form">

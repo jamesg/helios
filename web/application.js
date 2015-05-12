@@ -816,33 +816,29 @@ var AlbumsPage = PageView.extend(
             this.$el.html(this.template());
             this._albums = new AlbumCollection;
             this._albums.fetch();
-            this._albumsView = new CollectionView(
-                {
-                    el: this.$('ul[name=albums-list]'),
-                    model: this._albums,
-                    view: StaticView.extend(
-                        {
-                            tagName: 'li',
-                            template: '<a><%-name%></a>',
-                            events: { 'click': 'gotoAlbum' },
-                            gotoAlbum: function() {
-                                var model = new PhotographsInAlbum(
-                                    [],
-                                    { album: this.model }
-                                    );
-                                var page = new ThumbnailPage(
-                                    {
-                                        application: options.application,
-                                        model: model,
-                                        name: this.model.get('name')
-                                    }
-                                    );
-                                options.application.pushPage(page);
+            this._albumsView = new CollectionView({
+                el: this.$('ul[name=albums-list]'),
+                model: this._albums,
+                view: StaticView.extend({
+                    tagName: 'li',
+                    template: '<a><%-name%></a>',
+                    events: { 'click': 'gotoAlbum' },
+                    gotoAlbum: function() {
+                        var model = new PhotographsInAlbum(
+                            [],
+                            { album: this.model }
+                            );
+                        var page = new ThumbnailPage(
+                            {
+                                application: options.application,
+                                model: model,
+                                name: this.model.get('name')
                             }
-                        }
-                        )
-                }
-                );
+                            );
+                        options.application.pushPage(page);
+                    }
+                })
+            });
             this._albumsView.render();
         },
         reset: function() {
