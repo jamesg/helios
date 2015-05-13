@@ -1,26 +1,9 @@
-// REST responses consist of the actual response as the 'data' key inside a
-// JSON object.  This allows the protocol to be extended more easily at a later
-// date if required.  In the case of array responses, returning a raw array is
-// also a potential security risk.
-
-var RestCollection = Backbone.Collection.extend(
-        {
-            parse: function(response) {
-                return response.data;
-            }
-        }
-        );
-
-var RestModel = Backbone.Model.extend(
-        {
-            parse: function(response) {
-                if(_.has(response, 'data'))
-                    return response.data;
-                else
-                    return response;
-            }
-        }
-        );
+/*
+ * Get the URI for a REST API handler.
+ */
+var restUri = function(fragment) {
+    return fragment;
+};
 
 var Album = RestModel.extend(
     {
@@ -36,7 +19,9 @@ var Album = RestModel.extend(
                 return errors;
         },
         url: function() {
-            return this.isNew()?'album':('album/' + this.id());
+            return restUri(
+                this.isNew()?'album':('album/' + this.id())
+                );
         }
     }
     );
@@ -44,7 +29,7 @@ var Album = RestModel.extend(
 var AlbumCollection = RestCollection.extend(
     {
         model: Album,
-        url: 'album'
+        url: restUri('album')
     }
     );
 
@@ -60,7 +45,7 @@ var Tag = RestModel.extend(
 var TagCollection = RestCollection.extend(
     {
         model: Tag,
-        url: 'tag'
+        url: restUri('tag')
     }
     );
 
@@ -76,7 +61,7 @@ var Location = RestModel.extend(
 var LocationCollection = RestCollection.extend(
     {
         model: Location,
-        url: 'location'
+        url: restUri('location')
     }
     );
 
@@ -100,7 +85,9 @@ var Photograph = RestModel.extend(
                 return errors;
         },
         url: function() {
-            return this.isNew()?'photograph':('photograph/' + this.get('photograph_id'));
+            return restUri(
+                this.isNew()?'photograph':('photograph/' + this.get('photograph_id'))
+                );
         }
     }
     );
@@ -108,7 +95,9 @@ var Photograph = RestModel.extend(
 var RandomPhotograph = Photograph.extend(
     {
         url: function() {
-            return this.isNew()?'photograph/random':('photograph/' + this.get('photograph_id'));
+            return restUri(
+                this.isNew()?'photograph/random':('photograph/' + this.get('photograph_id'))
+                );
         }
     }
     );
@@ -121,7 +110,9 @@ var PhotographsInAlbum = RestCollection.extend(
         },
         model: Photograph,
         url: function() {
-            return 'album/' + this._album.get('album_id') + '/photograph';
+            return restUri(
+                'album/' + this._album.get('album_id') + '/photograph'
+                );
         }
     }
     );
@@ -129,7 +120,7 @@ var PhotographsInAlbum = RestCollection.extend(
 var UncategorisedPhotographs = RestCollection.extend(
     {
         model: Photograph,
-        url: 'uncategorised/photograph'
+        url: restUri('uncategorised/photograph')
     }
     );
 
@@ -140,7 +131,9 @@ var PhotographsWithTag = RestCollection.extend(
             this._tag = options.tag;
         },
         model: Photograph,
-        url: function() { return 'tag/' + this._tag + '/photograph'; }
+        url: function() {
+            return restUri('tag/' + this._tag + '/photograph');
+        }
     }
     );
 
@@ -151,7 +144,9 @@ var PhotographsWithLocation = RestCollection.extend(
             this._location = options.location;
         },
         model: Photograph,
-        url: function() { return 'location/' + this._location + '/photograph'; }
+        url: function() {
+            return restUri('location/' + this._location + '/photograph');
+        }
     }
     );
 
@@ -163,8 +158,9 @@ var PhotographAlbums = RestCollection.extend(
         },
         model: Album,
         url: function() {
-            return 'photograph/' + this._photograph.get('photograph_id') +
-                '/album';
+            return restUri(
+                'photograph/' + this._photograph.get('photograph_id') + '/album'
+                );
         }
     }
     );

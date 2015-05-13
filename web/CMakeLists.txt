@@ -1,6 +1,7 @@
 atlas_add_web_library(
     PREFIX helios
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/static.a
+    TARGET helios-web
     SOURCES
         index.html
         index.js
@@ -8,6 +9,4 @@ atlas_add_web_library(
         models.js
         style.css
         )
-
-add_custom_target(helios-web ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/static.a)
 
