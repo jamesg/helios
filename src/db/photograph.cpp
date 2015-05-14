@@ -20,16 +20,16 @@ const char helios::db::attr::tag::tag[] = "tag";
 const char helios::db::attr::tag::photograph_count[] = "photograph_count";
 const char helios::db::attr::location::location[] = "location";
 const char helios::db::attr::location::photograph_count[] = "photograph_count";
-const char helios::db::relvar::photograph[] = "photograph";
-const char helios::db::relvar::photograph_tagged[] = "photograph_tagged";
-const char helios::db::relvar::photograph_location[] = "photograph_location";
-const char helios::db::relvar::photograph_in_album[] = "photograph_in_album";
-const char helios::db::relvar::album[] = "album";
+const char helios::db::relvar::photograph[] = "helios_photograph";
+const char helios::db::relvar::photograph_tagged[] = "helios_photograph_tagged";
+const char helios::db::relvar::photograph_location[] = "helios_photograph_location";
+const char helios::db::relvar::photograph_in_album[] = "helios_photograph_in_album";
+const char helios::db::relvar::album[] = "helios_album";
 
 void helios::db::photograph::create(hades::connection& conn)
 {
     hades::devoid(
-            "CREATE TABLE IF NOT EXISTS photograph ( "
+            "CREATE TABLE IF NOT EXISTS helios_photograph ( "
             " photograph_id INTEGER PRIMARY KEY AUTOINCREMENT, "
             " title VARCHAR NOT NULL, "
             " caption VARCHAR NULL, "
@@ -38,25 +38,25 @@ void helios::db::photograph::create(hades::connection& conn)
             conn
             );
     hades::devoid(
-            "CREATE TABLE IF NOT EXISTS photograph_location ( "
+            "CREATE TABLE IF NOT EXISTS helios_photograph_location ( "
             " photograph_id INTEGER PRIMARY KEY, "
             " location VARCHAR, "
-            " FOREIGN KEY(photograph_id) REFERENCES photograph(photograph_id) "
+            " FOREIGN KEY(photograph_id) REFERENCES helios_photograph(photograph_id) "
             "  ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED "
             " ) ",
             conn
             );
     hades::devoid(
-            "CREATE TABLE IF NOT EXISTS jpeg_data ( "
+            "CREATE TABLE IF NOT EXISTS helios_jpeg_data ( "
             " photograph_id INTEGER PRIMARY KEY, "
             " data BLOB NOT NULL, "
-            " FOREIGN KEY(photograph_id) REFERENCES photograph(photograph_id) "
+            " FOREIGN KEY(photograph_id) REFERENCES helios_photograph(photograph_id) "
             "  ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED "
             " ) ",
             conn
             );
     hades::devoid(
-            "CREATE TABLE IF NOT EXISTS album ( "
+            "CREATE TABLE IF NOT EXISTS helios_album ( "
             " album_id INTEGER PRIMARY KEY AUTOINCREMENT, "
             " name VARCHAR NOT NULL, "
             " caption VARCHAR NULL, "
@@ -65,22 +65,22 @@ void helios::db::photograph::create(hades::connection& conn)
             conn
             );
     hades::devoid(
-            "CREATE TABLE IF NOT EXISTS photograph_tagged ( "
+            "CREATE TABLE IF NOT EXISTS helios_photograph_tagged ( "
             " photograph_id INTEGER NOT NULL, "
             " tag VARCHAR NOT NULL, "
-            " FOREIGN KEY(photograph_id) REFERENCES photograph(photograph_id) "
+            " FOREIGN KEY(photograph_id) REFERENCES helios_photograph(photograph_id) "
             "  ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, "
             " UNIQUE(photograph_id, tag) "
             " ) ",
             conn
             );
     hades::devoid(
-            "CREATE TABLE IF NOT EXISTS photograph_in_album ( "
+            "CREATE TABLE IF NOT EXISTS helios_photograph_in_album ( "
             " photograph_id INTEGER NOT NULL, "
             " album_id INTEGER NOT NULL, "
-            " FOREIGN KEY(photograph_id) REFERENCES photograph(photograph_id) "
+            " FOREIGN KEY(photograph_id) REFERENCES helios_photograph(photograph_id) "
             "  ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, "
-            " FOREIGN KEY(album_id) REFERENCES album(album_id) "
+            " FOREIGN KEY(album_id) REFERENCES helios_album(album_id) "
             "  ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, "
             " UNIQUE(photograph_id, album_id) "
             " ) ",
@@ -129,7 +129,7 @@ void helios::db::set_photograph_tags(
 {
     hades::transaction tr(conn, "helios_db_set_photograph_tags");
     hades::devoid(
-            "DELETE FROM photograph_tagged WHERE photograph_id = ?",
+            "DELETE FROM helios_photograph_tagged WHERE photograph_id = ?",
             hades::row<int>(id.get_int<db::attr::photograph::photograph_id>()),
             conn
             );

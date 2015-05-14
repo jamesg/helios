@@ -12,7 +12,7 @@
 void helios::db::cache::create(hades::connection& conn)
 {
     hades::devoid(
-            "CREATE TABLE IF NOT EXISTS jpeg_cache ( "
+            "CREATE TABLE IF NOT EXISTS helios_jpeg_cache ( "
             " photograph_id INTEGER, "
             " width INTEGER, "
             " height INTEGER, "
@@ -33,7 +33,7 @@ bool helios::db::cache::has(
     sqlite3_stmt *stmt;
     sqlite3_prepare(
             conn.handle(),
-            "SELECT COUNT(photograph_id) FROM jpeg_cache "
+            "SELECT COUNT(photograph_id) FROM helios_jpeg_cache "
             "WHERE photograph_id = ? AND "
             " height = ? AND "
             " width = ? ",
@@ -60,7 +60,7 @@ helios::jpeg_cache_db helios::db::cache::get(
     sqlite3_stmt *stmt;
     sqlite3_prepare(
             conn.handle(),
-            "SELECT photograph_id, data FROM jpeg_cache "
+            "SELECT photograph_id, data FROM helios_jpeg_cache "
             "WHERE photograph_id = ? AND "
             " height = ? AND "
             " width = ? ",
@@ -90,7 +90,7 @@ void helios::db::cache::insert(
         )
 {
     hades::devoid(
-            "DELETE FROM jpeg_cache WHERE "
+            "DELETE FROM helios_jpeg_cache WHERE "
             " photograph_id = ? AND height = ? AND width = ? ",
             hades::row<int, int, int>(data.photograph_id, data.height, data.width),
             conn
@@ -98,7 +98,7 @@ void helios::db::cache::insert(
     sqlite3_stmt *stmt;
     sqlite3_prepare(
             conn.handle(),
-            "INSERT INTO jpeg_cache(photograph_id, height, width, data) VALUES (?, ?, ?, ?)",
+            "INSERT INTO helios_jpeg_cache(photograph_id, height, width, data) VALUES (?, ?, ?, ?)",
             -1,
             &stmt,
             nullptr

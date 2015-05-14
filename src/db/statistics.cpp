@@ -11,7 +11,7 @@ helios::statistics helios::db::get_statistics(hades::connection& conn)
         db::attr::statistics::total_count
         >(
             conn,
-            "SELECT COUNT(photograph_id) AS total_count FROM photograph "
+            "SELECT COUNT(photograph_id) AS total_count FROM helios_photograph "
             );
     if(stats.size() > 0)
         return helios::statistics(stats[0]);

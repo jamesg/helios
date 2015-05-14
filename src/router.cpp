@@ -122,7 +122,7 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
                 helios::photograph_location>(
                     conn,
                     hades::where(
-                        "photograph.photograph_id = ?",
+                        "helios_photograph.photograph_id = ?",
                         hades::row<int>(photograph_id)
                         )
                     );
@@ -155,7 +155,7 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
     install<>(
         atlas::http::matcher("/album", "GET"),
         [&conn]() {
-            auto filter = hades::order_by("album.name ASC");
+            auto filter = hades::order_by("helios_album.name ASC");
             return atlas::http::json_response(
                 helios::album::get_collection(conn, filter)
                 );
@@ -176,7 +176,7 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
             helios::album album(
                 hades::get_one<helios::album>(
                     conn,
-                    hades::where("album.album_id = ?", hades::row<int>(album_id))
+                    hades::where("helios_album.album_id = ?", hades::row<int>(album_id))
                     )
                 );
             return atlas::http::json_response(album);
@@ -195,13 +195,13 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
                     conn,
                     hades::filter(
                         hades::where(
-                            "photograph.photograph_id = photograph_in_album.photograph_id AND "
-                            "photograph_in_album.album_id = album.album_id AND "
-                            "photograph.photograph_id = photograph_location.photograph_id AND "
-                            "album.album_id = ?",
+                            "helios_photograph.photograph_id = helios_photograph_in_album.photograph_id AND "
+                            "helios_photograph_in_album.album_id = helios_album.album_id AND "
+                            "helios_photograph.photograph_id = helios_photograph_location.photograph_id AND "
+                            "helios_album.album_id = ?",
                             hades::row<int>(album_id)
                             ),
-                        hades::order_by("photograph.taken ASC")
+                        hades::order_by("helios_photograph.taken ASC")
                         )
                     )
                 );
@@ -214,11 +214,11 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
         return atlas::http::json_response(
             hades::custom_select<helios::photograph, db::attr::photograph::photograph_id, db::attr::photograph::title>(
                 conn,
-                "SELECT photograph.photograph_id, title "
-                "FROM photograph "
-                "LEFT OUTER JOIN photograph_in_album "
-                "ON photograph_in_album.photograph_id = photograph.photograph_id "
-                "WHERE photograph_in_album.album_id IS NULL"
+                "SELECT helios_photograph.photograph_id, title "
+                "FROM helios_photograph "
+                "LEFT OUTER JOIN helios_photograph_in_album "
+                "ON helios_photograph_in_album.photograph_id = helios_photograph.photograph_id "
+                "WHERE helios_photograph_in_album.album_id IS NULL"
                 )
             );
         },
@@ -259,8 +259,8 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
                 hades::join<helios::photograph_in_album, helios::album>(
                     conn,
                     hades::where(
-                        "photograph_in_album.album_id = album.album_id AND "
-                        "photograph_in_album.photograph_id = ?",
+                        "helios_photograph_in_album.album_id = helios_album.album_id AND "
+                        "helios_photograph_in_album.photograph_id = ?",
                         hades::row<int>(photograph_id)
                         )
                     )
@@ -276,12 +276,12 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
                     conn,
                     hades::filter(
                         hades::where(
-                            "photograph.photograph_id = "
-                            " photograph_tagged.photograph_id AND "
-                            "photograph_tagged.tag = ? ",
+                            "helios_photograph.photograph_id = "
+                            " helios_photograph_tagged.photograph_id AND "
+                            "helios_photograph_tagged.tag = ? ",
                             hades::row<std::string>(tag)
                             ),
-                        hades::order_by("photograph.taken ASC")
+                        hades::order_by("helios_photograph.taken ASC")
                         )
                     )
                 );
@@ -296,12 +296,12 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
                     conn,
                     hades::filter(
                         hades::where(
-                            "photograph.photograph_id = "
-                            " photograph_location.photograph_id AND "
-                            "photograph_location.location = ? ",
+                            "helios_photograph.photograph_id = "
+                            " helios_photograph_location.photograph_id AND "
+                            "helios_photograph_location.location = ? ",
                             hades::row<std::string>(location)
                             ),
-                        hades::order_by("photograph.taken ASC")
+                        hades::order_by("helios_photograph.taken ASC")
                         )
                     )
                 );
@@ -317,7 +317,7 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
                     db::attr::tag::tag,
                     db::attr::tag::photograph_count>(
                         conn,
-                        "SELECT tag, COUNT(photograph_id) FROM photograph_tagged "
+                        "SELECT tag, COUNT(photograph_id) FROM helios_photograph_tagged "
                         "WHERE tag IS NOT NULL AND tag != '' "
                         "GROUP BY tag ORDER BY tag ASC "
                         )
@@ -334,7 +334,7 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
                     db::attr::photograph_location::location,
                     db::attr::tag::photograph_count>(
                         conn,
-                        "SELECT location, COUNT(photograph_id) FROM photograph_location "
+                        "SELECT location, COUNT(photograph_id) FROM helios_photograph_location "
                         "WHERE location IS NOT NULL AND location != '' "
                         "GROUP BY location ORDER BY location ASC "
                         )

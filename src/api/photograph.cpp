@@ -29,7 +29,7 @@ void helios::api::photograph::install(
         "photograph_get",
         [&conn](int id) {
             auto where = hades::where(
-                "photograph.photograph_id = ?",
+                "helios_photograph.photograph_id = ?",
                 hades::row<int>(id)
                 );
             styx::list l =
@@ -94,7 +94,7 @@ void helios::api::photograph::install(
         [&conn](styx::element photograph_e) {
             helios::photograph photograph(photograph_e);
             hades::devoid(
-                "DELETE FROM photograph WHERE photograph_id = ?",
+                "DELETE FROM helios_photograph WHERE photograph_id = ?",
                 hades::row<int>(
                     photograph.get_int<db::attr::photograph::photograph_id>()
                     ),
@@ -108,7 +108,7 @@ void helios::api::photograph::install(
         [&conn]() {
             return hades::get_collection<helios::photograph>(
                 conn,
-                hades::order_by("photograph.taken DESC", 36)
+                hades::order_by("helios_photograph.taken DESC", 36)
                 );
         },
         boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
@@ -121,8 +121,8 @@ void helios::api::photograph::install(
             // attributes all NULL.
             return hades::outer_join<helios::photograph, helios::photograph_in_album>(
                 conn,
-                "photograph.photograph_id = photograph_in_album.photograph_id",
-                hades::where("photograph_in_album.photograph_id IS NULL")
+                "helios_photograph.photograph_id = helios_photograph_in_album.photograph_id",
+                hades::where("helios_photograph_in_album.photograph_id IS NULL")
                 );
         },
         boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
@@ -140,7 +140,7 @@ void helios::api::photograph::install(
     server.install<styx::list>(
         "album_list",
         [&conn]() {
-            auto ob = hades::order_by("album.name ASC");
+            auto ob = hades::order_by("helios_album.name ASC");
             return helios::album::get_collection(conn, ob);
         },
         boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
@@ -193,13 +193,13 @@ void helios::api::photograph::install(
                 conn,
                 hades::filter(
                     hades::where(
-                        "photograph.photograph_id = photograph_in_album.photograph_id AND "
-                        "photograph_in_album.album_id = album.album_id AND "
-                        "photograph.photograph_id = photograph_location.photograph_id AND "
-                        "album.album_id = ?",
+                        "helios_photograph.photograph_id = helios_photograph_in_album.photograph_id AND "
+                        "helios_photograph_in_album.album_id = helios_album.album_id AND "
+                        "helios_photograph.photograph_id = helios_photograph_location.photograph_id AND "
+                        "helios_album.album_id = ?",
                         hades::row<int>(album_id)
                         ),
-                    hades::order_by("photograph.taken ASC")
+                    hades::order_by("helios_photograph.taken ASC")
                     )
                 );
         },
@@ -211,9 +211,9 @@ void helios::api::photograph::install(
             return hades::join<helios::photograph, helios::photograph_in_album, helios::album>(
                 conn,
                 hades::where(
-                    "photograph.photograph_id = photograph_in_album.photograph_id AND "
-                    "photograph_in_album.album_id = album.album_id AND "
-                    "photograph.photograph_id = ?",
+                    "helios_photograph.photograph_id = helios_photograph_in_album.photograph_id AND "
+                    "helios_photograph_in_album.album_id = helios_album.album_id AND "
+                    "helios_photograph.photograph_id = ?",
                     hades::row<int>(photograph_id)
                     )
                 );
@@ -229,7 +229,7 @@ void helios::api::photograph::install(
                 db::attr::location::photograph_count>(
                     conn,
                     "SELECT location, COUNT(photograph_id) "
-                    " FROM photograph_location "
+                    " FROM helios_photograph_location "
                     " WHERE location IS NOT NULL AND location != '' "
                     "GROUP BY location ORDER BY location ASC "
                     );
@@ -244,7 +244,7 @@ void helios::api::photograph::install(
                 db::attr::tag::tag,
                 db::attr::tag::photograph_count>(
                     conn,
-                    "SELECT tag, COUNT(photograph_id) FROM photograph_tagged "
+                    "SELECT tag, COUNT(photograph_id) FROM helios_photograph_tagged "
                     "WHERE tag IS NOT NULL AND tag != '' "
                     "GROUP BY tag ORDER BY tag ASC "
                     );
@@ -258,12 +258,12 @@ void helios::api::photograph::install(
                 conn,
                 hades::filter(
                     hades::where(
-                        "photograph.photograph_id = "
-                        " photograph_tagged.photograph_id AND "
-                        "photograph_tagged.tag = ? ",
+                        "helios_photograph.photograph_id = "
+                        " helios_photograph_tagged.photograph_id AND "
+                        "helios_photograph_tagged.tag = ? ",
                         hades::row<std::string>(tag)
                         ),
-                    hades::order_by("photograph.taken ASC")
+                    hades::order_by("helios_photograph.taken ASC")
                     )
                 );
         },
@@ -276,12 +276,12 @@ void helios::api::photograph::install(
                 conn,
                 hades::filter(
                     hades::where(
-                        "photograph.photograph_id = "
-                        " photograph_location.photograph_id AND "
-                        "photograph_location.location = ? ",
+                        "helios_photograph.photograph_id = "
+                        " helios_photograph_location.photograph_id AND "
+                        "helios_photograph_location.location = ? ",
                         hades::row<std::string>(location)
                         ),
-                    hades::order_by("photograph.taken ASC")
+                    hades::order_by("helios_photograph.taken ASC")
                     )
                 );
         },

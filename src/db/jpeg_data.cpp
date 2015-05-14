@@ -14,7 +14,7 @@ helios::jpeg_data_db helios::db::jpeg_data::get_by_id(
     sqlite3_stmt *stmt;
     sqlite3_prepare(
             conn.handle(),
-            "SELECT photograph_id, data FROM jpeg_data WHERE photograph_id = ?",
+            "SELECT photograph_id, data FROM helios_jpeg_data WHERE photograph_id = ?",
             -1,
             &stmt,
             nullptr
@@ -38,7 +38,7 @@ void helios::db::jpeg_data::insert(
     sqlite3_stmt *stmt;
     sqlite3_prepare(
             conn.handle(),
-            "INSERT INTO jpeg_data(photograph_id, data) VALUES (?, ?)",
+            "INSERT INTO helios_jpeg_data(photograph_id, data) VALUES (?, ?)",
             -1,
             &stmt,
             nullptr
