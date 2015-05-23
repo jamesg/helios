@@ -12,6 +12,10 @@
     width: 100%;
 }
 
+.main-menu .grid {
+    padding: 0.5em;
+}
+
 .image-container, .image-controls {
     background-color: #444;
     text-align: center;

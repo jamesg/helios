@@ -4,7 +4,6 @@
 <head>
 
 <title>Photograph Album</title>
-<link href="/atlas/pure-min.css" rel="stylesheet" type="text/css" media="all"></link>
 <link href="/atlas/css/defaults.css" rel="stylesheet" type="text/css" media="all"></link>
 <link href="/atlas/css/form.css" rel="stylesheet" type="text/css" media="all"></link>
 <link href="/atlas/css/grid.css" rel="stylesheet" type="text/css" media="all"></link>
@@ -31,54 +30,62 @@
 
 <script type="text/template" id="homepage">
 <h1>Helios <small>Photograph Album</small></h1>
-<div class="pure-g main-menu">
-    <div class="pure-u-12-24">
-        <button class="pure-button" name="albums">
-            <span aria-hidden="aria-hidden" data-glyph="book" class="oi"> </span>
-            Albums
-        </button>
+<div class="main-menu">
+    <div class="grid">
+        <div class="col-1-2">
+            <button name="albums">
+                <span aria-hidden="aria-hidden" data-glyph="book" class="oi"> </span>
+                Albums
+            </button>
+        </div>
+        <div class="col-1-2">
+            <button name="locations">
+                <span aria-hidden="aria-hidden" data-glyph="map" class="oi"> </span>
+                Locations
+            </button>
+        </div>
     </div>
-    <div class="pure-u-12-24">
-        <button class="pure-button" name="locations">
-            <span aria-hidden="aria-hidden" data-glyph="map" class="oi"> </span>
-            Locations
-        </button>
+    <div class="grid">
+        <div class="col-1-2">
+            <button name="random">
+                <span aria-hidden="aria-hidden" data-glyph="random" class="oi"> </span>
+                Random
+            </button>
+        </div>
+        <div class="col-1-2">
+            <button name="signin">
+                <span aria-hidden="aria-hidden" data-glyph="account-login" class="oi"> </span>
+                Sign In
+            </button>
+        </div>
     </div>
-    <div class="pure-u-12-24">
-        <button class="pure-button" name="random">
-            <span aria-hidden="aria-hidden" data-glyph="random" class="oi"> </span>
-            Random
-        </button>
+    <div class="grid">
+        <div class="col-1-2">
+            <button name="signout">
+                <span aria-hidden="aria-hidden" data-glyph="account-logout" class="oi"> </span>
+                Sign Out
+            </button>
+        </div>
+        <div class="col-1-2">
+            <button name="tags">
+                <span aria-hidden="aria-hidden" data-glyph="tags" class="oi"> </span>
+                Tags
+            </button>
+        </div>
     </div>
-    <div class="pure-u-12-24">
-        <button class="pure-button" name="signin">
-            <span aria-hidden="aria-hidden" data-glyph="account-login" class="oi"> </span>
-            Sign In
-        </button>
-    </div>
-    <div class="pure-u-12-24">
-        <button class="pure-button" name="signout">
-            <span aria-hidden="aria-hidden" data-glyph="account-logout" class="oi"> </span>
-            Sign Out
-        </button>
-    </div>
-    <div class="pure-u-12-24">
-        <button class="pure-button" name="tags">
-            <span aria-hidden="aria-hidden" data-glyph="tags" class="oi"> </span>
-            Tags
-        </button>
-    </div>
-    <div class="pure-u-12-24">
-        <button class="pure-button" name="uncategorised">
-            <span aria-hidden="aria-hidden" data-glyph="puzzle-piece" class="oi"> </span>
-            Uncategorised
-        </button>
-    </div>
-    <div class="pure-u-12-24">
-        <button class="pure-button" name="upload">
-            <span aria-hidden="aria-hidden" data-glyph="data-transfer-upload" class="oi"> </span>
-            Upload
-        </button>
+    <div class="grid">
+        <div class="col-1-2">
+            <button name="uncategorised">
+                <span aria-hidden="aria-hidden" data-glyph="puzzle-piece" class="oi"> </span>
+                Uncategorised
+            </button>
+        </div>
+        <div class="col-1-2">
+            <button name="upload">
+                <span aria-hidden="aria-hidden" data-glyph="data-transfer-upload" class="oi"> </span>
+                Upload
+            </button>
+        </div>
     </div>
 </div>
 </script>
@@ -88,12 +95,13 @@
 </script>
 
 <script type="text/template" id="album-form">
-<fieldset class="pure-control-group">
-    <label for="name">Name</label>
-    <input type="text" name="name" value="<%-name%>">
-    </input>
-</fieldset>
-<button type="submit" class="pure-button pure-button-primary">Save</button>
+<div class="aligned">
+    <div class="group">
+        <label for="name">Name</label>
+        <input type="text" name="name" value="<%-name%>"></input>
+    </div>
+</div>
+<button type="submit" class="button-primary">Save</button>
 </script>
 
 <script type="text/template" id="photograph-thumb-view">
@@ -103,30 +111,28 @@
 </script>
 
 <script type="text/template" id="photograph-page">
-<div class="pure-g" style="height: 500px;">
-    <div class="pure-u-2-24 image-controls" style="height: 100%;">
+<div class="grid" style="height: 500px;">
+    <div class="col-1-12 image-controls" style="height: 100%;">
         <button
             type="button"
             class="button-block"
             <% if(disablePrev) print('disabled') %>
-            name="prev"
-            class="pure-button">
+            name="prev">
             <span aria-hidden="aria-hidden" data-glyph="chevron-left" class="oi">
             </span>
         </button>
     </div>
-    <div class="pure-u-20-24 image-container" style="height: 100%;">
+    <div class="col-10-12 image-container" style="height: 100%;">
         <img
             src="jpeg_image?width=800&height=480&photograph_id=<%-photograph_id%>"
             alt="<%-title%>"><span class="vertical-align-helper"></span>
     </div>
-    <div class="pure-u-2-24 image-controls" style="height: 100%;">
+    <div class="col-1-12 image-controls" style="height: 100%;">
         <button
             type="button"
             class="button-block"
             <% if(disableNext) print('disabled') %>
-            name="next"
-            class="pure-button">
+            name="next">
             <span aria-hidden="aria-hidden" data-glyph="chevron-right" class="oi">
             </span>
         </button>
@@ -134,8 +140,8 @@
 </div>
 <h2><%-title%></h2>
 <div name="details"></div>
-<form name="edit" class="pure-form pure-form-aligned"></form>
-<form name="albums" class="pure-form pure-form-aligned"></form>
+<form name="edit"></form>
+<form name="albums"></form>
 </script>
 
 <script type="text/template" id="photograph-view">
@@ -168,42 +174,36 @@
 </script>
 
 <script type="text/template" id="albums-page">
-<button type="button" class="pure-button" name="new-album"> New Album </button>
+<button type="button" name="new-album"> New Album </button>
 <ul name="albums-list" class="action-list action-list-large"></ul>
 </script>
 
 <script type="text/template" id="photograph-edit-form">
 <h2>Edit Photograph</h2>
-<fieldset>
-    <div class="pure-control-group">
+<div class="aligned">
+    <div class="group">
         <label for="title">Title</label>
         <input type="text" name="title" value="<%-title%>"></input>
     </div>
-    <div class="pure-control-group">
+    <div class="group">
         <label for="caption">Caption</label>
         <input type="text" name="caption" value="<%-caption%>"></input>
     </div>
-    <div class="pure-control-group">
+    <div class="group">
         <label for="taken">Date</label>
         <input type="text" name="date" value="<%-taken%>"></input>
     </div>
-    <div class="pure-control-group">
+    <div class="group">
         <label for="location">Location</label>
         <input type="text" name="location" value="<%-location%>"></input>
     </div>
-    <div class="pure-control-group">
+    <div class="group">
         <label for="tags">Tags</label>
         <input type="text" name="tags" value="<%-tags%>"></input>
     </div>
-    <div class="pure-controls">
-        <button type="submit" class="pure-button pure-button-primary">
-            Save
-        </button>
-        <button
-            class="pure-button button-warning"
-            name="delete">
-        Delete
-        </button>
+    <div class="controls">
+        <button type="submit" class="button-primary">Save</button>
+        <button class="button-warning" name="delete">Delete</button>
     </div>
 </fieldset>
 
@@ -226,14 +226,13 @@
             </div>
             <div class="modal-footer">
                <button
-                    class="pure-button"
                     type="button"
                     data-dismiss="modal">
                     <span aria-hidden="true">&times;</span>
                     <span class="sr-only">Cancel</span>
                 </button>
                 <button
-                    class="pure-button button-warning"
+                    class="button-warning"
                     type="button"
                     name="delete-confirm">
                     Delete
@@ -246,13 +245,15 @@
 
 <script type="text/template" id="albums-form">
 <h2>Albums</h2>
-<div class="pure-control-group">
-    <label for="albums">Album</label>
-    <select class="pure-input" name="albums"></select>
-</div>
-<div class="pure-control-group">
-    <label for="add"></label>
-    <button type="submit" class="pure-button" name="add">Add</button>
+<div class="aligned">
+    <div class="group">
+        <label for="albums">Album</label>
+        <select name="albums"></select>
+    </div>
+    <div class="group">
+        <label for="add"></label>
+        <button type="submit" name="add">Add</button>
+    </div>
 </div>
 <ul class="action-list action-list-small" name="photograph-albums"></ul>
 </script>
@@ -260,55 +261,52 @@
 <script type="text/template" id="photograph-new-form">
 <h2>New Photograph</h2>
 <div name="messagebox"></div>
-<fieldset class="pure-control-group">
-<fieldset>
-    <div class="pure-control-group">
+<div class="aligned">
+    <div class="group">
         <label for="title">Title</label>
         <input type="text" name="title"></input>
     </div>
-    <div class="pure-control-group">
+    <div class="group">
         <label for="caption">Caption</label>
         <input type="text" name="caption"></input>
     </div>
-    <div class="pure-control-group">
+    <div class="group">
         <label for="location">Location</label>
         <input type="text" name="location"></input>
     </div>
-    <div class="pure-control-group">
+    <div class="group">
         <label for="tags">Tags</label>
         <input type="text" name="tags"></input>
     </div>
-    <div class="pure-control-group">
+    <div class="group">
         <label for="file">File</label>
         <input type="file" name="file"></input>
     </div>
-    <div class="pure-controls">
-        <button type="submit" class="pure-button pure-button-primary">
+    <div class="controls">
+        <button type="submit" class="button-primary">
             Upload
         </button>
     </div>
-</fieldset>
+</div>
 </script>
 
 <script type="text/template" id="signin-page">
 <h2>Sign In</h2>
 <div name="messagebox"></div>
-<form class="pure-form pure-form-aligned">
-<fieldset>
-<div class="pure-control-group">
-    <label for="username">Username</label>
-    <input type="text" name="username"></input>
+<form>
+<div class="aligned">
+    <div class="group">
+        <label for="username">Username</label>
+        <input type="text" name="username"></input>
+    </div>
+    <div class="group">
+        <label for="password">Password</label>
+        <input type="password" name="password"></input>
+    </div>
+    <div class="controls">
+        <button type="submit" class="button-primary">Sign In</button>
+    </div>
 </div>
-<div class="pure-control-group">
-    <label for="password">Password</label>
-    <input type="password" name="password"></input>
-</div>
-<div class="pure-controls">
-    <button type="submit" class="pure-button pure-button-primary">
-        Sign In
-    </button>
-</div>
-</form>
 </script>
 
 <script type="text/javascript" src="/atlas/underscore.js"></script>
