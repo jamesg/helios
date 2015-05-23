@@ -528,9 +528,9 @@ var ThumbnailPage = PageView.extend(
         },
         initialize: function(options) {
             PageView.prototype.initialize.apply(this, arguments);
+            PageView.prototype.render.apply(this, arguments);
             this._name = options.name;
             this.model.fetch();
-            this.$el.html(this.template(this.model.toJSON()));
             var thumbnailPage = this;
             this._photographsView = new CollectionView(
                 {
@@ -552,6 +552,7 @@ var ThumbnailPage = PageView.extend(
                 );
             this._photographsView.render();
         },
+        render: function() {},
         reset: function() {
             this.model.fetch();
         },
@@ -651,14 +652,15 @@ var AlbumsPage = PageView.extend(
 var TagsPage = PageView.extend(
     {
         pageTitle: 'Tags',
+        template: $('#tagspage-template').html(),
         initialize: function(options) {
             PageView.prototype.initialize.apply(this, arguments);
+            PageView.prototype.render.apply(this, arguments);
             this._tags = new TagCollection;
             this._tags.fetch();
             this._tagsView = new CollectionView(
                 {
-                    tagName: 'ul',
-                    className: 'action-list action-list-large',
+                    el: this.$('ul[name=tags]'),
                     model: this._tags,
                     view: StaticView.extend(
                         {
@@ -681,16 +683,11 @@ var TagsPage = PageView.extend(
                         )
                 }
                 );
-            this.render();
         },
         reset: function() {
             this._tags.fetch();
         },
-        render: function() {
-            this.$el.empty();
-            this._tagsView.render();
-            this.$el.append(this._tagsView.$el);
-        }
+        render: function() { }
     }
     );
 
@@ -701,14 +698,15 @@ var TagsPage = PageView.extend(
 var LocationsPage = PageView.extend(
     {
         pageTitle: 'Locations',
+        template: $('#locationspage-template').html(),
         initialize: function(options) {
             PageView.prototype.initialize.apply(this, arguments);
+            PageView.prototype.render.apply(this, arguments);
             this._locations = new LocationCollection;
             this._locations.fetch();
             this._locationsView = new CollectionView(
                 {
-                    tagName: 'ul',
-                    className: 'action-list action-list-large',
+                    el: this.$('ul[name=locations]'),
                     model: this._locations,
                     view: StaticView.extend(
                         {
@@ -739,11 +737,7 @@ var LocationsPage = PageView.extend(
         reset: function() {
             this._locations.fetch();
         },
-        render: function() {
-            this.$el.empty();
-            this._locationsView.render();
-            this.$el.append(this._locationsView.$el);
-        }
+        render: function() { }
     }
     );
 
