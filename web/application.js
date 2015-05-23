@@ -217,16 +217,23 @@ var SignInPage = PageView.extend(
     }
     );
 
-var PhotographNewForm = Backbone.View.extend(
+var UploadPage = PageView.extend(
     {
-        tagName: 'form',
-        className: 'pure-form pure-form-aligned',
         events: {
-            'submit': 'create'
+            'submit form[name=photographform]': 'create'
         },
+        initialize: function() {
+            PageView.prototype.initialize.apply(this, arguments);
+            PageView.prototype.render.apply(this, arguments);
+            this._messageBox = new MessageBox({
+                el: this.$('div[name=messagebox]')
+            });
+        },
+        render: function() {},
+        template: $('#uploadpage-template').html(),
         create: function() {
-            var photographData = new FormData(this.el);
-            var el = this.el;
+            var el = this.$('form[name=photographform]')[0];
+            var photographData = new FormData(el);
             var messageBox = this._messageBox;
             var reqListener = function() {
                 el.disabled = false;
@@ -238,7 +245,7 @@ var PhotographNewForm = Backbone.View.extend(
             var xhr = new XMLHttpRequest();
             xhr.open(
                     'post',
-                    '/insert_photograph',
+                    'insert_photograph',
                     true
                     );
             xhr.onload = reqListener;
@@ -255,38 +262,6 @@ var PhotographNewForm = Backbone.View.extend(
 
             return false;
         },
-        initialize: function() {
-            this.initRender();
-            this._messageBox = new MessageBox(
-                    {
-                        el: this.$('div[name=messagebox]')
-                    }
-                    );
-        },
-        initRender: function() {
-            this.$el.html(this.template(this.model.attributes));
-            this.$title = this.$('[name=title]');
-            this.$caption = this.$('[name=caption]');
-            this.$location = this.$('[name=location]');
-            this.$tags = this.$('[name=tags]');
-        },
-        template: _.template($('#photograph-new-form').html())
-    }
-    );
-
-var UploadPage = PageView.extend(
-    {
-        pageTitle: 'Upload Photograph',
-        initialize: function() {
-            PageView.prototype.initialize.apply(this, arguments);
-            this._form = new PhotographNewForm({ model: new Photograph });
-            this._form.render();
-            this.render();
-        },
-        render: function() {
-            this.$el.empty();
-            this.$el.append(this._form.$el);
-        }
     }
     );
 
@@ -394,16 +369,24 @@ var PhotographPage = PageView.extend(
         pageTitle: function() { return this.model.get('title'); },
         template: _.template($('#photograph-page').html()),
         events: {
-            'click button[name=delete]': 'showDeletePhotograph',
-            'click button[name=delete-confirm]': 'deletePhotograph'
+            'click button[name=delete]': 'showDeletePhotograph'
         },
         showDeletePhotograph: function() {
-            $('#delete-modal').modal();
+            var m = new Modal({
+                view: StaticView.extend({
+                    template: $('#deletephotograph-template').html()
+                }),
+                model: this.model,
+                buttons: [
+                    StandardButton.cancel(),
+                    StandardButton.destroy(this.deletePhotograph.bind(this))
+                ]
+            });
+            gApplication.modal(m);
         },
         deletePhotograph: function() {
             this.model.destroy();
-            this.$('#delete-modal').modal('hide');
-            this.application.popPage();
+            gApplication.popPage();
         },
         initialize: function(options) {
             PageView.prototype.initialize.apply(this, arguments);
