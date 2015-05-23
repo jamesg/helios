@@ -8,10 +8,8 @@
 #include "atlas/http/server/install_static_file.hpp"
 #include "atlas/http/server/static_file.hpp"
 #include "atlas/http/server/static_files.hpp"
-#include "atlas/jsonrpc/uri.hpp"
 #include "atlas/log/log.hpp"
 
-#include "api/api.hpp"
 #include "helios/db/create.hpp"
 #include "helios/router.hpp"
 

@@ -269,66 +269,53 @@ var PhotographAlbumsView = StaticView.extend(
     {
         initialize: function(options) {
             StaticView.prototype.initialize.apply(this, arguments);
+            StaticView.prototype.render.apply(this, arguments);
             this._photograph = options.photograph;
-            this.initRender();
-            //console.log('$photographAlbums', this.$photographAlbums);
-            //console.log('$albums', this.$albums[0]);
+
             var photographAlbums =
                 new PhotographAlbums([], { photograph: options.photograph });
             this._photographAlbums = photographAlbums;
             photographAlbums.fetch();
+
             var albums = new AlbumCollection;
             this._albums = albums;
             albums.fetch();
-            var albumsList = new CollectionView(
-                {
-                    el: this.$photographAlbums,
-                    model: photographAlbums,
-                    view: StaticView.extend(
-                        {
-                            tagName: 'li',
-                            template: '<%-name%> (<a>Remove</a>)',
-                            events: {
-                                'click a': 'removeFromAlbum'
-                            },
-                            removeFromAlbum: function() {
-                                // RPC
-                                jsonRpc(
-                                    {
-                                        method: 'remove_photograph_from_album',
-                                        params: [
-                                            options.photograph.get('photograph_id'),
-                                            this.model.get('album_id')
-                                        ],
-                                        success: (function() {
-                                            photographAlbums.fetch();
-                                        }).bind(this),
-                                        error: function(err) { console.log('err',err); }
-                                    }
-                                    );
-                                return false;
-                            }
-                        }
-                        )
-                }
-                );
-            albumsList.render();
-            console.log('$albums', this.$albums);
-            console.log('$el', this.$el);
-            this._albumsField = new CollectionView(
-                {
-                    el: this.$albums,
-                    model: albums,
-                    view: StaticView.extend(
-                        {
-                            tagName: 'option',
-                            template: '<%-name%>'
-                        }
-                        )
-                }
-                );
-            this._albumsField.render();
+
+            (new CollectionView({
+                el: this.$('ul[name=photograph-albums]'),
+                model: photographAlbums,
+                view: StaticView.extend({
+                    tagName: 'li',
+                    template: '<%-name%> (<a>Remove</a>)',
+                    events: {
+                        'click a': 'removeFromAlbum'
+                    },
+                    removeFromAlbum: function() {
+                        jsonRpc({
+                            method: 'remove_photograph_from_album',
+                            params: [
+                                options.photograph.get('photograph_id'),
+                                this.model.get('album_id')
+                            ],
+                            success: (function() {
+                                photographAlbums.fetch();
+                            }).bind(this),
+                            error: function(err) { console.log('err',err); }
+                        });
+                        return false;
+                    }
+                })
+            })).render();
+            (new CollectionView({
+                el: this.$('select[name=albums]'),
+                model: albums,
+                view: StaticView.extend({
+                    tagName: 'option',
+                    template: '<%-name%>'
+                })
+            })).render();
         },
+        render: function() {},
         reset: function() {
             this._photographAlbums.fetch();
         },
@@ -337,30 +324,21 @@ var PhotographAlbumsView = StaticView.extend(
         },
         addPhotographToAlbum: function() {
             var albumId =
-                this._albums.at(this.$albums[0].selectedIndex).get('album_id');
-            jsonRpc(
-                {
-                    method: 'add_photograph_to_album',
-                    params: [
-                        this._photograph.get('photograph_id'),
-                        albumId
-                    ],
-                    success: (function() {
-                        this._photographAlbums.fetch();
-                    }).bind(this),
-                    error: function(err) { console.log('err',err); }
-                }
-                );
+                this._albums.at(this.$('select[name=albums]')[0].selectedIndex).get('album_id');
+            jsonRpc({
+                method: 'add_photograph_to_album',
+                params: [
+                    this._photograph.get('photograph_id'),
+                    albumId
+                ],
+                success: (function() {
+                    this._photographAlbums.fetch();
+                }).bind(this),
+                error: function(err) { console.log('err',err); }
+            });
             return false;
         },
-        template: _.template($('#albums-form').html()),
-        initRender: function() {
-            this.$el.html(this.template());
-            this.$albums = this.$('select[name=albums]');
-            this.$photographAlbums = this.$('ul[name=photograph-albums]');
-        },
-        render: function() {
-        }
+        template: $('#albums-form').html()
     }
     );
 

@@ -6,6 +6,7 @@
 #include "atlas/api/server.hpp"
 #include "atlas/http/server/mimetypes.hpp"
 #include "atlas/http/server/static_text.hpp"
+#include "atlas/jsonrpc/uri.hpp"
 #include "hades/crud.ipp"
 #include "hades/custom_select.hpp"
 #include "hades/get_by_id.hpp"
@@ -13,6 +14,7 @@
 #include "hades/join.hpp"
 #include "styx/styx.hpp"
 
+#include "api/api.hpp"
 #include "db/photograph.hpp"
 #include "uri/insert_photograph.hpp"
 #include "uri/jpeg_image.hpp"
@@ -34,8 +36,23 @@ HELIOS_DECLARE_STATIC_STRING(application_js)
 HELIOS_DECLARE_STATIC_STRING(models_js)
 HELIOS_DECLARE_STATIC_STRING(style_css)
 
-helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::io_service> io)
+helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::io_service> io) :
+    m_api_server(io)
 {
+    api::install(conn, m_api_server);
+    install(
+            atlas::http::matcher("/api_call", "POST"),
+            boost::bind(
+                &atlas::jsonrpc::uri,
+                io,
+                m_api_server,
+                _1,
+                _2,
+                _3,
+                _4
+                )
+           );
+
     //
     // Install static files.
     //
