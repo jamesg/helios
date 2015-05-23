@@ -5,12 +5,11 @@
 
 <title>Photograph Album</title>
 <link href="/atlas/pure-min.css" rel="stylesheet" type="text/css" media="all"></link>
-<!-- bootstrap modal -->
-<link href="/atlas/modal.css" rel="stylesheet" type="text/css" media="all"></link>
 <link href="/atlas/css/defaults.css" rel="stylesheet" type="text/css" media="all"></link>
 <link href="/atlas/css/form.css" rel="stylesheet" type="text/css" media="all"></link>
 <link href="/atlas/css/grid.css" rel="stylesheet" type="text/css" media="all"></link>
 <link href="/atlas/css/list.css" rel="stylesheet" type="text/css" media="all"></link>
+<link href="/atlas/css/modal.css" rel="stylesheet" type="text/css" media="all"></link>
 <link href="/atlas/css/navigation.css" rel="stylesheet" type="text/css" media="all"></link>
 <link href="/atlas/css/teletype-theme.css" rel="stylesheet" type="text/css" media="all"></link>
 <link href="style.css" rel="stylesheet" type="text/css" media="all"></link>
@@ -25,7 +24,9 @@
 
 <body>
 
+<div id="modal-container" class="modal-container"></div>
 <ul id="navigation" class="navigation"></ul>
+
 <div id="template-content"></div>
 
 <script type="text/template" id="homepage">
@@ -155,49 +156,19 @@
 <li><a href="jpeg_image_fullsize?photograph_id=<%-photograph_id%>">Original size</a></li>
 </script>
 
-<script type="text/template" id="albums-page">
-<button
-    type="button"
-    class="pure-button"
-    name="new-album">
-    New Album
-</button>
-<div
-    id="new-album-modal"
-    tabindex="-1"
-    class="modal fade hide"
-    role="dialog"
-    aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form name="new-album-form" class="pure-form pure-form-aligned">
-                <div class="modal-header">
-                    <h3>New Album</h3>
-                </div>
-                <div class="modal-body">
-                        <div class="pure-control-group">
-                            <label for="name">Name</label>
-                            <input type="text" name="name"></input>
-                        </div>
-                </div>
-                <div class="modal-footer">
-                   <button
-                        class="pure-button"
-                        type="button"
-                        data-dismiss="modal">
-                        <span aria-hidden="true">&times;</span>
-                        <span class="sr-only">Cancel</span>
-                    </button>
-                    <button
-                        type="submit"
-                        class="pure-button pure-button-primary">
-                        Create
-                    </button>
-                </div>
-            </form>
+<script type="text/template" id="albumform-template">
+    <h3>New Album</h3>
+    <div name="messagebox" class="messagebox"></div>
+    <div class="aligned">
+        <div class="group">
+            <label for="name">Name</label>
+            <input type="text" name="name" value="<%-name%>"></input>
         </div>
     </div>
-</div>
+</script>
+
+<script type="text/template" id="albums-page">
+<button type="button" class="pure-button" name="new-album"> New Album </button>
 <ul name="albums-list" class="action-list action-list-large"></ul>
 </script>
 

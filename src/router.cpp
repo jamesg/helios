@@ -162,9 +162,9 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
-    install_json<>(
+    install_json<styx::element>(
         atlas::http::matcher("/album", "post"),
-        [&conn](styx::element album_e) {
+        [&conn](const styx::element& album_e) {
             helios::album album(album_e);
             album.insert(conn);
             return atlas::http::json_response(album);
@@ -224,9 +224,9 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
-    install_json<int>(
+    install_json<styx::element, int>(
         atlas::http::matcher("/photograph/([^/]+)", "put"),
-        [&conn](const styx::element photograph_e, const int photograph_id) {
+        [&conn](const styx::element& photograph_e, const int photograph_id) {
             helios::photograph photograph(photograph_e);
             if(photograph.get_int<db::attr::photograph::photograph_id>() != photograph_id)
                 return atlas::http::json_error_response("Photograph id does not match.");

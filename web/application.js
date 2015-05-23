@@ -792,28 +792,46 @@ var AlbumsPage = PageView.extend(
         pageTitle: 'Albums',
         template: _.template($('#albums-page').html()),
         events: {
-            'click button[name=new-album]': 'showCreateAlbum',
-            'submit form[name=new-album-form]': 'createAlbum'
+            'click button[name=new-album]': 'showCreateAlbum'
         },
         showCreateAlbum: function() {
-            this.$('#new-album-modal').modal();
-        },
-        createAlbum: function() {
-            var album = new Album({ name: this.$('input[name=name]').val() });
-            album.save(
-                {},
-                {
-                    success: (function() {
-                        this.reset();
-                        this.$('#new-album-modal').modal('hide');
-                    }).bind(this)
-                }
-                );
-            return false;
+            var m = new Modal({
+                view: StaticView.extend({
+                    template: $('#albumform-template').html(),
+                    initialize: function() {
+                        StaticView.prototype.initialize.apply(this, arguments);
+                        StaticView.prototype.render.apply(this, arguments);
+                        this.on('create', this.create.bind(this));
+                        this._messageBox =
+                            new MessageBox({ el: this.$('[name=messagebox]') });
+                    },
+                    render: function() {},
+                    create: function() {
+                        this.model.set({
+                            name: this.$('input[name=name]').val()
+                        });
+                        this.model.save(
+                            {},
+                            {
+                                success: (function() {
+                                    this.trigger('finished');
+                                }).bind(this),
+                                error: (function() {
+                                    this._messageBox.displayError('Failed to save item');
+                                }).bind(this)
+                            }
+                            );
+                    }
+                }),
+                buttons: [ StandardButton.cancel(), StandardButton.create() ],
+                model: new Album
+            });
+            this.listenTo(m, 'finished', this.reset.bind(this));
+            gApplication.modal(m);
         },
         initialize: function(options) {
             PageView.prototype.initialize.apply(this, arguments);
-            this.$el.html(this.template());
+            PageView.prototype.render.apply(this, arguments);
             this._albums = new AlbumCollection;
             this._albums.fetch();
             this._albumsView = new CollectionView({
@@ -841,6 +859,7 @@ var AlbumsPage = PageView.extend(
             });
             this._albumsView.render();
         },
+        render: function() {},
         reset: function() {
             this._albums.fetch();
         }
