@@ -665,35 +665,28 @@ var LocationsPage = PageView.extend(
             PageView.prototype.render.apply(this, arguments);
             this._locations = new LocationCollection;
             this._locations.fetch();
-            this._locationsView = new CollectionView(
-                {
-                    el: this.$('ul[name=locations]'),
-                    model: this._locations,
-                    view: StaticView.extend(
-                        {
-                            tagName: 'li',
-                            template: '<%-location%> (<%-photograph_count%>)',
-                            events: { 'click': 'gotoLocation' },
-                            gotoLocation: function() {
-                                var location = this.model.get('location');
-                                var model = new PhotographsWithLocation(
-                                    [],
-                                    { location: location }
-                                    );
-                                var page = new ThumbnailPage(
-                                    {
-                                        application: options.application,
-                                        model: model,
-                                        name: this.model.get('location')
-                                    }
-                                    );
-                                options.application.pushPage(page);
-                            }
-                        }
-                        )
-                }
-                );
-            this.render();
+            (new CollectionView({
+                el: this.$('ul[name=locations]'),
+                model: this._locations,
+                view: StaticView.extend({
+                    tagName: 'li',
+                    template: '<%-location%> (<%-photograph_count%>)',
+                    events: { 'click': 'gotoLocation' },
+                    gotoLocation: function() {
+                        var location = this.model.get('location');
+                        var model = new PhotographsWithLocation(
+                            [],
+                            { location: location }
+                            );
+                        var page = new ThumbnailPage({
+                            application: options.application,
+                            model: model,
+                            name: this.model.get('location')
+                        });
+                        options.application.pushPage(page);
+                    }
+                })
+            })).render();
         },
         reset: function() {
             this._locations.fetch();

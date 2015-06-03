@@ -24,7 +24,15 @@
 <body>
 
 <div id="modal-container" class="modal-container"></div>
-<ul id="navigation" class="navigation"></ul>
+
+<ul class="navigation navigation-pages">
+    <li>
+        <span class="oi" data-glyph="home" aria-hidden="true"> </span>
+        <a href="index.html">Home</a>
+    </li>
+</ul>
+
+<ul id="navigation" class="navigation navigation-breadcrumbs"></ul>
 
 <div id="template-content"></div>
 
@@ -97,8 +105,10 @@
 <script type="text/template" id="album-form">
 <div class="aligned">
     <div class="group">
-        <label for="name">Name</label>
-        <input type="text" name="name" value="<%-name%>"></input>
+        <label>
+            Name
+            <input type="text" name="name" value="<%-name%>"></input>
+        </label>
     </div>
 </div>
 <button type="submit" class="button-primary">Save</button>
@@ -167,8 +177,10 @@
     <div name="messagebox" class="messagebox"></div>
     <div class="aligned">
         <div class="group">
-            <label for="name">Name</label>
-            <input type="text" name="name" value="<%-name%>"></input>
+            <label>
+                Name
+                <input type="text" name="name" value="<%-name%>"></input>
+            </label>
         </div>
     </div>
 </script>
@@ -182,24 +194,34 @@
 <h2>Edit Photograph</h2>
 <div class="aligned">
     <div class="group">
-        <label for="title">Title</label>
+        <label>
+        Title
         <input type="text" name="title" value="<%-title%>"></input>
+        </label>
     </div>
     <div class="group">
-        <label for="caption">Caption</label>
+        <label>
+        Caption
         <input type="text" name="caption" value="<%-caption%>"></input>
+        </label>
     </div>
     <div class="group">
-        <label for="taken">Date</label>
+        <label>
+        Date
         <input type="text" name="date" value="<%-taken%>"></input>
+        </label>
     </div>
     <div class="group">
-        <label for="location">Location</label>
+        <label>
+        Location
         <input type="text" name="location" value="<%-location%>"></input>
+        </label>
     </div>
     <div class="group">
-        <label for="tags">Tags</label>
+        <label>
+        Tags
         <input type="text" name="tags" value="<%-tags%>"></input>
+        </label>
     </div>
     <div class="controls">
         <button type="submit" class="button-primary">Save</button>
@@ -220,12 +242,15 @@
 <h2>Albums</h2>
 <div class="aligned">
     <div class="group">
-        <label for="albums">Album</label>
+        <label>
+        Albums
         <select name="albums"></select>
+        </label>
     </div>
     <div class="group">
-        <label for="add"></label>
+        <label>
         <button type="button" name="add">Add</button>
+        </label>
     </div>
 </div>
 <ul class="action-list action-list-small" name="photograph-albums"></ul>
@@ -237,24 +262,34 @@
 <form method="POST" enctype="multipart/form-data" name="photographform">
     <div class="aligned">
         <div class="group">
-            <label for="title">Title</label>
+            <label>
+            Title
             <input type="text" name="title"></input>
+            </label>
         </div>
         <div class="group">
-            <label for="caption">Caption</label>
+            <label>
+            Caption
             <input type="text" name="caption"></input>
+            </label>
         </div>
         <div class="group">
-            <label for="location">Location</label>
+            <label>
+            Location
             <input type="text" name="location"></input>
+            </label>
         </div>
         <div class="group">
-            <label for="tags">Tags</label>
+            <label>
+            Tags
             <input type="text" name="tags"></input>
+            </label>
         </div>
         <div class="group">
-            <label for="file">File</label>
+            <label>
+            File
             <input type="file" name="file"></input>
+            </label>
         </div>
         <div class="controls">
             <button type="submit" class="button-primary">
@@ -271,12 +306,16 @@
 <form>
 <div class="aligned">
     <div class="group">
-        <label for="username">Username</label>
+        <label>
+        Username
         <input type="text" name="username"></input>
+        </label>
     </div>
     <div class="group">
-        <label for="password">Password</label>
+        <label>
+        Password
         <input type="password" name="password"></input>
+        </label>
     </div>
     <div class="controls">
         <button type="submit" class="button-primary">Sign In</button>
