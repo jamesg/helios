@@ -291,12 +291,8 @@ var PhotographAlbumsView = StaticView.extend(
                         'click a': 'removeFromAlbum'
                     },
                     removeFromAlbum: function() {
-                        jsonRpc({
-                            method: 'remove_photograph_from_album',
-                            params: [
-                                options.photograph.get('photograph_id'),
-                                this.model.get('album_id')
-                            ],
+                        this.model.destroy({
+                            url: restUri('photograph/' + options.photoraph.id + '/album'),
                             success: (function() {
                                 photographAlbums.fetch();
                             }).bind(this),
@@ -323,19 +319,19 @@ var PhotographAlbumsView = StaticView.extend(
             'click button[name=add]': 'addPhotographToAlbum'
         },
         addPhotographToAlbum: function() {
-            var albumId =
-                this._albums.at(this.$('select[name=albums]')[0].selectedIndex).get('album_id');
-            jsonRpc({
-                method: 'add_photograph_to_album',
-                params: [
-                    this._photograph.get('photograph_id'),
-                    albumId
-                ],
-                success: (function() {
-                    this._photographAlbums.fetch();
-                }).bind(this),
-                error: function(err) { console.log('err',err); }
-            });
+            var album = this._albums.at(this.$('select[name=albums]')[0].selectedIndex);
+            album.save(
+                {
+                },
+                {
+                    method: 'POST',
+                    url: restUri('photograph/' + this._photograph.id + '/album'),
+                    success: (function() {
+                        this._photographAlbums.fetch();
+                    }).bind(this),
+                    error: function(err) { console.log('err',err); }
+                }
+                );
             return false;
         },
         template: $('#albums-form').html()

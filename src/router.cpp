@@ -285,6 +285,22 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
+    install_json<album, int>(
+        atlas::http::matcher("/photograph/([0-9]+)/album", "POST"),
+        [&conn](album a, int photograph_id) {
+            photograph_in_album in_album;
+            in_album.set_id(
+                photograph_in_album::id_type{
+                    photograph_id,
+                    a.get_int<db::attr::album::album_id>()
+                }
+                );
+            in_album.save(conn);
+            return atlas::http::json_response(
+                hades::get_by_id<album>(conn, a.id())
+                );
+        }
+        );
     install<std::string>(
         atlas::http::matcher("/tag/([^/]*)/photograph", "GET"),
         [&conn](const std::string tag) {
