@@ -169,8 +169,8 @@ void helios::api::photograph::install(
                 helios::photograph_in_album::id_type{photograph_id, album_id}
                 );
             return photograph_in_album.save(conn);
-        }/*,*/
-        /*boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)*/
+        },
+        boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
     server.install<bool, int, int>(
         "remove_photograph_from_album",
