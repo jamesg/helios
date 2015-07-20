@@ -196,7 +196,10 @@ var SignInPage = PageView.extend(
                 {
                     url: 'auth',
                     method: 'sign_in',
-                    params: [this.$username.val(), this.$password.val()],
+                    params: [
+                        this.$('input[name=username]').val(),
+                        this.$('input[name=password]').val()
+                    ],
                     success: function(user) {
                         storage.set('token', user.token);
                         application.popPage();
