@@ -24,11 +24,10 @@ void helios::api::features::install(
         atlas::api::server& server
         )
 {
-    server.install<styx::element, int>(
+    server.install<styx::element, styx::int_type>(
             "features",
-            [&conn](int id) {
+            [&conn](styx::int_type id) {
                 return get_features();
             }
             );
 }
-

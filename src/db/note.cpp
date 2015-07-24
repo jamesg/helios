@@ -71,8 +71,7 @@ styx::list helios::db::note::published_notes(hades::connection& conn)
             conn,
             hades::where(
                 "helios_note.note_id = helios_note_version.note_id AND phase = ? ",
-                hades::row<int>(note_version::published)
+                hades::row<styx::int_type>(note_version::published)
                 )
             );
 }
-

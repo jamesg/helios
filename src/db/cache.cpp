@@ -25,9 +25,9 @@ void helios::db::cache::create(hades::connection& conn)
 
 bool helios::db::cache::has(
         hades::connection& conn,
-        int photograph_id,
-        int height,
-        int width
+        styx::int_type photograph_id,
+        styx::int_type height,
+        styx::int_type width
         )
 {
     sqlite3_stmt *stmt;
@@ -52,9 +52,9 @@ bool helios::db::cache::has(
 
 helios::jpeg_cache_db helios::db::cache::get(
         hades::connection& conn,
-        int photograph_id,
-        int height,
-        int width
+        styx::int_type photograph_id,
+        styx::int_type height,
+        styx::int_type width
         )
 {
     sqlite3_stmt *stmt;
@@ -92,7 +92,11 @@ void helios::db::cache::insert(
     hades::devoid(
             "DELETE FROM helios_jpeg_cache WHERE "
             " photograph_id = ? AND height = ? AND width = ? ",
-            hades::row<int, int, int>(data.photograph_id, data.height, data.width),
+            hades::row<styx::int_type, styx::int_type, styx::int_type>(
+                data.photograph_id,
+                data.height,
+                data.width
+            ),
             conn
             );
     sqlite3_stmt *stmt;
@@ -122,4 +126,3 @@ void helios::db::cache::insert(
     }
     sqlite3_finalize(stmt);
 }
-

@@ -8,7 +8,7 @@
 
 helios::jpeg_data_db helios::db::jpeg_data::get_by_id(
         hades::connection& conn,
-        int photograph_id
+        styx::int_type photograph_id
         )
 {
     sqlite3_stmt *stmt;
@@ -48,4 +48,3 @@ void helios::db::jpeg_data::insert(
     hades::step(stmt);
     sqlite3_finalize(stmt);
 }
-

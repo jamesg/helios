@@ -34,13 +34,14 @@ helios::server::server(
     m_connection.reset(new hades::connection(options.db_file));
     db::create(*m_connection);
 
-    boost::shared_ptr<atlas::http::router> helios_router(new helios::router(*m_connection, m_io));
+    boost::shared_ptr<atlas::http::router>
+        helios_router(new helios::router(m_io, *m_connection));
     m_http_server.router().install(
         atlas::http::matcher("(.*)", 1),
         boost::bind(&atlas::http::router::serve, helios_router, _1, _2, _3, _4)
         );
 
-    boost::shared_ptr<atlas::http::router> atlas_router(atlas::http::static_files());
+    boost::shared_ptr<atlas::http::router> atlas_router(atlas::http::static_files(m_io));
     m_http_server.router().install(
         atlas::http::matcher("/atlas(.*)"),
         boost::bind(&atlas::http::router::serve, atlas_router, _1, _2, _3, _4)
@@ -72,4 +73,3 @@ boost::shared_ptr<boost::asio::io_service> helios::server::io()
 {
     return m_io;
 }
-

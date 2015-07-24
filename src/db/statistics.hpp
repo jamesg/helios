@@ -33,7 +33,7 @@ namespace helios
         /*!
          * \brief The total number of photographs stored in the database.
          */
-        int& total_count()
+        styx::int_type& total_count()
         {
             return get_int<db::attr::statistics::total_count>();
         }
@@ -46,4 +46,3 @@ namespace helios
 }
 
 #endif
-

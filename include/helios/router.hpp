@@ -17,11 +17,10 @@ namespace helios
     class router : public atlas::http::application_router
     {
     public:
-        router(hades::connection&, boost::shared_ptr<boost::asio::io_service>);
+        router(boost::shared_ptr<boost::asio::io_service>, hades::connection&);
     private:
         atlas::api::server m_api_server;
     };
 }
 
 #endif
-

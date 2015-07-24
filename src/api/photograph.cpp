@@ -25,12 +25,12 @@ void helios::api::photograph::install(
         atlas::api::server& server
         )
 {
-    server.install<styx::element, int>(
+    server.install<styx::element, styx::int_type>(
         "photograph_get",
-        [&conn](int id) {
+        [&conn](styx::int_type id) {
             auto where = hades::where(
                 "helios_photograph.photograph_id = ?",
-                hades::row<int>(id)
+                hades::row<styx::int_type>(id)
                 );
             styx::list l =
                 hades::equi_outer_join<helios::photograph, helios::photograph_location>(
@@ -95,7 +95,7 @@ void helios::api::photograph::install(
             helios::photograph photograph(photograph_e);
             hades::devoid(
                 "DELETE FROM helios_photograph WHERE photograph_id = ?",
-                hades::row<int>(
+                hades::row<styx::int_type>(
                     photograph.get_int<db::attr::photograph::photograph_id>()
                     ),
                 conn
@@ -128,9 +128,9 @@ void helios::api::photograph::install(
         boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
 
-    server.install<styx::element, int>(
+    server.install<styx::element, styx::int_type>(
         "album_get",
-        [&conn](int album_id) {
+        [&conn](styx::int_type album_id) {
             helios::album a;
             a.from_id(conn, helios::album::id_type{album_id});
             return a;
@@ -162,9 +162,9 @@ void helios::api::photograph::install(
         },
         boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
-    server.install<bool, int, int>(
+    server.install<bool, styx::int_type, styx::int_type>(
         "add_photograph_to_album",
-        [&conn](int photograph_id, int album_id) {
+        [&conn](styx::int_type photograph_id, styx::int_type album_id) {
             helios::photograph_in_album photograph_in_album(
                 helios::photograph_in_album::id_type{photograph_id, album_id}
                 );
@@ -172,9 +172,9 @@ void helios::api::photograph::install(
         },
         boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
-    server.install<bool, int, int>(
+    server.install<bool, styx::int_type, styx::int_type>(
         "remove_photograph_from_album",
-        [&conn](int photograph_id, int album_id) {
+        [&conn](styx::int_type photograph_id, styx::int_type album_id) {
             helios::photograph_in_album photograph_in_album(
                 helios::photograph_in_album::id_type{photograph_id, album_id}
                 );
@@ -182,7 +182,7 @@ void helios::api::photograph::install(
         }/*,*/
         /*boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)*/
         );
-    server.install<styx::list, int>(
+    server.install<styx::list, styx::int_type>(
         "photographs_in_album",
         [&conn](int album_id) {
             return hades::join<
@@ -197,7 +197,7 @@ void helios::api::photograph::install(
                         "helios_photograph_in_album.album_id = helios_album.album_id AND "
                         "helios_photograph.photograph_id = helios_photograph_location.photograph_id AND "
                         "helios_album.album_id = ?",
-                        hades::row<int>(album_id)
+                        hades::row<styx::int_type>(album_id)
                         ),
                     hades::order_by("helios_photograph.taken ASC")
                     )
@@ -205,7 +205,7 @@ void helios::api::photograph::install(
         },
         boost::bind(atlas::jsonrpc::auth::is_logged_in, boost::ref(conn), _1)
         );
-    server.install<styx::list, int>(
+    server.install<styx::list, styx::int_type>(
         "photograph_albums",
         [&conn](int photograph_id) {
             return hades::join<helios::photograph, helios::photograph_in_album, helios::album>(
@@ -214,7 +214,7 @@ void helios::api::photograph::install(
                     "helios_photograph.photograph_id = helios_photograph_in_album.photograph_id AND "
                     "helios_photograph_in_album.album_id = helios_album.album_id AND "
                     "helios_photograph.photograph_id = ?",
-                    hades::row<int>(photograph_id)
+                    hades::row<styx::int_type>(photograph_id)
                     )
                 );
         },
@@ -623,4 +623,3 @@ void helios::api::photograph::install(
             //photographs);
     //result.data() = photographs;
 //}
-

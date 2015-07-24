@@ -200,7 +200,7 @@ namespace helios
 
         styx::list get_photographs_by_album(
                 hades::connection&,
-                const int album_id
+                const styx::int_type album_id
                 );
         std::vector<std::string> photograph_tags(
                 hades::connection&,
@@ -220,4 +220,3 @@ namespace helios
 }
 
 #endif
-

@@ -20,9 +20,9 @@ void helios::api::note::install(
         atlas::api::server& server
         )
 {
-    server.install<styx::element, int, int>(
+    server.install<styx::element, styx::int_type, styx::int_type>(
         "markdown_data_get",
-        [&conn](const int markdown_id, const int phase) {
+        [&conn](const styx::int_type markdown_id, const styx::int_type phase) {
             return styx::null();
         }
         );
@@ -34,9 +34,9 @@ void helios::api::note::install(
             return markdown;
         }
         );
-    server.install<styx::element, int>(
+    server.install<styx::element, styx::int_type>(
         "note_get",
-        [&conn](const int id) {
+        [&conn](const styx::int_type id) {
             helios::note note;
             note.from_id(conn, helios::note::id_type{id});
             return note;
@@ -46,9 +46,9 @@ void helios::api::note::install(
         "note_list",
         boost::bind(helios::note::get_collection, boost::ref(conn))
         );
-    server.install<styx::element, int, int>(
+    server.install<styx::element, styx::int_type, styx::int_type>(
         "note_version_get",
-        [&conn](const int note_id, const int phase) {
+        [&conn](const styx::int_type note_id, const styx::int_type phase) {
             helios::note_version note_version;
             note_version.from_id(conn, helios::note_version::id_type{note_id, phase});
             return note_version;
@@ -81,9 +81,9 @@ void helios::api::note::install(
             return note_version;
         }
         );
-    server.install<bool, int>(
+    server.install<bool, styx::int_type>(
         "note_destroy",
-        [&conn](const int note_id) {
+        [&conn](const styx::int_type note_id) {
             helios::note note;
             note.from_id(conn, helios::note::id_type{note_id});
             return note.destroy(conn);
@@ -96,11 +96,11 @@ void helios::api::note::install(
             boost::ref(conn),
             hades::where(
                 "helios_note.note_id = helios_note_version.note_id AND helios_note.phase = ?",
-                hades::row<int>(helios::note_version::published)
+                hades::row<styx::int_type>(helios::note_version::published)
                 )
             )
         );
-    server.install<styx::null, int>(
+    server.install<styx::null, styx::int_type>(
         "note_publish",
         [&conn](const int note_id) {
             helios::note note;
@@ -158,4 +158,3 @@ void helios::api::note::install(
                 //conn
                 //);
 }
-

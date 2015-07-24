@@ -36,7 +36,11 @@ HELIOS_DECLARE_STATIC_STRING(application_js)
 HELIOS_DECLARE_STATIC_STRING(models_js)
 HELIOS_DECLARE_STATIC_STRING(style_css)
 
-helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::io_service> io) :
+helios::router::router(
+    boost::shared_ptr<boost::asio::io_service> io,
+    hades::connection& conn
+) :
+    atlas::http::application_router(io),
     m_api_server(io)
 {
     api::install(conn, m_api_server);
@@ -131,16 +135,16 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
             return atlas::http::json_response(photograph);
         }
         );
-    install<int>(
+    install<styx::int_type>(
         atlas::http::matcher("/photograph/([0-9]+)", "GET"),
-        [&conn](const int photograph_id) {
+        [&conn](const styx::int_type photograph_id) {
             styx::list l = hades::equi_outer_join<
                 helios::photograph,
                 helios::photograph_location>(
                     conn,
                     hades::where(
                         "helios_photograph.photograph_id = ?",
-                        hades::row<int>(photograph_id)
+                        hades::row<styx::int_type>(photograph_id)
                         )
                     );
             if(l.size() != 1)
@@ -187,22 +191,25 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
             return atlas::http::json_response(album);
         }
         );
-    install<int>(
+    install<styx::int_type>(
         atlas::http::matcher("/album/([^/]+)", "GET"),
-        [&conn](const int album_id) {
+        [&conn](const styx::int_type album_id) {
             helios::album album(
                 hades::get_one<helios::album>(
                     conn,
-                    hades::where("helios_album.album_id = ?", hades::row<int>(album_id))
+                    hades::where(
+                        "helios_album.album_id = ?",
+                        hades::row<styx::int_type>(album_id)
                     )
-                );
+                )
+            );
             return atlas::http::json_response(album);
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
-    install<int>(
+    install<styx::int_type>(
         atlas::http::matcher("/album/([^/]+)/photograph", "GET"),
-        [&conn](const int album_id) {
+        [&conn](const styx::int_type album_id) {
             return atlas::http::json_response(
                 hades::join<
                     helios::photograph,
@@ -216,7 +223,7 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
                             "helios_photograph_in_album.album_id = helios_album.album_id AND "
                             "helios_photograph.photograph_id = helios_photograph_location.photograph_id AND "
                             "helios_album.album_id = ?",
-                            hades::row<int>(album_id)
+                            hades::row<styx::int_type>(album_id)
                             ),
                         hades::order_by("helios_photograph.taken ASC")
                         )
@@ -241,9 +248,9 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
-    install_json<styx::element, int>(
+    install_json<styx::element, styx::int_type>(
         atlas::http::matcher("/photograph/([^/]+)", "put"),
-        [&conn](const styx::element& photograph_e, const int photograph_id) {
+        [&conn](const styx::element& photograph_e, const styx::int_type photograph_id) {
             helios::photograph photograph(photograph_e);
             if(photograph.get_int<db::attr::photograph::photograph_id>() != photograph_id)
                 return atlas::http::json_error_response("Photograph id does not match.");
@@ -253,13 +260,13 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
             db::set_photograph_tags(conn, photograph.id(), photograph.get_string("tags"));
             return atlas::http::json_response(
                 hades::get_by_id<helios::photograph>(conn, photograph.id())
-                );
+            );
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
-    install<int>(
+    install<styx::int_type>(
         atlas::http::matcher("/photograph/([^/]+)", "delete"),
-        [&conn](int photograph_id) {
+        [&conn](styx::int_type photograph_id) {
             helios::photograph photograph;
             photograph.get_int<db::attr::photograph::photograph_id>() = photograph_id;
             if(photograph.destroy(conn))
@@ -269,25 +276,25 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
-    install<int>(
+    install<styx::int_type>(
         atlas::http::matcher("/photograph/([^/]+)/album", "GET"),
-        [&conn](int photograph_id) {
+        [&conn](styx::int_type photograph_id) {
             return atlas::http::json_response(
                 hades::join<helios::photograph_in_album, helios::album>(
                     conn,
                     hades::where(
                         "helios_photograph_in_album.album_id = helios_album.album_id AND "
                         "helios_photograph_in_album.photograph_id = ?",
-                        hades::row<int>(photograph_id)
+                        hades::row<styx::int_type>(photograph_id)
                         )
                     )
                 );
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
-    install_json<album, int>(
+    install_json<album, styx::int_type>(
         atlas::http::matcher("/photograph/([0-9]+)/album", "POST"),
-        [&conn](album a, int photograph_id) {
+        [&conn](album a, styx::int_type photograph_id) {
             photograph_in_album in_album;
             in_album.set_id(
                 photograph_in_album::id_type{
@@ -383,4 +390,3 @@ helios::router::router(hades::connection& conn, boost::shared_ptr<boost::asio::i
         boost::bind(&atlas::api::server::serve, auth_api_server, _1, _2, _3, _4)
         );
 }
-

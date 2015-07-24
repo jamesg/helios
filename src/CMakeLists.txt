@@ -17,6 +17,7 @@ target_link_libraries(
     helios-uri
     ${CMAKE_CURRENT_BINARY_DIR}/../web/static.a
     atlas-com-api
+    atlas-auth
     atlas-com-http-server
     atlas-com-jsonrpc
     atlas-web
@@ -24,4 +25,3 @@ target_link_libraries(
     ${Boost_LIBRARIES}
     ${OPENSSL_LIBRARIES}
     )
-

@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include "styx/styx.hpp"
+
 namespace hades
 {
     class connection;
@@ -15,7 +17,7 @@ namespace helios
      */
     struct jpeg_data_db
     {
-        int photograph_id;
+        styx::int_type photograph_id;
         std::vector<unsigned char> data;
 
         jpeg_data_db() :
@@ -27,11 +29,10 @@ namespace helios
     {
         namespace jpeg_data
         {
-            jpeg_data_db get_by_id(hades::connection&, int);
+            jpeg_data_db get_by_id(hades::connection&, styx::int_type);
             void insert(const jpeg_data_db&, hades::connection&);
         }
     }
 }
 
 #endif
-

@@ -16,7 +16,7 @@
 void helios::uri::jpeg_image(
         hades::connection& conn,
         mg_connection *mg_conn,
-        boost::smatch,
+        atlas::http::uri_parameters_type,
         atlas::http::uri_callback_type callback_success,
         atlas::http::uri_callback_type callback_failure
         )
@@ -172,4 +172,3 @@ void helios::uri::jpeg_image(
 
     callback_success();
 }
-

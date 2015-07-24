@@ -101,7 +101,7 @@ int helios::exports::main(int argc, const char* argv[])
                 "album.album_id = ? AND "
                 "photograph.photograph_id = photograph_in_album.photograph_id AND "
                 "album.album_id = photograph_in_album.album_id ",
-                hades::row<int>(album.get_int<db::attr::album::album_id>())
+                hades::row<styx::int_type>(album.get_int<db::attr::album::album_id>())
                 );
         auto order = hades::order_by("photograph.taken ASC");
         styx::list photographs = hades::join<
@@ -156,4 +156,3 @@ int helios::exports::main(int argc, const char* argv[])
         }
     }
 }
-

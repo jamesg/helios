@@ -90,13 +90,12 @@ void helios::db::photograph::create(hades::connection& conn)
 
 styx::list helios::db::get_photographs_by_album(
         hades::connection& conn,
-        const int album_id
+        const styx::int_type album_id
         )
 {
-    boost::fusion::vector<int> params(album_id);
     return hades::join<helios::photograph, helios::photograph_in_album>(
             conn,
-            hades::where("album_id = ?", hades::row<int>(album_id))
+            hades::where("album_id = ?", hades::row<styx::int_type>(album_id))
             );
 }
 
@@ -107,7 +106,7 @@ std::vector<std::string> helios::db::photograph_tags(
 {
     auto where = hades::where(
         "photograph_id = ?",
-        hades::row<int>(
+        hades::row<styx::int_type>(
             id.get_int<db::attr::photograph::photograph_id>()
             )
         );
@@ -130,7 +129,7 @@ void helios::db::set_photograph_tags(
     hades::transaction tr(conn, "helios_db_set_photograph_tags");
     hades::devoid(
             "DELETE FROM helios_photograph_tagged WHERE photograph_id = ?",
-            hades::row<int>(id.get_int<db::attr::photograph::photograph_id>()),
+            hades::row<styx::int_type>(id.get_int<db::attr::photograph::photograph_id>()),
             conn
             );
     for(const std::string& tag : tags)
@@ -157,4 +156,3 @@ void helios::db::set_photograph_tags(
         tags_vector.push_back(*it);
     set_photograph_tags(conn, id, tags_vector);
 }
-

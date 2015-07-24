@@ -7,7 +7,7 @@
 
 #include <exiv2/exiv2.hpp>
 
-#include "atlas/auth.hpp"
+#include "atlas/auth/auth.hpp"
 #include "atlas/http/server/error.hpp"
 #include "atlas/jsonrpc/request.hpp"
 #include "atlas/jsonrpc/result.hpp"
@@ -73,7 +73,7 @@ namespace
 void helios::uri::insert_photograph(
         hades::connection& conn,
         mg_connection *mg_conn,
-        boost::smatch,
+        atlas::http::uri_parameters_type,
         atlas::http::uri_callback_type callback_success,
         atlas::http::uri_callback_type callback_failure
         )
@@ -161,4 +161,3 @@ void helios::uri::insert_photograph(
 
     callback_success();
 }
-
