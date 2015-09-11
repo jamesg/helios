@@ -295,7 +295,7 @@ var PhotographAlbumsView = StaticView.extend(
                     },
                     removeFromAlbum: function() {
                         this.model.destroy({
-                            url: restUri('photograph/' + options.photoraph.id + '/album'),
+                            url: restUri('photograph/' + options.photograph.id + '/album/' + this.model.id),
                             success: (function() {
                                 photographAlbums.fetch();
                             }).bind(this),
@@ -466,23 +466,28 @@ var PhotographPage = PageView.extend(
 var ThumbnailPage = PageView.extend(
     {
         pageTitle: function() { return this._name; },
-        gotoPhotograph: function(index) {
-            this.model.at(index).fetch();
+        gotoPhotograph: function(photograph) {
+            photograph.fetch();
             var opts =
                 {
                     application: this.application,
-                    model: this.model.at(index)
+                    model: photograph
                 };
-            if(index > 0)
+            var index = this.model.indexOf(photograph);
+            if(index > 0) {
+                var prev = this.model.at(index - 1);
                 opts.prevPhotograph = (function() {
                     this.application.popPage();
-                    this.gotoPhotograph(index-1);
+                    this.gotoPhotograph(prev);
                 }).bind(this);
-            if(index < this.model.length-1)
+            }
+            if(index < this.model.length - 1) {
                 opts.nextPhotograph = (function() {
+                    var next = this.model.at(index + 1);
                     this.application.popPage();
-                    this.gotoPhotograph(index+1);
+                    this.gotoPhotograph(next);
                 }).bind(this);
+            }
             var page = new PhotographPage(opts);
             this.application.pushPage(page);
         },
@@ -502,9 +507,9 @@ var ThumbnailPage = PageView.extend(
                             template: $('#photograph-thumb-view').html(),
                             events: { 'click': 'gotoPhotograph' },
                             gotoPhotograph: function() {
-                                var index =
-                                    thumbnailPage.model.indexOf(this.model);
-                                thumbnailPage.gotoPhotograph(index);
+                                // var index =
+                                //     thumbnailPage.model.indexOf(this.model);
+                                thumbnailPage.gotoPhotograph(this.model);
                             }
                         }
                         )
@@ -693,4 +698,3 @@ var LocationsPage = PageView.extend(
         render: function() { }
     }
     );
-

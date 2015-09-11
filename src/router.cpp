@@ -292,6 +292,16 @@ helios::router::router(
         },
         boost::bind(&atlas::auth::is_signed_in, boost::ref(conn), _1)
         );
+    install<styx::int_type, styx::int_type>(
+        atlas::http::matcher("/photograph/([0-9]+)/album/([0-9]+)", "DELETE"),
+        [&conn](styx::int_type photograph_id, styx::int_type album_id) {
+            return atlas::http::json_response(
+                photograph_in_album(
+                    photograph_in_album::id_type{photograph_id, album_id}
+                    ).destroy(conn)
+            );
+        }
+    );
     install_json<album, styx::int_type>(
         atlas::http::matcher("/photograph/([0-9]+)/album", "POST"),
         [&conn](album a, styx::int_type photograph_id) {
